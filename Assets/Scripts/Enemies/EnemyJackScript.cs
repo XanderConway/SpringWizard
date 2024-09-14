@@ -33,7 +33,7 @@ public class EnemyScript : MonoBehaviour
     private void Update()
     {
 
-        isjumping = False
+        isJumping = false;
         bool playerInRange = Physics.CheckSphere(transform.position, detectionRange, whatIsPlayer);
 
         if (playerInRange)
@@ -43,7 +43,7 @@ public class EnemyScript : MonoBehaviour
 
         if (isGrounded)
         {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse)
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isJumping = true;
         }
     }
@@ -59,9 +59,6 @@ private void MoveTowardsPlayer()
 
     rb.MovePosition(transform.position + movement);
 }
-
-
-
 
     // TODO: player health
     public void TakeDamage(float damage)
