@@ -21,6 +21,9 @@ public class EnemyScript : MonoBehaviour
 
     private Rigidbody rb;
 
+    private Animator animator;
+    private bool isJumping = false;
+
     private void Start()
     {
         // Get the Rigidbody component
@@ -30,7 +33,7 @@ public class EnemyScript : MonoBehaviour
     private void Update()
     {
 
-
+        isjumping = False
         bool playerInRange = Physics.CheckSphere(transform.position, detectionRange, whatIsPlayer);
 
         if (playerInRange)
@@ -40,7 +43,8 @@ public class EnemyScript : MonoBehaviour
 
         if (isGrounded)
         {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse)
+            isJumping = true;
         }
     }
 
