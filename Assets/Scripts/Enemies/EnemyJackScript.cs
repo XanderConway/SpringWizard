@@ -41,12 +41,15 @@ public class EnemyScript : MonoBehaviour
             MoveTowardsPlayer();
         }
 
-        if (isGrounded)
-        {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            isJumping = true;
-        }
+        // if (isGrounded)
+        // {
+        //     rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        //     isJumping = true;
+        // }
+
+
     }
+
 
 private void MoveTowardsPlayer()
 {
