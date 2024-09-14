@@ -30,7 +30,6 @@ public class EnemyScript : MonoBehaviour
     private void Update()
     {
 
-        // GroundCheck();
 
         bool playerInRange = Physics.CheckSphere(transform.position, detectionRange, whatIsPlayer);
 
@@ -41,7 +40,6 @@ public class EnemyScript : MonoBehaviour
 
         if (isGrounded)
         {
-            // Apply an upward force to make the cube bounce
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
