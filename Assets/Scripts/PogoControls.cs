@@ -6,16 +6,16 @@ public class NewBehaviourScript : MonoBehaviour
 {
     public float rotationSpeed = 1.0f;
     public float jumpForce = 1.0f;
-    public float gravityMultiplier;
-    public Collider bounceCollider;
-    public Rigidbody rb;
+    public Transform pogo_stick;
+
+    private float gravityMultiplier;
+    private Collider bounceCollider;
+    private Rigidbody rb;
     // Start is called before the first frame update
     void Start()
     {
-
         rb = GetComponent<Rigidbody>();
         bounceCollider = GetComponent<Collider>();
-
     }
 
     // Update is called once per frame
@@ -28,13 +28,13 @@ public class NewBehaviourScript : MonoBehaviour
     {
         float forward_input = Input.GetAxis("Vertical");
         float side_input = Input.GetAxis("Horizontal");
-        transform.rotation *= Quaternion.AngleAxis(forward_input * rotationSpeed * Time.deltaTime, transform.right);
+        Quaternion rotation = Quaternion.AngleAxis(forward_input * rotationSpeed * Time.deltaTime, transform.right);
+        pogo_stick.rotation = rotation * pogo_stick.rotation;
+
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
-        Debug.Log("Collided!");
-
+        rb.AddForce(pogo_stick.transform.up * jumpForce, ForceMode.Impulse);
     }
 }
