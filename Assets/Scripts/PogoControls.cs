@@ -1,15 +1,34 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class NewBehaviourScript : MonoBehaviour
 {
-    public float rotationSpeed = 1.0f;
+    public float rotationSpeed = 360f;
+    public float leanSpeed = 360f;
+    public float maxLeanAngle = 15;
+
+    private float currentLeanAngle = 0;
+
     public float jumpForce = 1.0f;
-    public Transform pogo_stick;
-    public Transform magic_spawn;
+
+    public float pogoRayCastLength = 10f;
+    public Vector3 pogoRayCastOffset = Vector3.zero;
+    bool enteredPogoRange = false;
+
+    public float compressTime = 0.4f;
+    private float compressTimer = 0;
+    private bool compressing = false;
+
+
+    public Transform pogoStick; // Will flip around it's side axis
+    public Transform leanChild; // Will rotate around forward axis, should be the parent of pogostick
+
+    public Transform magicSpawn;
 
     private float gravityMultiplier;
+
     private Collider bounceCollider;
     private Rigidbody rb;
 
@@ -28,60 +47,102 @@ public class NewBehaviourScript : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         bounceCollider = GetComponent<Collider>();
+
+  
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
+    {
+        detectJumping();
+
+        //if (!isGrounded)
+        //{
+        //    rotationEnd = pogo_stick.up;
+        //    float angle = Vector3.Angle(rotationStart, rotationEnd);
+        //    rotationDifference += angle;
+        //    rotationStart = rotationEnd;
+        //}
+    }
+
+    private void Update()
     {
         handleControls();
+    }
 
-        if (!isGrounded)
+    void detectJumping()
+    {
+        Vector3 pogoCastStart = leanChild.transform.position + leanChild.transform.rotation * pogoRayCastOffset;
+        Vector3 pogoCastEnd = pogoCastStart + leanChild.transform.rotation * leanChild.transform.up * (-pogoRayCastLength);
+        RaycastHit hit;
+        LayerMask layerMask = ~0; // Collide with every layer
+
+        if (Physics.Raycast(pogoCastStart, -1 * leanChild.transform.up, out hit, pogoRayCastLength, layerMask))
         {
-            rotationEnd = pogo_stick.up;
-            float angle = Vector3.Angle(rotationStart, rotationEnd);
-            rotationDifference += angle;
-            rotationStart = rotationEnd;
+            // Compress the spring if there is ground below us and we are moving downwards
+            if (!compressing && rb.velocity.y <= 0)
+            {
+                compressing = true;
+                Debug.Log("Activating compression" + hit.collider.gameObject.name);
+
+                //rb.AddForce(pogo_stick.transform.up * jumpForce, ForceMode.Impulse);
+            }
+        }
+
+        if (compressing)
+        {
+            compressTimer += Time.deltaTime;
+        }
+
+        if (compressTimer > compressTime)
+        {
+            compressTimer = 0;
+            compressing = false;
+            Jump();
+            Debug.Log("Jumping");
+
         }
     }
 
     void handleControls()
     {
-        float forward_input = Input.GetAxis("Vertical");
-        float side_input = Input.GetAxis("Horizontal");
-        Quaternion rotation = Quaternion.AngleAxis(forward_input * rotationSpeed * Time.deltaTime, transform.right);
-        pogo_stick.rotation = rotation * pogo_stick.rotation;
+        float forwardInput = Input.GetAxis("Vertical");
+
+        float sideInput = Input.GetAxis("Horizontal");
+
+        Quaternion xRotation = Quaternion.AngleAxis(forwardInput * rotationSpeed * Time.deltaTime, transform.right);
+        pogoStick.rotation = xRotation * pogoStick.rotation;
+
+        currentLeanAngle -= sideInput * leanSpeed * Time.deltaTime; // Should be subtracted
+
+        currentLeanAngle = Mathf.Clamp(currentLeanAngle, -maxLeanAngle, maxLeanAngle);
+        leanChild.localRotation = Quaternion.AngleAxis(currentLeanAngle, Vector3.forward);
+        
 
         if (Input.GetKeyDown(KeyCode.R))
         {
             transform.position = Vector3.zero;
         }
-
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void Jump()
     {
-        Debug.Log("Collide");
-        rb.AddForce(pogo_stick.transform.up * jumpForce, ForceMode.Impulse);
-
-        isGrounded = true;
-        Debug.Log("rotationDifference: " + rotationDifference);
-        if (rotationDifference > rotationThreshold)
-        {
-            Debug.Log("Trick!  " + rotationDifference);
-            TrickDetected();
-            rotationDifference = 0;
-        }
+        rb.AddForce(leanChild.transform.up * jumpForce, ForceMode.Impulse);
     }
 
-    void OnCollisionExit(Collision collision)
+    private void OnDrawGizmos()
     {
+        Gizmos.color = Color.red;
 
-        isGrounded = false;
+        // Duplicated from control handling
+        Vector3 pogoCastStart = leanChild.transform.position + leanChild.transform.rotation * pogoRayCastOffset;
+        Vector3 pogoCastEnd = pogoCastStart + leanChild.transform.up * (-pogoRayCastLength);
+        Gizmos.DrawLine(pogoCastStart, pogoCastEnd);
     }
 
     void TrickDetected()
     {
-        GameObject effect = Instantiate(trickMagic, magic_spawn.transform.position, Quaternion.identity);
+        GameObject effect = Instantiate(trickMagic, magicSpawn.transform.position, Quaternion.identity);
         Destroy(effect, 1);
         //destroy the magic after 1 second
     }
