@@ -55,6 +55,13 @@ public class PogoControls : MonoBehaviour
     public Material wizardMaterial;
 
 
+    // particle effects
+    public GameObject fireEffect;
+    public GameObject iceEffect;
+    public GameObject earthEffect;
+    public GameObject airEffect;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -80,7 +87,8 @@ public class PogoControls : MonoBehaviour
         {
             if (currTrick > 0)
             {
-                Debug.Log("WATER");
+                Debug.Log("ICE");
+                WaterSpell();
             }
             else if (currTrick < 0)
             {
@@ -103,6 +111,7 @@ public class PogoControls : MonoBehaviour
 
         wizardMaterial.SetColor("_Color", Color.blue);
         currTrick = 0;
+        flipType = 0;
     }
 
     private void Jump(float force)
@@ -120,6 +129,19 @@ public class PogoControls : MonoBehaviour
 
         // TODO: Robby, you can remove water layers from this layer mask, and only add them when the ice trick is performed,
         // so that we only jump off water when the trick happens. 
+        
+        //remove water layer from layer mask
+        
+        layerMask = ~LayerMask.GetMask("Water");
+        
+         if (flipType > 0)
+        {
+            if (currTrick > 0)
+            {
+                layerMask = ~0;
+                Debug.Log("ICE");
+            }
+        }
 
         if (Physics.Raycast(pogoCastStart, -1 * leanChild.transform.up, out hit, pogoRayCastLength, layerMask))
         {
@@ -130,6 +152,8 @@ public class PogoControls : MonoBehaviour
                 groundedEvent();
             }
         }
+        //else if ice trick is triggered
+        
 
         if (grounded)
         {
@@ -248,5 +272,30 @@ public class PogoControls : MonoBehaviour
 
         // Draw the pogo stick center
         Gizmos.DrawSphere(pogoStick.transform.position + pogoStick.transform.rotation * flipAxisOffset, 4);
+    }
+
+
+    // Magic trick functions
+    //TODO: maybe consider moving this to a separate script
+    public void WaterSpell()
+    {
+        //spawn ice effect
+        GameObject effect = Instantiate(iceEffect, transform.position, Quaternion.identity);
+        //destroy the ice effect after 1 second
+        Destroy(effect, 1);
+
+        //if player is on a water layer, turn the water into ice
+        LayerMask layerMask = LayerMask.GetMask("Water");
+        RaycastHit hit;
+        Vector3 pogoCastStart = leanChild.transform.position + leanChild.transform.rotation * pogoRayCastOffset;
+        Vector3 pogoCastEnd = pogoCastStart + leanChild.transform.rotation * leanChild.transform.up * (-pogoRayCastLength);
+        if (Physics.Raycast(pogoCastStart, -1 * leanChild.transform.up, out hit, pogoRayCastLength, layerMask))
+        {   
+            //turn water into ice
+            hit.collider.gameObject.layer = 0;
+            Debug.Log("layer now: " + hit.collider.gameObject.layer);
+            //change the material of the water to ice
+            hit.collider.gameObject.GetComponent<Renderer>().material.SetColor("_Color", Color.white);
+        }
     }
 }

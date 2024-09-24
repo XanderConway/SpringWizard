@@ -38,7 +38,7 @@ public class EnemyScript : MonoBehaviour
 
         //if (playerInRange)
         //{
-        Debug.Log("Player in range");
+        // Debug.Log("Player in range");
             MoveTowardsPlayer();
        // }
 
