@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 
 /*
@@ -61,6 +62,8 @@ public class PogoControls : MonoBehaviour
     public GameObject earthEffect;
     public GameObject airEffect;
 
+    private float fireJumpBoost = 0;
+
 
     // Start is called before the first frame update
     void Start()
@@ -101,6 +104,8 @@ public class PogoControls : MonoBehaviour
                 if (currTrick > 0)
                 {
                     Debug.Log("FIRE");
+                    FireSpell();
+
                 }
                 else if (currTrick < 0)
                 {
@@ -139,7 +144,6 @@ public class PogoControls : MonoBehaviour
             if (currTrick > 0)
             {
                 layerMask = ~0;
-                Debug.Log("ICE");
             }
         }
 
@@ -170,10 +174,11 @@ public class PogoControls : MonoBehaviour
             }
             else
             {
-                Jump(baseJumpForce + bonusJumpForce);
+                Jump(baseJumpForce + bonusJumpForce + fireJumpBoost);
 
                 groundedTimer = 0;
                 bonusJumpForce = 0;
+                fireJumpBoost = 0;
                 grounded = false;
             }
         }
@@ -297,5 +302,15 @@ public class PogoControls : MonoBehaviour
             //change the material of the water to ice
             hit.collider.gameObject.GetComponent<Renderer>().material.SetColor("_Color", Color.white);
         }
+    }
+
+    public void FireSpell()
+    {
+        //spawn fire effect
+        GameObject effect = Instantiate(fireEffect, transform.position, Quaternion.identity);
+        //destroy the fire effect after 1 second
+        Destroy(effect, 1);
+        //TODO consider apply jump force over here
+        fireJumpBoost = baseJumpForce * 2;
     }
 }

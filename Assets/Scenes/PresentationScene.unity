@@ -1777,6 +1777,10 @@ PrefabInstance:
       propertyPath: iceEffect
       value: 
       objectReference: {fileID: 5540563368741201512, guid: 8bc60316096113d4abf720985bbbd2ca, type: 3}
+    - target: {fileID: 1753573210206236188, guid: 40c32abe180ef164ba97b79e6ec98964, type: 3}
+      propertyPath: fireEffect
+      value: 
+      objectReference: {fileID: 4028048673965380584, guid: 93ac828e1b7bcd34b92b9c6d6af471c3, type: 3}
     - target: {fileID: 6508162318390226884, guid: 40c32abe180ef164ba97b79e6ec98964, type: 3}
       propertyPath: m_Name
       value: PlayerCharacter
