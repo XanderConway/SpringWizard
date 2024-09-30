@@ -23,6 +23,7 @@ public class PogoControls : MonoBehaviour
 
     private float currentLeanAngle = 0;
     private float currentFlipAngle = 0;
+    private float fireJumpBoost = 100;
     public AnimationCurve flipSpeedMultiplier;
 
     // Trick detection parameters
@@ -102,8 +103,7 @@ public class PogoControls : MonoBehaviour
             {
                 if (currTrick > 0)
                 {
-                    effect = Instantiate(fireEffect, transform.position, Quaternion.identity);
-                    Debug.Log("FIRE?");
+                    FireSpell();
                 }
                 else if (currTrick < 0)
                 {
@@ -181,10 +181,11 @@ public class PogoControls : MonoBehaviour
             }
             else
             {
-                Jump(baseJumpForce + bonusJumpForce);
+                Jump(baseJumpForce + bonusJumpForce + fireJumpBoost);
 
                 groundedTimer = 0;
                 bonusJumpForce = 0;
+                fireJumpBoost = 0;
                 grounded = false;
             }
         }
@@ -288,6 +289,7 @@ public class PogoControls : MonoBehaviour
 
     // Magic trick functions
     //TODO: maybe consider moving this to a separate script
+
     public void WaterSpell()
     {
         //spawn ice effect
@@ -308,5 +310,15 @@ public class PogoControls : MonoBehaviour
             //change the material of the water to ice
             hit.collider.gameObject.GetComponent<Renderer>().material.SetColor("_Color", Color.white);
         }
+    }
+
+    public void FireSpell()
+    {
+        //spawn fire effect
+        GameObject effect = Instantiate(fireEffect, transform.position, Quaternion.identity);
+        //destroy the fire effect after 1 second
+        Destroy(effect, 1);
+        //TODO consider apply jump force over here
+        fireJumpBoost = baseJumpForce * 2;
     }
 }
