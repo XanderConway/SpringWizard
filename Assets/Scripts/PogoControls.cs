@@ -1,7 +1,6 @@
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 
 /*
@@ -24,6 +23,7 @@ public class PogoControls : MonoBehaviour
 
     private float currentLeanAngle = 0;
     private float currentFlipAngle = 0;
+    private float fireJumpBoost = 100;
     public AnimationCurve flipSpeedMultiplier;
 
     // Trick detection parameters
@@ -62,8 +62,6 @@ public class PogoControls : MonoBehaviour
     public GameObject earthEffect;
     public GameObject airEffect;
 
-    private float fireJumpBoost = 0;
-
 
     // Start is called before the first frame update
     void Start()
@@ -85,6 +83,7 @@ public class PogoControls : MonoBehaviour
     // Called when the pogo stick hits the ground
     void groundedEvent()
     {
+        GameObject effect = null;
         // TODO: Robby call your spell effects here
         if (flipType > 0)
         {
@@ -95,6 +94,7 @@ public class PogoControls : MonoBehaviour
             }
             else if (currTrick < 0)
             {
+                effect = Instantiate(earthEffect, transform.position, Quaternion.identity);
                 Debug.Log("EARTH");
             }
         }
@@ -103,15 +103,19 @@ public class PogoControls : MonoBehaviour
             {
                 if (currTrick > 0)
                 {
-                    Debug.Log("FIRE");
                     FireSpell();
-
                 }
                 else if (currTrick < 0)
                 {
+                    effect = Instantiate(airEffect, transform.position, Quaternion.identity);
                     Debug.Log("AIR");
                 }
             }
+        }
+
+        if(effect)
+        {
+            Destroy(effect, 1.5f);
         }
 
         wizardMaterial.SetColor("_Color", Color.blue);
@@ -123,6 +127,7 @@ public class PogoControls : MonoBehaviour
     {
         rb.AddForce(leanChild.transform.up * force, ForceMode.Impulse);
         pogoStick.transform.localScale = Vector3.one;
+        Physics.IgnoreLayerCollision(3, 4, true);
     }
 
     void detectJumping()
@@ -144,6 +149,8 @@ public class PogoControls : MonoBehaviour
             if (currTrick > 0)
             {
                 layerMask = ~0;
+                Physics.IgnoreLayerCollision(3, 4, false);
+                Debug.Log("ICE");
             }
         }
 
@@ -238,7 +245,7 @@ public class PogoControls : MonoBehaviour
         // If there is no input, move the lean rotation back to 0
         if(Mathf.Abs(sideInput) < 0.1)
         {
-            float leanAdjustment = leanSpeed * Time.deltaTime * 0.2f;
+            float leanAdjustment = leanSpeed * Time.deltaTime * 0.8f;
             currentLeanAngle -= Mathf.Sign(currentLeanAngle) * Mathf.Min(leanAdjustment, Mathf.Abs(currentLeanAngle));
         }
 
@@ -282,10 +289,11 @@ public class PogoControls : MonoBehaviour
 
     // Magic trick functions
     //TODO: maybe consider moving this to a separate script
+
     public void WaterSpell()
     {
         //spawn ice effect
-        GameObject effect = Instantiate(iceEffect, transform.position, Quaternion.identity);
+        GameObject effect = Instantiate(iceEffect, pogoStick.position, Quaternion.identity);
         //destroy the ice effect after 1 second
         Destroy(effect, 1);
 
