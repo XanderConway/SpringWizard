@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2440417676167716177}
   - component: {fileID: 377268964338840518}
   m_Layer: 0
-  m_Name: Ice
+  m_Name: Earth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4835,7 +4835,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 167dbda00f94b1f44847cef48bd04561, type: 2}
+  - {fileID: 2100000, guid: 9f2894980ca7a4e42a46b39b742391ac, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
