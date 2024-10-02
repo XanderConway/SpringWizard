@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using UnityEngine;
 
 /*
@@ -33,6 +34,7 @@ public class PogoControls : MonoBehaviour
 
     // Jump detection parameters
     public float pogoRayCastLength = 10f;
+    public float pogoCastRadius = 5f;
     public Vector3 pogoRayCastOffset = Vector3.zero;
 
     // The axis to rotate the player around when doing flips in the air
@@ -57,6 +59,9 @@ public class PogoControls : MonoBehaviour
 
 
     // particle effects
+    public AudioClip[] jumpFxs;
+    public AudioSource audioSource;
+
     public GameObject fireEffect;
     public GameObject iceEffect;
     public GameObject earthEffect;
@@ -81,7 +86,7 @@ public class PogoControls : MonoBehaviour
     }
 
     // Called when the pogo stick hits the ground
-    void groundedEvent()
+    void groundedEvent(GameObject ground)
     {
         GameObject effect = null;
         // TODO: Robby call your spell effects here
@@ -90,7 +95,7 @@ public class PogoControls : MonoBehaviour
             if (currTrick > 0)
             {
                 Debug.Log("ICE");
-                WaterSpell();
+                WaterSpell(ground);
             }
             else if (currTrick < 0)
             {
@@ -127,7 +132,13 @@ public class PogoControls : MonoBehaviour
     {
         rb.AddForce(leanChild.transform.up * force, ForceMode.Impulse);
         pogoStick.transform.localScale = Vector3.one;
-        Physics.IgnoreLayerCollision(3, 4, true);
+
+        if(jumpFxs.Length > 0 && audioSource)
+        {
+            int choice = Random.Range(0, jumpFxs.Length);
+            audioSource.PlayOneShot(jumpFxs[choice]);
+        }
+        Physics.IgnoreLayerCollision(4, 6, true);
     }
 
     void detectJumping()
@@ -149,7 +160,7 @@ public class PogoControls : MonoBehaviour
             if (currTrick > 0)
             {
                 layerMask = ~0;
-                Physics.IgnoreLayerCollision(3, 4, false);
+                Physics.IgnoreLayerCollision(4, 6, false);
                 Debug.Log("ICE");
             }
         }
@@ -160,7 +171,7 @@ public class PogoControls : MonoBehaviour
             if (!grounded && rb.velocity.y <= 0)
             {
                 grounded = true;
-                groundedEvent();
+                groundedEvent(hit.collider.gameObject);
             }
         }
         //else if ice trick is triggered
@@ -252,21 +263,24 @@ public class PogoControls : MonoBehaviour
         currentLeanAngle = Mathf.Clamp(currentLeanAngle, -maxLeanAngle, maxLeanAngle);
         leanChild.localRotation = Quaternion.AngleAxis(currentLeanAngle, Vector3.forward);
 
-        holdingJump = Input.GetKey(KeyCode.Space);
+        holdingJump = Input.GetButton("Jump");
 
 
         // TEMPORARY RESET BUTTON
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R) || Input.GetButton("Reset"))
         {
             transform.position = Vector3.zero;
         }
 
+        bool trick1 = Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.Joystick1Button4); ;
+        bool trick2 = Input.GetKey(KeyCode.E) || Input.GetKey(KeyCode.Joystick1Button5);
+
         // Currently just changing colour as a place holder for animations
-        if(Input.GetKey(KeyCode.Q))
+        if(trick1)
         {
             currTrick = 1;
             wizardMaterial.SetColor("_Color", Color.red);
-        } else if(Input.GetKey(KeyCode.E))
+        } else if(trick2)
         {
             wizardMaterial.SetColor("_Color", Color.green);
             currTrick = -1;
@@ -290,26 +304,18 @@ public class PogoControls : MonoBehaviour
     // Magic trick functions
     //TODO: maybe consider moving this to a separate script
 
-    public void WaterSpell()
+    public void WaterSpell(GameObject ground)
     {
-        //spawn ice effect
+        ////spawn ice effect
         GameObject effect = Instantiate(iceEffect, pogoStick.position, Quaternion.identity);
-        //destroy the ice effect after 1 second
+        ////destroy the ice effect after 1 second
         Destroy(effect, 1);
 
-        //if player is on a water layer, turn the water into ice
-        LayerMask layerMask = LayerMask.GetMask("Water");
-        RaycastHit hit;
-        Vector3 pogoCastStart = leanChild.transform.position + leanChild.transform.rotation * pogoRayCastOffset;
-        Vector3 pogoCastEnd = pogoCastStart + leanChild.transform.rotation * leanChild.transform.up * (-pogoRayCastLength);
-        if (Physics.Raycast(pogoCastStart, -1 * leanChild.transform.up, out hit, pogoRayCastLength, layerMask))
-        {   
-            //turn water into ice
-            hit.collider.gameObject.layer = 0;
-            Debug.Log("layer now: " + hit.collider.gameObject.layer);
-            //change the material of the water to ice
-            hit.collider.gameObject.GetComponent<Renderer>().material.SetColor("_Color", Color.white);
-        }
+        //turn water into ice
+        ground.layer = 0;
+        Debug.Log("layer now: " + ground.gameObject.layer);
+        //change the material of the water to ice
+        ground.GetComponent<Renderer>().material.SetColor("_Color", Color.white);
     }
 
     public void FireSpell()
