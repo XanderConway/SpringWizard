@@ -43,6 +43,16 @@ public class PogoControls : MonoBehaviour
     public float maxHeldJumpForce = 3.0f;
     public float compressTime = 0.4f;
     public float maxJumpHoldTime = 1.0f;
+
+    public GameObject mainPogoBody;
+    public float springLength = 1.0f;
+    public float springMaxCompression = 0.003f;
+    private Vector3 pogoBodyHeightOffGround;
+
+    // Head collision Checker
+    public Vector3 headOffset;
+    public float headRadius;
+
     public AnimationCurve bounceScale;
     private float groundedTimer = 0;
     private bool grounded = false;
@@ -67,6 +77,7 @@ public class PogoControls : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        pogoBodyHeightOffGround = mainPogoBody.transform.localPosition;
     }
 
     void FixedUpdate()
@@ -90,7 +101,7 @@ public class PogoControls : MonoBehaviour
             if (currTrick > 0)
             {
                 Debug.Log("ICE");
-                WaterSpell();
+
             }
             else if (currTrick < 0)
             {
@@ -103,7 +114,7 @@ public class PogoControls : MonoBehaviour
             {
                 if (currTrick > 0)
                 {
-                    FireSpell();
+                    Debug.Log("FIRE");
                 }
                 else if (currTrick < 0)
                 {
@@ -118,7 +129,6 @@ public class PogoControls : MonoBehaviour
             Destroy(effect, 1.5f);
         }
 
-        wizardMaterial.SetColor("_Color", Color.blue);
         currTrick = 0;
         flipType = 0;
     }
@@ -130,6 +140,7 @@ public class PogoControls : MonoBehaviour
         Physics.IgnoreLayerCollision(3, 4, true);
     }
 
+    float groundSpeed = 0;
     void detectJumping()
     {
         Vector3 pogoCastStart = leanChild.transform.position + leanChild.transform.rotation * pogoRayCastOffset;
@@ -160,6 +171,7 @@ public class PogoControls : MonoBehaviour
             if (!grounded && rb.velocity.y <= 0)
             {
                 grounded = true;
+                groundSpeed = rb.velocity.y;
                 groundedEvent();
             }
         }
@@ -169,8 +181,22 @@ public class PogoControls : MonoBehaviour
         if (grounded)
         {
             groundedTimer += Time.deltaTime;
-            float squashFactor = bounceScale.Evaluate(groundedTimer / compressTime);
-            pogoStick.transform.localScale = new Vector3(1, squashFactor, 1);
+
+            // Current compression is inital_velocity * cos(time)
+            float maxCompression = groundSpeed * springMaxCompression;
+            float bounceAmount = maxCompression * Mathf.Cos(groundedTimer / compressTime * 2 * Mathf.PI) + 0.5f;
+            
+            // The spring is fully compressed, begin decompressing this usually feels bad
+            if (bounceAmount > 1)
+            {
+                bounceAmount = 1;
+                //groundedTimer = compressTime - groundedTimer;
+            }
+
+            mainPogoBody.transform.localPosition = pogoBodyHeightOffGround + springLength * Vector3.down * bounceAmount;
+
+            //float squashFactor = bounceScale.Evaluate(groundedTimer / compressTime);
+            //pogoStick.transform.localScale = new Vector3(1, squashFactor, 1);
         }
 
         if (groundedTimer > compressTime)
@@ -236,7 +262,7 @@ public class PogoControls : MonoBehaviour
             pogoStick.Rotate(transform.right, flipAngle, Space.World);
         } else
         {
-            Vector3 rotationCenter = pogoStick.transform.position + pogoStick.transform.rotation * flipAxisOffset;
+            Vector3 rotationCenter = leanChild.transform.position + leanChild.transform.rotation * flipAxisOffset;
             pogoStick.RotateAround(rotationCenter, transform.right, flipAngle);
         }
 
@@ -265,10 +291,8 @@ public class PogoControls : MonoBehaviour
         if(Input.GetKey(KeyCode.Q))
         {
             currTrick = 1;
-            wizardMaterial.SetColor("_Color", Color.red);
         } else if(Input.GetKey(KeyCode.E))
         {
-            wizardMaterial.SetColor("_Color", Color.green);
             currTrick = -1;
         }
     }
@@ -284,41 +308,8 @@ public class PogoControls : MonoBehaviour
 
         // Draw the pogo stick center
         Gizmos.DrawSphere(pogoStick.transform.position + pogoStick.transform.rotation * flipAxisOffset, 4);
-    }
 
 
-    // Magic trick functions
-    //TODO: maybe consider moving this to a separate script
-
-    public void WaterSpell()
-    {
-        //spawn ice effect
-        GameObject effect = Instantiate(iceEffect, pogoStick.position, Quaternion.identity);
-        //destroy the ice effect after 1 second
-        Destroy(effect, 1);
-
-        //if player is on a water layer, turn the water into ice
-        LayerMask layerMask = LayerMask.GetMask("Water");
-        RaycastHit hit;
-        Vector3 pogoCastStart = leanChild.transform.position + leanChild.transform.rotation * pogoRayCastOffset;
-        Vector3 pogoCastEnd = pogoCastStart + leanChild.transform.rotation * leanChild.transform.up * (-pogoRayCastLength);
-        if (Physics.Raycast(pogoCastStart, -1 * leanChild.transform.up, out hit, pogoRayCastLength, layerMask))
-        {   
-            //turn water into ice
-            hit.collider.gameObject.layer = 0;
-            Debug.Log("layer now: " + hit.collider.gameObject.layer);
-            //change the material of the water to ice
-            hit.collider.gameObject.GetComponent<Renderer>().material.SetColor("_Color", Color.white);
-        }
-    }
-
-    public void FireSpell()
-    {
-        //spawn fire effect
-        GameObject effect = Instantiate(fireEffect, transform.position, Quaternion.identity);
-        //destroy the fire effect after 1 second
-        Destroy(effect, 1);
-        //TODO consider apply jump force over here
-        fireJumpBoost = baseJumpForce * 2;
+        Gizmos.color = Color.blue;
     }
 }
