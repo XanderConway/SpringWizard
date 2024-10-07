@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /*
  * POGO STICK CONTROLS
@@ -75,14 +76,17 @@ public class PogoControls : MonoBehaviour
     public Transform pogoStick; // Will flip around it's side axis
     public Transform leanChild; // Will rotate around forward axis, should be the child of pogostick
     private Rigidbody rb;
+    private PlayerInputActions playerInputActions;
+    private Vector2 leanInputVector;
 
-
-    // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         pogoBodyHeightOffGround = mainPogoBody.transform.localPosition;
         ragdollBones = ragdollBody.GetComponentsInChildren<Rigidbody>();
+
+        playerInputActions = new PlayerInputActions();
+        playerInputActions.Player.Lean.Enable();
 
         startCameraPosition = cam.transform.localPosition;
         startBoneRotations = new Quaternion[ragdollBones.Length];
@@ -280,8 +284,9 @@ public class PogoControls : MonoBehaviour
 
     void rotatePlayer()
     {
-        float forwardInput = Input.GetAxis("Vertical");
-        float sideInput = Input.GetAxis("Horizontal");
+        leanInputVector = playerInputActions.Player.Lean.ReadValue<Vector2>();
+        float forwardInput = leanInputVector.y;
+        float sideInput = leanInputVector.x;
 
         float flipAngle = forwardInput * rotationSpeed * Time.deltaTime;
 
@@ -383,7 +388,7 @@ public class PogoControls : MonoBehaviour
 
     }
 
-    public bool getDead()
+    public bool IsDead()
     {
         return dead;
     }

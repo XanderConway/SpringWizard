@@ -551,8 +551,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9ef5409e85ce794690d3779bf966124, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSensitivity: 296.9
-  maxField: 70
+  target: {fileID: 1405720330021803342}
+  sensitivity: {x: 1, y: 1}
+  verticalClampAngleTop: -45
+  verticalClampAngleBottom: 40
+  cameraDistance: {x: 0, y: 150, z: -200}
+  cameraAngle: {x: 30, y: 0, z: 0}
+  yaw: 0
+  pitch: 0
 --- !u!114 &4639174407192013048
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1049,6 +1055,8 @@ MonoBehaviour:
   rotationSpeed: 360
   leanSpeed: 90
   maxLeanAngle: 10
+  maxLeanForwardAngle: 60
+  maxLeanBackwardAngle: 40
   flipSpeedMultiplier:
     serializedVersion: 2
     m_Curve:
@@ -1088,7 +1096,14 @@ MonoBehaviour:
   baseJumpForce: 250
   maxHeldJumpForce: 300
   compressTime: 0.3
-  maxJumpHoldTime: 1
+  mainPogoBody: {fileID: 0}
+  springLength: 1
+  springMaxCompression: 0.003
+  lethalImpactThreshold: 0
+  ragdollBody: {fileID: 0}
+  pogoStickComponents: []
+  cam: {fileID: 0}
+  deathPogoStick: {fileID: 0}
   bounceScale:
     serializedVersion: 2
     m_Curve:
@@ -1124,11 +1139,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   pogoStick: {fileID: 7226089553120463600}
   leanChild: {fileID: 1507793730691772373}
-  wizardMaterial: {fileID: 2100000, guid: 5111bd8c011549440aca76acc75e5def, type: 2}
-  fireEffect: {fileID: 5540563368741201512, guid: 579a579a99841ac41a3a472a003db68d, type: 3}
-  iceEffect: {fileID: 5540563368741201512, guid: 8bc60316096113d4abf720985bbbd2ca, type: 3}
-  earthEffect: {fileID: 5540563368741201512, guid: 028d09ee3a363a2499bda507cf1f65b2, type: 3}
-  airEffect: {fileID: 5540563368741201512, guid: 005eb95da2de9074491a80a176b954e6, type: 3}
+  velocitySpringBonus: 10
 --- !u!75 &4643699835036757451
 ConstantForce:
   m_ObjectHideFlags: 0

@@ -3625,8 +3625,8 @@ GameObject:
   - component: {fileID: 9208229659224443851}
   - component: {fileID: 7324192649113593654}
   - component: {fileID: 1348157638542216180}
-  - component: {fileID: 8754409779654486401}
   - component: {fileID: 8140531363374324133}
+  - component: {fileID: 4664874697241297718}
   m_Layer: 3
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3708,20 +3708,6 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7178682417247575503}
   m_Enabled: 1
---- !u!114 &8754409779654486401
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7178682417247575503}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c9ef5409e85ce794690d3779bf966124, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mouseSensitivity: 1000
-  maxField: 70
 --- !u!114 &8140531363374324133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3756,6 +3742,26 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4664874697241297718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7178682417247575503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9ef5409e85ce794690d3779bf966124, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 8829146388634044418}
+  sensitivity: {x: 1, y: 1}
+  verticalClampAngleTop: -45
+  verticalClampAngleBottom: 40
+  cameraDistance: {x: 0, y: 150, z: -200}
+  cameraAngle: {x: 30, y: 0, z: 0}
+  yaw: 0
+  pitch: 0
 --- !u!1 &7242174854746216942
 GameObject:
   m_ObjectHideFlags: 0
@@ -4754,7 +4760,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   pogoStick: {fileID: 9003311747405400351}
   leanChild: {fileID: 2823786398027076748}
-  wizardMaterial: {fileID: 2100000, guid: 5111bd8c011549440aca76acc75e5def, type: 2}
   velocitySpringBonus: 10
 --- !u!54 &7825629372783430010
 Rigidbody:
