@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /*
  * POGO STICK CONTROLS
@@ -73,6 +74,8 @@ public class PogoControls : PlayerSubject, TimerObserver
     public Transform pogoStick; // Will flip around it's side axis
     public Transform leanChild; // Will rotate around forward axis, should be the child of pogostick
     private Rigidbody rb;
+    private PlayerInputActions playerInputActions;
+    private Vector2 leanInputVector;
 
     public AudioClip[] jumpFxs;
     public AudioSource audioSource;
@@ -84,6 +87,9 @@ public class PogoControls : PlayerSubject, TimerObserver
         rb = GetComponent<Rigidbody>();
         pogoBodyHeightOffGround = mainPogoBody.transform.localPosition;
         ragdollBones = ragdollBody.GetComponentsInChildren<Rigidbody>();
+
+        playerInputActions = new PlayerInputActions();
+        playerInputActions.Player.Lean.Enable();
 
         startCameraPosition = cam.transform.localPosition;
         startBoneRotations = new Quaternion[ragdollBones.Length];
@@ -304,8 +310,9 @@ public class PogoControls : PlayerSubject, TimerObserver
 
     void rotatePlayer()
     {
-        float forwardInput = Input.GetAxis("Vertical");
-        float sideInput = Input.GetAxis("Horizontal");
+        leanInputVector = playerInputActions.Player.Lean.ReadValue<Vector2>();
+        float forwardInput = leanInputVector.y;
+        float sideInput = leanInputVector.x;
 
         float flipAngle = forwardInput * rotationSpeed * Time.deltaTime;
 
@@ -407,7 +414,7 @@ public class PogoControls : PlayerSubject, TimerObserver
 
     }
 
-    public bool getDead()
+    public bool IsDead()
     {
         return dead;
     }
