@@ -4,16 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/*
- * POGO STICK CONTROLS
- * WS -> Rotate forward and backwards
- * AD -> Rotate side to side
- * SPACE -> Hold space when on the ground to compress the spring longer and jump higher
- * MOUSE -> Pan to change the look direction
- * Q -> Perform trick 1 (Needs to be performed with a flip for effect)
- * E -> Perform trick 2 (Needs to be performed with a flip for effect)
- */
-
 public class PogoControls : MonoBehaviour
 {
     // Rotation parameters
@@ -42,7 +32,7 @@ public class PogoControls : MonoBehaviour
 
     // Parameters for jump forces
     public float baseJumpForce = 1.0f;
-    public float maxHeldJumpForce = 1.0f;
+    public float maxChargedJumpForce = 1.0f;
     public float compressTime = 0.4f;
 
     // Used for spring compression animation (Purely Aesthetic)
@@ -69,8 +59,6 @@ public class PogoControls : MonoBehaviour
     public AnimationCurve bounceScale;
     private float groundedTimer = 0;
     private bool grounded = false;
-    private bool holdingJump = false;
-    private float bonusJumpForce = 0;
 
     // Transforms used for rotations
     public Transform pogoStick; // Will flip around it's side axis
@@ -78,6 +66,9 @@ public class PogoControls : MonoBehaviour
     private Rigidbody rb;
     private PlayerInputActions playerInputActions;
     private Vector2 leanInputVector;
+    private float maxChargeTime = 2.0f;
+    private float chargeTime = 0.0f;
+    private bool isChargingJump = false;
 
     void Start()
     {
@@ -87,6 +78,11 @@ public class PogoControls : MonoBehaviour
 
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Lean.Enable();
+        playerInputActions.Player.ChargeJump.Enable();
+        playerInputActions.Player.ChargeJump.performed += OnChargeJumpStarted;
+        playerInputActions.Player.ChargeJump.canceled += OnChargeJumpReleased;
+        playerInputActions.Player.Restart.Enable();
+        playerInputActions.Player.Restart.performed += OnRestart;
 
         startCameraPosition = cam.transform.localPosition;
         startBoneRotations = new Quaternion[ragdollBones.Length];
@@ -102,6 +98,24 @@ public class PogoControls : MonoBehaviour
         ToggleRagdoll(false);
     }
 
+    void OnRestart(InputAction.CallbackContext context)
+    {
+        transform.position = Vector3.zero;
+    }
+
+    void OnChargeJumpStarted(InputAction.CallbackContext context)
+    {
+        isChargingJump = true;
+        chargeTime = 0.0f;
+    }
+
+    private void OnChargeJumpReleased(InputAction.CallbackContext context)
+    {
+        float jumpForce = Mathf.Lerp(baseJumpForce, maxChargedJumpForce, chargeTime / maxChargeTime);
+        Jump(jumpForce);
+        isChargingJump = false;
+    }
+
     void FixedUpdate()
     {
         if (!dead)
@@ -109,7 +123,7 @@ public class PogoControls : MonoBehaviour
             detectJumping();
             countFlips();
         }
-        else if (holdingJump)
+        else if (isChargingJump)
         {
             dead = false;
             setDead(false);
@@ -180,7 +194,6 @@ public class PogoControls : MonoBehaviour
         Physics.IgnoreLayerCollision(3, 4, true);
     }
 
-    float groundSpeed = 0;
     float jumpForce = 0;
     public float velocitySpringBonus = 10f;
     void detectJumping()
@@ -207,11 +220,10 @@ public class PogoControls : MonoBehaviour
             if (!grounded && rb.velocity.y <= 0)
             {
                 grounded = true;
-                groundSpeed = rb.velocity.y;
                 jumpForce = baseJumpForce;
-                if(holdingJump)
+                if (isChargingJump)
                 {
-                    jumpForce += maxHeldJumpForce;
+                    jumpForce += maxChargedJumpForce;
                 }
                 groundedEvent();
             }
@@ -247,7 +259,6 @@ public class PogoControls : MonoBehaviour
                 Jump(jumpForce);
 
                 groundedTimer = 0;
-                bonusJumpForce = 0;
                 fireJumpBoost = 0;
                 grounded = false;
             }
@@ -328,14 +339,7 @@ public class PogoControls : MonoBehaviour
 
     void handleControls()
     {
-        holdingJump = Input.GetKey(KeyCode.Space);
-
-
-        // TEMPORARY RESET BUTTON
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            transform.position = Vector3.zero;
-        }
+        isChargingJump = Input.GetKey(KeyCode.Space);
 
         // Currently just changing colour as a place holder for animations
         if(Input.GetKey(KeyCode.Q))
