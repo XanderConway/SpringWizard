@@ -429,4 +429,16 @@ public class PogoControls : MonoBehaviour
         // Draw the pogo stick center
         Gizmos.DrawSphere(pogoStick.transform.position + leanChild.transform.rotation * flipAxisOffset, 4);
     }
+
+    public void ApplySpringboardForce(float force)
+    {
+        if (grounded)
+        {
+            jumpForce += force;
+        }
+        else
+        {
+            rb.AddForce(leanChild.transform.up * force, ForceMode.Impulse);
+        }
+    }
 }
