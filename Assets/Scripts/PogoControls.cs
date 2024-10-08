@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,7 +14,7 @@ using UnityEngine;
  * E -> Perform trick 2 (Needs to be performed with a flip for effect)
  */
 
-public class PogoControls : MonoBehaviour
+public class PogoControls : Subject
 {
     // Rotation parameters
     public float rotationSpeed = 360f;
@@ -77,6 +78,7 @@ public class PogoControls : MonoBehaviour
     private Rigidbody rb;
 
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -96,6 +98,8 @@ public class PogoControls : MonoBehaviour
         }
 
         ToggleRagdoll(false);
+
+        NotifyObservers(PlayerTricks.None);
     }
 
     void FixedUpdate()
@@ -133,17 +137,23 @@ public class PogoControls : MonoBehaviour
     void groundedEvent()
     {
         GameObject effect = null;
-        // TODO: Robby call your spell effects here
+        
         if (flipType > 0)
         {
             if (currTrick > 0)
             {
-                Debug.Log("ICE");
+                // Debug.Log("ICE");
+                NotifyObservers(PlayerTricks.NoHandsFrontFlip);
 
             }
             else if (currTrick < 0)
             {
-                Debug.Log("EARTH");
+                NotifyObservers(PlayerTricks.NoFeetFrontFlip);
+                // Debug.Log("EARTH");
+            }
+            else
+            {
+                NotifyObservers(PlayerTricks.FrontFlip);
             }
         }
         else if (flipType < 0)
@@ -151,14 +161,22 @@ public class PogoControls : MonoBehaviour
             {
                 if (currTrick > 0)
                 {
-                    Debug.Log("FIRE");
+                    // Debug.Log("FIRE");
+                    NotifyObservers(PlayerTricks.NoHandsBackFlip);
                 }
                 else if (currTrick < 0)
                 {
-                    Debug.Log("AIR");
+                    // Debug.Log("AIR");
+                    NotifyObservers(PlayerTricks.NoFeetBackFlip);
+                }
+                else
+                {
+                    NotifyObservers(PlayerTricks.BackFlip);
                 }
             }
         }
+        
+        
 
         if(effect)
         {
@@ -429,4 +447,7 @@ public class PogoControls : MonoBehaviour
         // Draw the pogo stick center
         Gizmos.DrawSphere(pogoStick.transform.position + leanChild.transform.rotation * flipAxisOffset, 4);
     }
+
+   
+
 }
