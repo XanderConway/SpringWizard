@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,7 +14,7 @@ using UnityEngine;
  * E -> Perform trick 2 (Needs to be performed with a flip for effect)
  */
 
-public class PogoControls : MonoBehaviour
+public class PogoControls : PlayerSubject, TimerObserver
 {
     // Rotation parameters
     public float rotationSpeed = 360f;
@@ -96,6 +97,8 @@ public class PogoControls : MonoBehaviour
         }
 
         ToggleRagdoll(false);
+
+        NotifyTrickObservers(PlayerTricks.None);
     }
 
     void FixedUpdate()
@@ -133,17 +136,23 @@ public class PogoControls : MonoBehaviour
     void groundedEvent()
     {
         GameObject effect = null;
-        // TODO: Robby call your spell effects here
+        
         if (flipType > 0)
         {
             if (currTrick > 0)
             {
-                Debug.Log("ICE");
+                // Debug.Log("ICE");
+                NotifyTrickObservers(PlayerTricks.NoHandsFrontFlip);
 
             }
             else if (currTrick < 0)
             {
-                Debug.Log("EARTH");
+                NotifyTrickObservers(PlayerTricks.NoFeetFrontFlip);
+                // Debug.Log("EARTH");
+            }
+            else
+            {
+                NotifyTrickObservers(PlayerTricks.FrontFlip);
             }
         }
         else if (flipType < 0)
@@ -151,14 +160,22 @@ public class PogoControls : MonoBehaviour
             {
                 if (currTrick > 0)
                 {
-                    Debug.Log("FIRE");
+                    // Debug.Log("FIRE");
+                    NotifyTrickObservers(PlayerTricks.NoHandsBackFlip);
                 }
                 else if (currTrick < 0)
                 {
-                    Debug.Log("AIR");
+                    // Debug.Log("AIR");
+                    NotifyTrickObservers(PlayerTricks.NoFeetBackFlip);
+                }
+                else
+                {
+                    NotifyTrickObservers(PlayerTricks.BackFlip);
                 }
             }
         }
+        
+        
 
         if(effect)
         {
@@ -439,6 +456,22 @@ public class PogoControls : MonoBehaviour
         else
         {
             rb.AddForce(leanChild.transform.up * force, ForceMode.Impulse);
-        }
+    }
+
+    //TODO Function dealing with timer
+    public void UpdateTimeObserver(float time)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void UpdateTimeRunning(bool isRunning)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void TimesUP(bool timesUp)
+    {   
+        //TODO Implement action after Times up
+        throw new NotImplementedException();
     }
 }
