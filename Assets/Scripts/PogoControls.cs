@@ -456,6 +456,7 @@ public class PogoControls : PlayerSubject, TimerObserver
         else
         {
             rb.AddForce(leanChild.transform.up * force, ForceMode.Impulse);
+        }
     }
 
     //TODO Function dealing with timer
