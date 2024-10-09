@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Subject : MonoBehaviour
+public abstract class PlayerSubject : MonoBehaviour
 {
     private List<TrickObserver> _observers = new List<TrickObserver>();
 
@@ -16,11 +16,11 @@ public abstract class Subject : MonoBehaviour
         _observers.Remove(observer);
     }
 
-    public void NotifyObservers(PlayerTricks playerTricks)
+    public void NotifyTrickObservers(PlayerTricks playerTricks)
     {
         foreach (TrickObserver observer in _observers)
         {
-            observer.UpdateObserver(playerTricks);
+            observer.UpdateTrickObserver(playerTricks);
         }
     }
 }

@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class UITrickDetector : MonoBehaviour, TrickObserver
 {
-    [SerializeField] private Subject _player;
+    [SerializeField] private PlayerSubject _player;
 
     private int _trickScore = 0;
     private String _trickName;
@@ -19,7 +19,7 @@ public class UITrickDetector : MonoBehaviour, TrickObserver
 
 
 
-    public void UpdateObserver(PlayerTricks playerTricks)
+    public void UpdateTrickObserver(PlayerTricks playerTricks)
     {
        TrickDisplay(playerTricks);
        UpdateUI();

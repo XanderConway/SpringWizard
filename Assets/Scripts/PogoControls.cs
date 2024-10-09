@@ -14,7 +14,7 @@ using UnityEngine;
  * E -> Perform trick 2 (Needs to be performed with a flip for effect)
  */
 
-public class PogoControls : Subject
+public class PogoControls : PlayerSubject, TimerObserver
 {
     // Rotation parameters
     public float rotationSpeed = 360f;
@@ -78,7 +78,6 @@ public class PogoControls : Subject
     private Rigidbody rb;
 
 
-
     // Start is called before the first frame update
     void Start()
     {
@@ -99,7 +98,7 @@ public class PogoControls : Subject
 
         ToggleRagdoll(false);
 
-        NotifyObservers(PlayerTricks.None);
+        NotifyTrickObservers(PlayerTricks.None);
     }
 
     void FixedUpdate()
@@ -143,17 +142,17 @@ public class PogoControls : Subject
             if (currTrick > 0)
             {
                 // Debug.Log("ICE");
-                NotifyObservers(PlayerTricks.NoHandsFrontFlip);
+                NotifyTrickObservers(PlayerTricks.NoHandsFrontFlip);
 
             }
             else if (currTrick < 0)
             {
-                NotifyObservers(PlayerTricks.NoFeetFrontFlip);
+                NotifyTrickObservers(PlayerTricks.NoFeetFrontFlip);
                 // Debug.Log("EARTH");
             }
             else
             {
-                NotifyObservers(PlayerTricks.FrontFlip);
+                NotifyTrickObservers(PlayerTricks.FrontFlip);
             }
         }
         else if (flipType < 0)
@@ -162,16 +161,16 @@ public class PogoControls : Subject
                 if (currTrick > 0)
                 {
                     // Debug.Log("FIRE");
-                    NotifyObservers(PlayerTricks.NoHandsBackFlip);
+                    NotifyTrickObservers(PlayerTricks.NoHandsBackFlip);
                 }
                 else if (currTrick < 0)
                 {
                     // Debug.Log("AIR");
-                    NotifyObservers(PlayerTricks.NoFeetBackFlip);
+                    NotifyTrickObservers(PlayerTricks.NoFeetBackFlip);
                 }
                 else
                 {
-                    NotifyObservers(PlayerTricks.BackFlip);
+                    NotifyTrickObservers(PlayerTricks.BackFlip);
                 }
             }
         }
@@ -448,6 +447,22 @@ public class PogoControls : Subject
         Gizmos.DrawSphere(pogoStick.transform.position + leanChild.transform.rotation * flipAxisOffset, 4);
     }
 
-   
 
+
+    //TODO Function dealing with timer
+    public void UpdateTimeObserver(float time)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void UpdateTimeRunning(bool isRunning)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void TimesUP(bool timesUp)
+    {   
+        //TODO Implement action after Times up
+        throw new NotImplementedException();
+    }
 }

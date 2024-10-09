@@ -1,5 +1,5 @@
 
 public interface TrickObserver
 {
-    void UpdateObserver(PlayerTricks trick);    
+    void UpdateTrickObserver(PlayerTricks trick);    
 }
