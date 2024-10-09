@@ -447,7 +447,16 @@ public class PogoControls : PlayerSubject, TimerObserver
         Gizmos.DrawSphere(pogoStick.transform.position + leanChild.transform.rotation * flipAxisOffset, 4);
     }
 
-
+    public void ApplySpringboardForce(float force)
+    {
+        if (grounded)
+        {
+            jumpForce += force;
+        }
+        else
+        {
+            rb.AddForce(leanChild.transform.up * force, ForceMode.Impulse);
+    }
 
     //TODO Function dealing with timer
     public void UpdateTimeObserver(float time)
