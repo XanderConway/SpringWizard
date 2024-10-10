@@ -1,7 +1,6 @@
-using JetBrains.Annotations;
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /*
  * POGO STICK CONTROLS
@@ -13,7 +12,7 @@ using UnityEngine;
  * E -> Perform trick 2 (Needs to be performed with a flip for effect)
  */
 
-public class PogoControls : MonoBehaviour
+public class PogoControls : PlayerSubject, TimerObserver
 {
     // Rotation parameters
     public float rotationSpeed = 360f;
@@ -41,7 +40,7 @@ public class PogoControls : MonoBehaviour
 
     // Parameters for jump forces
     public float baseJumpForce = 1.0f;
-    public float maxHeldJumpForce = 1.0f;
+    public float maxChargedJumpForce = 1.0f;
     public float compressTime = 0.4f;
 
     // Used for spring compression animation (Purely Aesthetic)
@@ -68,13 +67,19 @@ public class PogoControls : MonoBehaviour
     public AnimationCurve bounceScale;
     private float groundedTimer = 0;
     private bool grounded = false;
-    private bool holdingJump = false;
-    private float bonusJumpForce = 0;
 
     // Transforms used for rotations
     public Transform pogoStick; // Will flip around it's side axis
     public Transform leanChild; // Will rotate around forward axis, should be the child of pogostick
     private Rigidbody rb;
+    private PlayerInputActions playerInputActions;
+    private Vector2 leanInputVector;
+    private float maxChargeTime = 2.0f;
+    private float chargeTime = 0.0f;
+    private bool isChargingJump = false;
+
+    public AudioClip[] jumpFxs;
+    public AudioSource audioSource;
 
 
     // Start is called before the first frame update
@@ -83,6 +88,14 @@ public class PogoControls : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         pogoBodyHeightOffGround = mainPogoBody.transform.localPosition;
         ragdollBones = ragdollBody.GetComponentsInChildren<Rigidbody>();
+
+        playerInputActions = new PlayerInputActions();
+        playerInputActions.Player.Lean.Enable();
+        playerInputActions.Player.ChargeJump.Enable();
+        playerInputActions.Player.ChargeJump.performed += OnChargeJumpStarted;
+        playerInputActions.Player.ChargeJump.canceled += OnChargeJumpReleased;
+        playerInputActions.Player.Restart.Enable();
+        playerInputActions.Player.Restart.performed += OnRestart;
 
         startCameraPosition = cam.transform.localPosition;
         startBoneRotations = new Quaternion[ragdollBones.Length];
@@ -96,6 +109,28 @@ public class PogoControls : MonoBehaviour
         }
 
         ToggleRagdoll(false);
+
+        NotifyTrickObservers(PlayerTricks.None);
+    }
+
+    void OnRestart(InputAction.CallbackContext context)
+    {
+        transform.position = new Vector3(-1625, 900, -456);
+    }
+
+    void OnChargeJumpStarted(InputAction.CallbackContext context)
+    {
+        Debug.Log("Jump held");
+        isChargingJump = true;
+        chargeTime = 0.0f;
+    }
+
+    private void OnChargeJumpReleased(InputAction.CallbackContext context)
+    {
+        //float jumpForce = Mathf.Lerp(baseJumpForce, maxChargedJumpForce, chargeTime / maxChargeTime);
+        //Jump(jumpForce);
+        Debug.Log("Jump released");
+        isChargingJump = false;
     }
 
     void FixedUpdate()
@@ -105,7 +140,7 @@ public class PogoControls : MonoBehaviour
             detectJumping();
             countFlips();
         }
-        else if (holdingJump)
+        else if (isChargingJump)
         {
             dead = false;
             setDead(false);
@@ -133,17 +168,23 @@ public class PogoControls : MonoBehaviour
     void groundedEvent()
     {
         GameObject effect = null;
-        // TODO: Robby call your spell effects here
+        
         if (flipType > 0)
         {
             if (currTrick > 0)
             {
-                Debug.Log("ICE");
+                // Debug.Log("ICE");
+                NotifyTrickObservers(PlayerTricks.NoHandsFrontFlip);
 
             }
             else if (currTrick < 0)
             {
-                Debug.Log("EARTH");
+                NotifyTrickObservers(PlayerTricks.NoFeetFrontFlip);
+                // Debug.Log("EARTH");
+            }
+            else
+            {
+                NotifyTrickObservers(PlayerTricks.FrontFlip);
             }
         }
         else if (flipType < 0)
@@ -151,14 +192,22 @@ public class PogoControls : MonoBehaviour
             {
                 if (currTrick > 0)
                 {
-                    Debug.Log("FIRE");
+                    // Debug.Log("FIRE");
+                    NotifyTrickObservers(PlayerTricks.NoHandsBackFlip);
                 }
                 else if (currTrick < 0)
                 {
-                    Debug.Log("AIR");
+                    // Debug.Log("AIR");
+                    NotifyTrickObservers(PlayerTricks.NoFeetBackFlip);
+                }
+                else
+                {
+                    NotifyTrickObservers(PlayerTricks.BackFlip);
                 }
             }
         }
+        
+        
 
         if(effect)
         {
@@ -174,9 +223,15 @@ public class PogoControls : MonoBehaviour
         rb.AddForce(leanChild.transform.up * force, ForceMode.Impulse);
         pogoStick.transform.localScale = Vector3.one;
         Physics.IgnoreLayerCollision(3, 4, true);
+
+
+        if (jumpFxs.Length > 0 && audioSource)
+        {
+            int choice = UnityEngine.Random.Range(0, jumpFxs.Length);
+            audioSource.PlayOneShot(jumpFxs[choice]);
+        }
     }
 
-    float groundSpeed = 0;
     float jumpForce = 0;
     public float velocitySpringBonus = 10f;
     void detectJumping()
@@ -203,11 +258,10 @@ public class PogoControls : MonoBehaviour
             if (!grounded && rb.velocity.y <= 0)
             {
                 grounded = true;
-                groundSpeed = rb.velocity.y;
                 jumpForce = baseJumpForce;
-                if(holdingJump)
+                if (isChargingJump)
                 {
-                    jumpForce += maxHeldJumpForce;
+                    jumpForce += maxChargedJumpForce;
                 }
                 groundedEvent();
             }
@@ -243,7 +297,6 @@ public class PogoControls : MonoBehaviour
                 Jump(jumpForce);
 
                 groundedTimer = 0;
-                bonusJumpForce = 0;
                 fireJumpBoost = 0;
                 grounded = false;
             }
@@ -280,8 +333,9 @@ public class PogoControls : MonoBehaviour
 
     void rotatePlayer()
     {
-        float forwardInput = Input.GetAxis("Vertical");
-        float sideInput = Input.GetAxis("Horizontal");
+        leanInputVector = playerInputActions.Player.Lean.ReadValue<Vector2>();
+        float forwardInput = leanInputVector.y;
+        float sideInput = leanInputVector.x;
 
         float flipAngle = forwardInput * rotationSpeed * Time.deltaTime;
 
@@ -323,14 +377,6 @@ public class PogoControls : MonoBehaviour
 
     void handleControls()
     {
-        holdingJump = Input.GetKey(KeyCode.Space);
-
-
-        // TEMPORARY RESET BUTTON
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            transform.position = Vector3.zero;
-        }
 
         // Currently just changing colour as a place holder for animations
         if(Input.GetKey(KeyCode.Q))
@@ -383,7 +429,7 @@ public class PogoControls : MonoBehaviour
 
     }
 
-    public bool getDead()
+    public bool IsDead()
     {
         return dead;
     }
@@ -428,5 +474,34 @@ public class PogoControls : MonoBehaviour
 
         // Draw the pogo stick center
         Gizmos.DrawSphere(pogoStick.transform.position + leanChild.transform.rotation * flipAxisOffset, 4);
+    }
+
+    public void ApplySpringboardForce(float force)
+    {
+        if (grounded)
+        {
+            jumpForce += force;
+        }
+        else
+        {
+            rb.AddForce(leanChild.transform.up * force, ForceMode.Impulse);
+        }
+    }
+
+    //TODO Function dealing with timer
+    public void UpdateTimeObserver(float time)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void UpdateTimeRunning(bool isRunning)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void TimesUP(bool timesUp)
+    {   
+        //TODO Implement action after Times up
+        throw new NotImplementedException();
     }
 }
