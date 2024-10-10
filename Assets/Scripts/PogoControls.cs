@@ -115,19 +115,21 @@ public class PogoControls : PlayerSubject, TimerObserver
 
     void OnRestart(InputAction.CallbackContext context)
     {
-        transform.position = Vector3.zero;
+        transform.position = new Vector3(-1625, 900, -456);
     }
 
     void OnChargeJumpStarted(InputAction.CallbackContext context)
     {
+        Debug.Log("Jump held");
         isChargingJump = true;
         chargeTime = 0.0f;
     }
 
     private void OnChargeJumpReleased(InputAction.CallbackContext context)
     {
-        float jumpForce = Mathf.Lerp(baseJumpForce, maxChargedJumpForce, chargeTime / maxChargeTime);
-        Jump(jumpForce);
+        //float jumpForce = Mathf.Lerp(baseJumpForce, maxChargedJumpForce, chargeTime / maxChargeTime);
+        //Jump(jumpForce);
+        Debug.Log("Jump released");
         isChargingJump = false;
     }
 
@@ -375,7 +377,6 @@ public class PogoControls : PlayerSubject, TimerObserver
 
     void handleControls()
     {
-        isChargingJump = Input.GetKey(KeyCode.Space);
 
         // Currently just changing colour as a place holder for animations
         if(Input.GetKey(KeyCode.Q))
