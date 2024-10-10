@@ -1,7 +1,4 @@
-using JetBrains.Annotations;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /*
@@ -76,6 +73,9 @@ public class PogoControls : PlayerSubject, TimerObserver
     public Transform pogoStick; // Will flip around it's side axis
     public Transform leanChild; // Will rotate around forward axis, should be the child of pogostick
     private Rigidbody rb;
+
+    public AudioClip[] jumpFxs;
+    public AudioSource audioSource;
 
 
     // Start is called before the first frame update
@@ -191,6 +191,13 @@ public class PogoControls : PlayerSubject, TimerObserver
         rb.AddForce(leanChild.transform.up * force, ForceMode.Impulse);
         pogoStick.transform.localScale = Vector3.one;
         Physics.IgnoreLayerCollision(3, 4, true);
+
+
+        if (jumpFxs.Length > 0 && audioSource)
+        {
+            int choice = UnityEngine.Random.Range(0, jumpFxs.Length);
+            audioSource.PlayOneShot(jumpFxs[choice]);
+        }
     }
 
     float groundSpeed = 0;

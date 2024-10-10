@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UITimer : TimerSubject
@@ -74,6 +75,9 @@ public class UITimer : TimerSubject
     {
         NotifyTimesUp(true);
         timerText.text = "Time's up!";
+
+        Scene scene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(scene.name);
     }
 
 
