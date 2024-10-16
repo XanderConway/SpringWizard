@@ -1084,8 +1084,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5086771
-  m_Center: {x: 0, y: 1.82, z: 0.0031716346}
+  m_Radius: 0.60044557
+  m_Center: {x: 0, y: 1.9117683, z: 0.0031716346}
 --- !u!95 &1144385446340015059
 Animator:
   serializedVersion: 5
@@ -3884,7 +3884,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 8829146388634044418}
-  sensitivity: {x: 1, y: 1}
+  sensitivity: {x: 200, y: 200}
   verticalClampAngleTop: -45
   verticalClampAngleBottom: 40
   cameraDistance: {x: 0, y: 150, z: -200}
@@ -4001,7 +4001,7 @@ GameObject:
   - component: {fileID: 2704694917381978580}
   m_Layer: 3
   m_Name: SidePivot
-  m_TagString: Untagged
+  m_TagString: Collector
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4029,7 +4029,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7492502442604362572}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: ed8e416c6a647654e82f6ab30c8213f6, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -4757,7 +4757,7 @@ GameObject:
   - component: {fileID: 7006093425984090003}
   m_Layer: 3
   m_Name: NewWizard 1
-  m_TagString: Untagged
+  m_TagString: Collector
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
