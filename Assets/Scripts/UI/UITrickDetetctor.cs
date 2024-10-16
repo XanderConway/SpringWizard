@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
-public class UITrickDetector : MonoBehaviour, TrickObserver
+public class UiScoreSystem : MonoBehaviour, TrickObserver
 {
     [SerializeField] private PlayerSubject _player;
+    [SerializeField] private List<Collectible> _collectibes;
 
     private int _trickScore = 0;
     private String _trickName;
@@ -74,11 +76,25 @@ public class UITrickDetector : MonoBehaviour, TrickObserver
         StartCoroutine(UpdateUIForLimitedTime(2.0f)); // Display trick name for 2 seconds
     }
 
+    private void updateScoreCollected(CollectibleData collectibleData)
+    {
+        _trickScore += collectibleData.points;
+        UpdateUI();
+        Debug.Log("Collected!");
+    }
 
-    
     void OnEnable()
     {
         _player.AddObserver(this);
+    }
+
+    void Start()
+    {
+        // Add as observer to collectibles
+        foreach (Collectible c in _collectibes)
+        {
+            c.getEvent().AddListener(updateScoreCollected);
+        }
     }
 
     void OnDisable()
