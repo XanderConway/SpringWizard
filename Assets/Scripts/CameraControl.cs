@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 public class Rotate : MonoBehaviour
 {
     [SerializeField] private Transform target;
-    [SerializeField] private Vector2 sensitivity = new (1.0f, 1.0f);
+    [SerializeField] private Vector2 sensitivity = new (200.0f, 200.0f);
     [SerializeField] private float verticalClampAngleTop = -45.0f;
     [SerializeField] private float verticalClampAngleBottom = 40.0f;
     [SerializeField] private Vector3 cameraDistance = new (0, 150f, -200.0f);
@@ -29,8 +29,8 @@ public class Rotate : MonoBehaviour
     void Update() {
         if (IsCameraControlEnabled()) {
             lookInputVector = playerInputActions.Player.Look.ReadValue<Vector2>();
-            yaw += lookInputVector.x * sensitivity.x;
-            pitch -= lookInputVector.y * sensitivity.y;
+            yaw += lookInputVector.x * sensitivity.x * Time.deltaTime;
+            pitch -= lookInputVector.y * sensitivity.y * Time.deltaTime;
             pitch = Mathf.Clamp(pitch, verticalClampAngleTop, verticalClampAngleBottom);
 
             Quaternion rotation = Quaternion.Euler(pitch, yaw, 0.0f);
