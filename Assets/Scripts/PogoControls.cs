@@ -468,6 +468,11 @@ public class PogoControls : PlayerSubject, TimerObserver
     // Disable player model, and spawn rag doll.
     public void setDead(bool isDead)
     {
+        if(isDead)
+        {
+            DeathData data = new DeathData(lastGroundedPosition, transform.position);
+            deathEvent.Invoke(data);
+        }
         dead = isDead;
         ToggleRagdoll(isDead);
 
@@ -499,8 +504,6 @@ public class PogoControls : PlayerSubject, TimerObserver
 
                 if(impactForce > lethalImpactThreshold)
                 {
-                    DeathData data = new DeathData(lastGroundedPosition, transform.position);
-                    deathEvent.Invoke(data);
                     setDead(true);
                     break;
                 }
