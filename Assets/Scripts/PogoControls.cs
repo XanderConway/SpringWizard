@@ -1,6 +1,19 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
+
+
+public class DeathData
+{
+    public Vector3 lastGroundedPosition;
+    public Vector3 deathPosition;
+    public DeathData(Vector3 lastGroundedPosition, Vector3 deathPosition)
+    {
+        this.lastGroundedPosition = lastGroundedPosition;
+        this.deathPosition = deathPosition;
+    }
+}
 
 /*
  * POGO STICK CONTROLS
@@ -55,8 +68,11 @@ public class PogoControls : PlayerSubject, TimerObserver
     public GameObject[] pogoStickComponents;
     public Camera cam; //Hacky fix for camera issues
     public GameObject deathPogoStick; // Disable the acutal pogostick and replace it with a dummy on death
-    private bool dead = false;
-    private Vector3 respawnPoint;
+
+    private bool dead { get; set; }
+    private UnityEvent<DeathData> deathEvent = new UnityEvent<DeathData>();
+
+    private Vector3 lastGroundedPosition;
     private Rigidbody[] ragdollBones;
 
     // These won't be needed once we have an animator
@@ -81,6 +97,11 @@ public class PogoControls : PlayerSubject, TimerObserver
     public AudioClip[] jumpFxs;
     public AudioSource audioSource;
 
+
+    public UnityEvent<DeathData> getDeathEvent()
+    {
+        return deathEvent;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -142,16 +163,16 @@ public class PogoControls : PlayerSubject, TimerObserver
         }
         else if (isChargingJump)
         {
-            dead = false;
-            setDead(false);
-            transform.position = respawnPoint + Vector3.up * 10;
-            transform.rotation = Quaternion.identity;
+            //dead = false;
+            //setDead(false);
+            //transform.position = lastGroundedPosition + Vector3.up * 10;
+            //transform.rotation = Quaternion.identity;
 
-            pogoStick.transform.localPosition = Vector3.zero;
-            pogoStick.rotation = Quaternion.identity;
+            //pogoStick.transform.localPosition = Vector3.zero;
+            //pogoStick.rotation = Quaternion.identity;
 
-            leanChild.transform.localPosition = Vector3.zero;
-            leanChild.rotation = Quaternion.identity;
+            //leanChild.transform.localPosition = Vector3.zero;
+            //leanChild.rotation = Quaternion.identity;
         }
     }
 
@@ -263,15 +284,14 @@ public class PogoControls : PlayerSubject, TimerObserver
                 {
                     jumpForce += maxChargedJumpForce;
                 }
+                lastGroundedPosition = transform.position;
                 groundedEvent();
             }
         }
-        //else if ice trick is triggered
         
 
         if (grounded)
         {
-            respawnPoint = transform.position;
             groundedTimer += Time.deltaTime;
 
             // Current compression is inital_velocity * cos(time)
@@ -456,7 +476,8 @@ public class PogoControls : PlayerSubject, TimerObserver
 
                 if(impactForce > lethalImpactThreshold)
                 {
-                    Debug.Log("DEATH " + impactForce);
+                    DeathData data = new DeathData(lastGroundedPosition, transform.position);
+                    deathEvent.Invoke(data);
                     setDead(true);
                     break;
                 }

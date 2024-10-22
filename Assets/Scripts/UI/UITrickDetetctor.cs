@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class UiScoreSystem : MonoBehaviour, TrickObserver
 {
     [SerializeField] private PlayerSubject _player;
-    [SerializeField] private List<Collectible> _collectibes;
+    [SerializeField] private GameObject _collectibesParent;
 
     private int _trickScore = 0;
     private String _trickName;
@@ -91,9 +91,15 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     void Start()
     {
         // Add as observer to collectibles
-        foreach (Collectible c in _collectibes)
+
+        if(_collectibesParent != null)
         {
-            c.getEvent().AddListener(updateScoreCollected);
+            Collectible[] collectibles = _collectibesParent.GetComponentsInChildren<Collectible>();
+
+            foreach (Collectible c in collectibles)
+            {
+                c.getEvent().AddListener(updateScoreCollected);
+            }
         }
     }
 
