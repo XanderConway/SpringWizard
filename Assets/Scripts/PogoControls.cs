@@ -49,6 +49,7 @@ public class PogoControls : PlayerSubject, TimerObserver
     // Jump detection parameters
     public float pogoRayCastLength = 10f;
     public Vector3 pogoRayCastOffset = Vector3.zero;
+    public float pogoCastRadius = 40f;
 
     // The axis to rotate the player around when doing flips in the air
     public Vector3 flipAxisOffset = Vector3.zero;
@@ -61,9 +62,11 @@ public class PogoControls : PlayerSubject, TimerObserver
 
     // Used for spring compression animation (Aesthetic)
     public GameObject mainPogoBody;
+    public float velocitySpringMultiplier = 0.2f;
     public float springLength = 1.0f;
     public float springMaxCompression = 0.003f;
     private Vector3 pogoBodyHeightOffGround;
+    public GameObject jumpParticle;
 
     // Parameters to handle Ragdoll and player death
     public float lethalImpactThreshold = 0;
@@ -105,6 +108,7 @@ public class PogoControls : PlayerSubject, TimerObserver
 
     public AudioClip[] jumpFxs;
     public AudioClip[] hurtFxs;
+    public AudioClip[] flipFxs;
 
     public AudioSource pogoAudioSource;
     public AudioSource voiceAudioSource;
@@ -268,14 +272,13 @@ public class PogoControls : PlayerSubject, TimerObserver
         }
     }
 
+    // TODO Clean up global variables
     float jumpForce = 0;
-    public float velocitySpringMultiplier = 0.2f;
     private float chargedCompressTime = 0;
 
     float compressHalfTime;
     float decompressHalfTime;
-
-    public float pogoCastRadius = 40f;
+    RaycastHit groundHit;
     void detectJumping()
     {
         Vector3 pogoCastStart = leanChild.transform.position + leanChild.transform.rotation * pogoRayCastOffset;
@@ -305,6 +308,8 @@ public class PogoControls : PlayerSubject, TimerObserver
                 decompressHalfTime = compressTime / 2;
 
                 lastGroundedPosition = transform.position;
+
+                groundHit = hit;
                 groundedEvent();
             }
         }
@@ -351,6 +356,9 @@ public class PogoControls : PlayerSubject, TimerObserver
             {
                 Jump(jumpForce);
 
+                GameObject jumpEffect = Instantiate(jumpParticle, pogoStick.transform.position, Quaternion.FromToRotation(Vector3.up, groundHit.normal));
+                Destroy(jumpEffect, 1.0f);
+
                 groundedTimer = 0;
                 fireJumpBoost = 0;
                 grounded = false;
@@ -373,16 +381,21 @@ public class PogoControls : PlayerSubject, TimerObserver
 
         if (currentFlipAngle > 270)
         {
-            Debug.Log("Front Flip!");
             flipType = 1;
             currentFlipAngle = 0;
+
+            if(flipFxs.Length > 0)
+            {
+                pogoAudioSource.PlayOneShot(flipFxs[0]);
+            }
         } 
 
         if (currentFlipAngle < -270)
         {
-            Debug.Log("Back Flip!");
             flipType = -1;
             currentFlipAngle = 0;
+
+            pogoAudioSource.PlayOneShot(flipFxs[1]);
         }
     }
 
@@ -497,6 +510,7 @@ public class PogoControls : PlayerSubject, TimerObserver
         {
             DeathData data = new DeathData(lastGroundedPosition, transform.position);
             deathEvent.Invoke(data);
+            NotifyTrickObservers(PlayerTricks.Death);
         }
         dead = isDead;
         ToggleRagdoll(isDead);

@@ -15,7 +15,7 @@ public class RespawnSystem: MonoBehaviour
 
     public GameObject respawnText;
 
-    public bool enableRespawn;
+    private bool enableRespawn;
 
     public float respawnDelay = 1.0f;
     private float respawnTimer = 0f;

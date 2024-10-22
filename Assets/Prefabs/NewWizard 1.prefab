@@ -5001,16 +5001,19 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  pogoRayCastLength: 21.1
-  pogoRayCastOffset: {x: 0, y: 0.16, z: 1.27}
+  pogoRayCastLength: 34
+  pogoRayCastOffset: {x: 0, y: 8.1, z: 1.27}
+  pogoCastRadius: 8
   flipAxisOffset: {x: 0, y: 43.3, z: 0}
   baseJumpForce: 250
   maxChargedJumpForce: 300
   maxCompressTime: 0.5
   compressTime: 0.3
   mainPogoBody: {fileID: 7833507588807233014}
+  velocitySpringMultiplier: 0.2
   springLength: 0.4
   springMaxCompression: 0.002
+  jumpParticle: {fileID: 3093203134938357112, guid: 58b046453ce69db43b3457a87fdb5ed6, type: 3}
   lethalImpactThreshold: 30
   ragdollBody: {fileID: 7833507588807233014}
   playerCollders:
@@ -5063,10 +5066,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: a1a8c616c89854d4084e3f93f929bafa, type: 3}
   hurtFxs:
   - {fileID: 8300000, guid: c92ee89b6d0b0cb4a8fcc7d8e9bf385a, type: 3}
+  flipFxs: []
   pogoAudioSource: {fileID: 2908888315733890370}
   voiceAudioSource: {fileID: 7889485622749836846}
-  velocitySpringMultiplier: 0.2
-  pogoCastRadius: 8
 --- !u!54 &7825629372783430010
 Rigidbody:
   m_ObjectHideFlags: 0
