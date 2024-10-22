@@ -476,7 +476,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3720491296095361428, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
   m_PrefabInstance: {fileID: 1403221865}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 907684629}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e6895922ac2ed04e8d8324cfadc7584, type: 3}
@@ -2306,11 +2306,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2102643154736519835, guid: f4a0229da9825964f9d9fbb3d32e4010, type: 3}
   m_PrefabInstance: {fileID: 6658261275295054571}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &907684629 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8722310485764097514, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
-  m_PrefabInstance: {fileID: 1403221865}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &925326536 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5e5cfb617e24ea64396e37b8f3eab4dd, type: 3}
@@ -3630,39 +3625,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8722310485764097514, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1403221867}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
 --- !u!4 &1403221866 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8829146388634044418, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
   m_PrefabInstance: {fileID: 1403221865}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1403221867
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 907684629}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9424a2540000496587aede3cc4298f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  jump: 0
-  input: {x: 0, y: 0, z: 0}
-  onRail: 0
-  grindSpeed: 100
-  heightOffset: 5
-  timeForFullSpline: 0
-  elapsedTime: 0
-  lerpSpeed: 100
-  currentRailScript: {fileID: 0}
-  playerRigidbody: {fileID: 0}
-  charController: {fileID: 0}
 --- !u!1001 &1422875813
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4382,10 +4351,10 @@ MonoBehaviour:
   m_FollowOffset: {x: 0, y: 40, z: -150}
   m_XDamping: 1.8
   m_YDamping: 1.8
-  m_ZDamping: 1.8
+  m_ZDamping: 0.65
   m_AngularDampingMode: 0
   m_PitchDamping: 0
-  m_YawDamping: 1
+  m_YawDamping: 0.1
   m_RollDamping: 0
   m_AngularDamping: 0
 --- !u!114 &1819560570
@@ -4409,9 +4378,9 @@ MonoBehaviour:
   m_ScreenX: 0.5
   m_ScreenY: 0.5
   m_DeadZoneWidth: 0.065
-  m_DeadZoneHeight: 0.354
+  m_DeadZoneHeight: 0.547
   m_SoftZoneWidth: 0.11
-  m_SoftZoneHeight: 0.533
+  m_SoftZoneHeight: 0.547
   m_BiasX: 0
   m_BiasY: 0
   m_CenterOnActivate: 1
@@ -5466,7 +5435,7 @@ MonoBehaviour:
   m_Sides: 8
   m_SegmentsPerUnit: 4
   m_Capped: 1
-  m_Radius: 7
+  m_Radius: 2
   m_Range: {x: 0, y: 1}
 --- !u!23 &2050518102
 MeshRenderer:
@@ -5571,39 +5540,39 @@ MonoBehaviour:
       TangentIn:
         x: -0
         y: -0
-        z: -122.36217
+        z: -108.847435
       TangentOut:
         x: 0
         y: 0
-        z: 128.6565
+        z: 72.26043
       Rotation:
         value:
-          x: 0.35844308
-          y: 0.09109032
-          z: -0.39999905
-          w: 0.83858323
-    - Position:
-        x: -135.38074
-        y: -498.88892
-        z: 550.0695
-      TangentIn:
-        x: -0
-        y: -0
-        z: -14.752185
-      TangentOut:
-        x: 0
-        y: 0
-        z: 17.189333
-      Rotation:
-        value:
-          x: 0.26275358
-          y: -0.63707626
-          z: 0.72333336
-          w: 0.043398544
+          x: 0.3916741
+          y: 0.5899873
+          z: 0.021182433
+          w: 0.7057319
     - Position:
         x: 461.61926
         y: -374.88892
         z: 132.06952
+      TangentIn:
+        x: -0
+        y: -0
+        z: -18.066002
+      TangentOut:
+        x: 0
+        y: 0
+        z: 33.340103
+      Rotation:
+        value:
+          x: 0.6308699
+          y: -0.04331753
+          z: 0.13495724
+          w: 0.7628324
+    - Position:
+        x: -135.38074
+        y: -498.88892
+        z: 550.0695
       TangentIn:
         x: -0
         y: -0
@@ -5614,10 +5583,10 @@ MonoBehaviour:
         z: 73.92625
       Rotation:
         value:
-          x: -0.06255594
-          y: 0.882497
-          z: 0.062288154
-          w: 0.46195883
+          x: -0.31210423
+          y: -0.3462322
+          z: 0.71361905
+          w: 0.522936
     m_MetaData:
     - Mode: 0
       Tension: 0.5
@@ -5647,7 +5616,7 @@ Transform:
   m_GameObject: {fileID: 2050518099}
   serializedVersion: 2
   m_LocalRotation: {x: -0.21321791, y: 0.030920113, z: 0.14014485, w: 0.96640646}
-  m_LocalPosition: {x: -1352, y: 670, z: -644}
+  m_LocalPosition: {x: -145, y: 444, z: -310}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
