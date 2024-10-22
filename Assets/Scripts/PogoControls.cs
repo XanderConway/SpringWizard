@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using UnityEditor.Build;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -56,32 +58,32 @@ public class PogoControls : PlayerSubject, TimerObserver
     public float maxChargedJumpForce = 1.0f;
     public float compressTime = 0.4f;
 
-    // Used for spring compression animation (Purely Aesthetic)
+    // Used for spring compression animation (Aesthetic)
     public GameObject mainPogoBody;
     public float springLength = 1.0f;
     public float springMaxCompression = 0.003f;
     private Vector3 pogoBodyHeightOffGround;
 
-    // To handle player Death
+    // Parameters to handle Ragdoll and player death
     public float lethalImpactThreshold = 0;
-    public GameObject ragdollBody;
+    public GameObject ragdollBody; // The body of the character that will ragdoll on death
+    public List<Collider> playerCollders; // Colliders that will be disabled when the player dies
     public GameObject[] pogoStickComponents;
+    public GameObject deathCollider;
+    private bool dead { get; set; }
+    private UnityEvent<DeathData> deathEvent = new UnityEvent<DeathData>();
+    private Rigidbody[] ragdollBones;
+    private Quaternion[] startBoneRotations;
+    private Vector3[] startBonePositions;
+
+    private List<Collider> ragDollColliders;
+
 
     public Camera cam; //Hacky fix for camera issues
     private Vector3 camStartPosition;
     private Quaternion camStartRotation;
 
-    public GameObject deathPogoStick; // Disable the acutal pogostick and replace it with a dummy on death
-
-    private bool dead { get; set; }
-    private UnityEvent<DeathData> deathEvent = new UnityEvent<DeathData>();
-
     private Vector3 lastGroundedPosition;
-    private Rigidbody[] ragdollBones;
-
-    // These won't be needed once we have an animator
-    private Quaternion[] startBoneRotations;
-    private Vector3[] startBonePositions;
 
     public AnimationCurve bounceScale;
     private float groundedTimer = 0;
@@ -90,9 +92,11 @@ public class PogoControls : PlayerSubject, TimerObserver
     // Transforms used for rotations
     public Transform pogoStick; // Will flip around it's side axis
     private Vector3 pogoStickStartPosition; // Used to keep the pogostick a constant distance from it's parent 
-
     public Transform leanChild; // Will rotate around forward axis, should be the child of pogostick
+
     private Rigidbody rb;
+
+    // Input parameters
     private PlayerInputActions playerInputActions;
     private Vector2 leanInputVector;
     private bool isChargingJump = false;
@@ -132,13 +136,12 @@ public class PogoControls : PlayerSubject, TimerObserver
             }
         }
 
-        ToggleRagdoll(false);
-           
         camStartPosition = cam.transform.localPosition;
         camStartRotation = cam.transform.localRotation;
 
         pogoStickStartPosition = pogoStick.transform.localPosition;
 
+        ToggleRagdoll(false);
         NotifyTrickObservers(PlayerTricks.None);
     }
 
@@ -314,8 +317,8 @@ public class PogoControls : PlayerSubject, TimerObserver
 
             mainPogoBody.transform.localPosition = pogoBodyHeightOffGround + springLength * Vector3.down * bounceAmount;
 
-            //float squashFactor = bounceScale.Evaluate(groundedTimer / compressTime);
-            //pogoStick.transform.localScale = new Vector3(1, squashFactor, 1);
+            float squashFactor = bounceScale.Evaluate(groundedTimer / compressTime);
+            pogoStick.transform.localScale = new Vector3(1, squashFactor, 1);
         }
 
         if (groundedTimer > compressTime)
@@ -416,6 +419,14 @@ public class PogoControls : PlayerSubject, TimerObserver
         }
     }
 
+    private void setCollidersActive(List<Collider> components, bool active)
+    {
+        for (int i = 0; i < components.Count; i++)
+        {
+            components[i].enabled = active;
+        }
+    }
+
     public void ToggleRagdoll(bool useRagdoll)
     {
 
@@ -424,6 +435,7 @@ public class PogoControls : PlayerSubject, TimerObserver
 
             ragdollBone.isKinematic = !useRagdoll;
             ragdollBone.gameObject.GetComponent<Collider>().enabled = useRagdoll;
+            ragdollBone.velocity = rb.velocity;
         }
 
 
@@ -432,7 +444,7 @@ public class PogoControls : PlayerSubject, TimerObserver
             pogoStickComponents[i].SetActive(!useRagdoll);
         }
 
-        // This can be buggy and won't be needed once we have animations
+        // Setting bone positions manually can be buggy, and won't be needed once we have animation
         if (!useRagdoll)
         {
             for (int i = 0; i < ragdollBones.Length; i++)
@@ -443,11 +455,13 @@ public class PogoControls : PlayerSubject, TimerObserver
                 cam.transform.localRotation = camStartRotation;
                 pogoStick.localPosition = pogoStickStartPosition;
             }
+
+            setCollidersActive(playerCollders, true);
+            rb.isKinematic = false;
         } else
         {
-            //GameObject tempPogoStick = Instantiate(deathPogoStick, pogoStickComponents[1].transform);
-            //Destroy(tempPogoStick, 1.0f);
-
+            setCollidersActive(playerCollders, false);
+            rb.isKinematic = true;
         }
     }
 
@@ -479,8 +493,7 @@ public class PogoControls : PlayerSubject, TimerObserver
 
         for (int i = 0; i < contactPoints.Length; i++)
         {   
-            // Extremely hacky solution for now
-            if (contactPoints[i].thisCollider.gameObject.name == "wizard_pose_v001")
+            if (deathCollider != null && contactPoints[i].thisCollider.gameObject == deathCollider)
             {
                 float impactForce = collision.relativeVelocity.magnitude;
 

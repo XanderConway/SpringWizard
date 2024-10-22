@@ -1037,10 +1037,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 244674429243301497}
-  - component: {fileID: 3092297220204879837}
   - component: {fileID: 1144385446340015059}
   m_Layer: 3
-  m_Name: wizard_pose_v001
+  m_Name: WizardModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1065,27 +1064,6 @@ Transform:
   - {fileID: 5489341930146159030}
   m_Father: {fileID: 2823786398027076748}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &3092297220204879837
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2817763672058518266}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.60044557
-  m_Center: {x: 0, y: 1.9117683, z: 0.0031716346}
 --- !u!95 &1144385446340015059
 Animator:
   serializedVersion: 5
@@ -1235,6 +1213,59 @@ Transform:
   - {fileID: 3318920958846854053}
   m_Father: {fileID: 7703297675506752280}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3578656647644916066
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6848409236718730439}
+  - component: {fileID: 4328654859621280444}
+  m_Layer: 3
+  m_Name: DeathCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6848409236718730439
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3578656647644916066}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2823786398027076748}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &4328654859621280444
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3578656647644916066}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 19.19
+  m_Center: {x: 0, y: 73.04, z: 0}
 --- !u!1 &3701534818294418058
 GameObject:
   m_ObjectHideFlags: 0
@@ -1843,7 +1874,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4685365989018373095}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: ed8e416c6a647654e82f6ab30c8213f6, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -2297,7 +2328,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4800746752269981494}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: ed8e416c6a647654e82f6ab30c8213f6, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -3532,7 +3563,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6712739780864592965}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: ed8e416c6a647654e82f6ab30c8213f6, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -4020,6 +4051,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 244674429243301497}
+  - {fileID: 6848409236718730439}
   m_Father: {fileID: 9003311747405400351}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &2704694917381978580
@@ -4793,7 +4825,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: 300
   leanSpeed: 90
-  maxLeanAngle: 10
+  maxLeanAngle: 20
   maxLeanForwardAngle: 60
   maxLeanBackwardAngle: -30
   flipSpeedMultiplier:
@@ -4847,13 +4879,16 @@ MonoBehaviour:
   mainPogoBody: {fileID: 7833507588807233014}
   springLength: 0.4
   springMaxCompression: 0.002
-  lethalImpactThreshold: 50
+  lethalImpactThreshold: 30
   ragdollBody: {fileID: 7833507588807233014}
+  playerCollders:
+  - {fileID: 4328654859621280444}
+  - {fileID: 2704694917381978580}
   pogoStickComponents:
   - {fileID: 8032239094651510722}
   - {fileID: 8499994883270473371}
+  deathCollider: {fileID: 3578656647644916066}
   cam: {fileID: 7324192649113593654}
-  deathPogoStick: {fileID: 1542167429149332743, guid: 045edaeb05613644fa4cff1d207fdba8, type: 3}
   bounceScale:
     serializedVersion: 2
     m_Curve:
@@ -4867,17 +4902,17 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0.25523162
     - serializedVersion: 3
-      time: 0.8398018
-      value: 0.9135476
-      inSlope: -0.091494314
-      outSlope: -0.091494314
+      time: 0.50109005
+      value: 0.8478193
+      inSlope: -0.0015223795
+      outSlope: -0.0015223795
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.30864048
+      outWeight: 0.71314704
     - serializedVersion: 3
-      time: 3.2543027
-      value: 0.7760625
+      time: 1.0016172
+      value: 0.99927187
       inSlope: 0.008553473
       outSlope: 0.008553473
       tangentMode: 0

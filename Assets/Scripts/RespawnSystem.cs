@@ -82,6 +82,7 @@ public class RespawnSystem: MonoBehaviour
                 player.setDead(false);
                 player.transform.position = closestPoint.position;
                 player.transform.rotation = closestPoint.rotation;
+
                 player.pogoStick.rotation = Quaternion.identity;
 
                 respawnText.SetActive(false);
