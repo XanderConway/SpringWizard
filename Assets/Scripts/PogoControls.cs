@@ -161,15 +161,11 @@ public class PogoControls : PlayerSubject, TimerObserver
 
     void OnChargeJumpStarted(InputAction.CallbackContext context)
     {
-        Debug.Log("Jump held");
         isChargingJump = true;
     }
 
     private void OnChargeJumpReleased(InputAction.CallbackContext context)
     {
-        //float jumpForce = Mathf.Lerp(baseJumpForce, maxChargedJumpForce, chargeTime / maxChargeTime);
-        //Jump(jumpForce);
-        Debug.Log("Jump released");
         isChargingJump = false;
     }
 
@@ -179,19 +175,6 @@ public class PogoControls : PlayerSubject, TimerObserver
         {
             detectJumping();
             countFlips();
-        }
-        else if (isChargingJump)
-        {
-            //dead = false;
-            //setDead(false);
-            //transform.position = lastGroundedPosition + Vector3.up * 10;
-            //transform.rotation = Quaternion.identity;
-
-            //pogoStick.transform.localPosition = Vector3.zero;
-            //pogoStick.rotation = Quaternion.identity;
-
-            //leanChild.transform.localPosition = Vector3.zero;
-            //leanChild.rotation = Quaternion.identity;
         }
     }
 
@@ -213,14 +196,12 @@ public class PogoControls : PlayerSubject, TimerObserver
         {
             if (currTrick > 0)
             {
-                // Debug.Log("ICE");
                 NotifyTrickObservers(PlayerTricks.NoHandsFrontFlip);
 
             }
             else if (currTrick < 0)
             {
                 NotifyTrickObservers(PlayerTricks.NoFeetFrontFlip);
-                // Debug.Log("EARTH");
             }
             else
             {
@@ -232,12 +213,10 @@ public class PogoControls : PlayerSubject, TimerObserver
             {
                 if (currTrick > 0)
                 {
-                    // Debug.Log("FIRE");
                     NotifyTrickObservers(PlayerTricks.NoHandsBackFlip);
                 }
                 else if (currTrick < 0)
                 {
-                    // Debug.Log("AIR");
                     NotifyTrickObservers(PlayerTricks.NoFeetBackFlip);
                 }
                 else
@@ -298,10 +277,6 @@ public class PogoControls : PlayerSubject, TimerObserver
 
                 jumpForce += Math.Max(Math.Abs(rb.velocity.y) * velocitySpringMultiplier, 100);
 
-                //if (isChargingJump)
-                //{
-                //    jumpForce += maxChargedJumpForce;
-                //}
                 chargedCompressTime = compressTime;
 
                 compressHalfTime = compressTime / 2;

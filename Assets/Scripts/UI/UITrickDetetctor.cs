@@ -9,16 +9,17 @@ using UnityEngine.UI;
 
 public class UiScoreSystem : MonoBehaviour, TrickObserver
 {
-    [SerializeField] private PlayerSubject _player;
-    [SerializeField] private GameObject _collectibesParent;
+    [SerializeField] private PlayerSubject player;
+    [SerializeField] private GameObject collectibesParent;
 
     private int _trickScore = 0;
     private String _trickName;
 
     //UI Elements
-    [SerializeField] private TextMeshProUGUI _trickScoreText;
-    [SerializeField] private TextMeshProUGUI _trickNameText;
-    [SerializeField] private TextMeshProUGUI _comboScoreText;
+    [SerializeField] private TextMeshProUGUI trickScoreText;
+    [SerializeField] private TextMeshProUGUI trickNameText;
+    [SerializeField] private TextMeshProUGUI comboScoreText;
+
 
     private float combo = 0;
     private PlayerTricks _prevTrick = PlayerTricks.None;
@@ -84,12 +85,12 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     }
     private IEnumerator UpdateUIForLimitedTime(float displayTime)
     {
-        _trickNameText.text = _trickName;
-        _trickScoreText.text = "Score: " + _trickScore;
-        _comboScoreText.text = "Combo: x" + combo;
+        trickNameText.text = _trickName;
+        trickScoreText.text = "Score: " + _trickScore;
+        comboScoreText.text = "Combo: x" + combo;
 
         yield return new WaitForSeconds(displayTime);
-        _trickNameText.text = "";
+        trickNameText.text = "";
     }
 
     private void UpdateUI()
@@ -106,16 +107,16 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
 
     void OnEnable()
     {
-        _player.AddObserver(this);
+        player.AddObserver(this);
     }
 
     void Start()
     {
         // Add as observer to collectibles
 
-        if(_collectibesParent != null)
+        if(collectibesParent != null)
         {
-            Collectible[] collectibles = _collectibesParent.GetComponentsInChildren<Collectible>();
+            Collectible[] collectibles = collectibesParent.GetComponentsInChildren<Collectible>();
 
             foreach (Collectible c in collectibles)
             {
@@ -126,6 +127,6 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
 
     void OnDisable()
     {
-        _player.RemoveObserver(this);
+        player.RemoveObserver(this);
     }
 }
