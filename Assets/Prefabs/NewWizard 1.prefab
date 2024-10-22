@@ -1062,6 +1062,7 @@ Transform:
   - {fileID: 4951660696828788233}
   - {fileID: 1422557127744419489}
   - {fileID: 5489341930146159030}
+  - {fileID: 1883603008112029276}
   m_Father: {fileID: 2823786398027076748}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &1144385446340015059
@@ -1222,7 +1223,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6848409236718730439}
-  - component: {fileID: 4328654859621280444}
+  - component: {fileID: 3771913954116590028}
   m_Layer: 3
   m_Name: DeathCollider
   m_TagString: Untagged
@@ -1245,8 +1246,8 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2823786398027076748}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &4328654859621280444
-SphereCollider:
+--- !u!136 &3771913954116590028
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1263,9 +1264,11 @@ SphereCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 19.19
-  m_Center: {x: 0, y: 73.04, z: 0}
+  serializedVersion: 2
+  m_Radius: 15.382843
+  m_Height: 71.10097
+  m_Direction: 1
+  m_Center: {x: 0, y: 61.4, z: -1.9060097}
 --- !u!1 &3701534818294418058
 GameObject:
   m_ObjectHideFlags: 0
@@ -1974,7 +1977,7 @@ GameObject:
   - component: {fileID: 5489341930146159030}
   - component: {fileID: 2908888315733890370}
   m_Layer: 3
-  m_Name: Audio Source
+  m_Name: PogoAudioSource
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2640,6 +2643,134 @@ Transform:
   - {fileID: 671559884602580783}
   m_Father: {fileID: 4886398700838312547}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5389798166060877002
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1883603008112029276}
+  - component: {fileID: 7889485622749836846}
+  m_Layer: 3
+  m_Name: VoiceAudioSource
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1883603008112029276
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5389798166060877002}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.678, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 244674429243301497}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &7889485622749836846
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5389798166060877002}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 0.188
+  m_Pitch: 1.5
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 7.8839016
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &5450496631482255258
 GameObject:
   m_ObjectHideFlags: 0
@@ -3612,8 +3743,8 @@ ConstantForce:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6712739780864592965}
   m_Enabled: 1
-  m_Force: {x: 0, y: 0, z: 0}
-  m_RelativeForce: {x: 0, y: -1000, z: 0}
+  m_Force: {x: 0, y: -2000, z: 0}
+  m_RelativeForce: {x: 0, y: 0, z: 0}
   m_Torque: {x: 0, y: 0, z: 0}
   m_RelativeTorque: {x: 0, y: 0, z: 0}
 --- !u!1 &6720153979110062021
@@ -4073,10 +4204,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 13.2387085
+  m_Radius: 9.4461
   m_Height: 94.9557
   m_Direction: 1
-  m_Center: {x: 0.8264313, y: 42.809547, z: 0}
+  m_Center: {x: 0.8264313, y: 42.809547, z: -0.11492729}
 --- !u!1 &7709650430283614189
 GameObject:
   m_ObjectHideFlags: 0
@@ -4870,11 +5001,12 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  pogoRayCastLength: 20.35
+  pogoRayCastLength: 21.1
   pogoRayCastOffset: {x: 0, y: 0.16, z: 1.27}
   flipAxisOffset: {x: 0, y: 43.3, z: 0}
   baseJumpForce: 250
-  maxChargedJumpForce: 1
+  maxChargedJumpForce: 300
+  maxCompressTime: 0.5
   compressTime: 0.3
   mainPogoBody: {fileID: 7833507588807233014}
   springLength: 0.4
@@ -4882,12 +5014,13 @@ MonoBehaviour:
   lethalImpactThreshold: 30
   ragdollBody: {fileID: 7833507588807233014}
   playerCollders:
-  - {fileID: 4328654859621280444}
+  - {fileID: 3771913954116590028}
   - {fileID: 2704694917381978580}
   pogoStickComponents:
   - {fileID: 8032239094651510722}
   - {fileID: 8499994883270473371}
   deathCollider: {fileID: 3578656647644916066}
+  deathParticleEffect: {fileID: 5204673240706134088, guid: 25a75f78eb9ff664384e743361d3a79a, type: 3}
   cam: {fileID: 7324192649113593654}
   bounceScale:
     serializedVersion: 2
@@ -4903,13 +5036,13 @@ MonoBehaviour:
       outWeight: 0.25523162
     - serializedVersion: 3
       time: 0.50109005
-      value: 0.8478193
-      inSlope: -0.0015223795
-      outSlope: -0.0015223795
+      value: 0.84925365
+      inSlope: 0.16328138
+      outSlope: 0.16328138
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.71314704
+      outWeight: 0.12741663
     - serializedVersion: 3
       time: 1.0016172
       value: 0.99927187
@@ -4928,8 +5061,12 @@ MonoBehaviour:
   - {fileID: 8300000, guid: b7b5d6192c02e7043a26af2ca50d0a84, type: 3}
   - {fileID: 8300000, guid: de956241164ae4b45965407b70f0ed2a, type: 3}
   - {fileID: 8300000, guid: a1a8c616c89854d4084e3f93f929bafa, type: 3}
-  audioSource: {fileID: 2908888315733890370}
-  velocitySpringBonus: 10
+  hurtFxs:
+  - {fileID: 8300000, guid: c92ee89b6d0b0cb4a8fcc7d8e9bf385a, type: 3}
+  pogoAudioSource: {fileID: 2908888315733890370}
+  voiceAudioSource: {fileID: 7889485622749836846}
+  velocitySpringMultiplier: 0.2
+  pogoCastRadius: 8
 --- !u!54 &7825629372783430010
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4965,7 +5102,7 @@ ConstantForce:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8722310485764097514}
   m_Enabled: 1
-  m_Force: {x: 0, y: -500, z: 0}
+  m_Force: {x: 0, y: -550, z: 0}
   m_RelativeForce: {x: 0, y: 0, z: 0}
   m_Torque: {x: 0, y: 0, z: 0}
   m_RelativeTorque: {x: 0, y: 0, z: 0}

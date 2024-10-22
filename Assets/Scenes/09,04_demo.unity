@@ -466,6 +466,72 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 635507405}
   m_CullTransparentMesh: 1
+--- !u!1 &662392093
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 662392096}
+  - component: {fileID: 662392095}
+  - component: {fileID: 662392094}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &662392094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 662392093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e1728c45e0570045bb4f71bacdcefb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!65 &662392095
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 662392093}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 100000, y: 1000, z: 100000}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &662392096
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 662392093}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1768, y: -1901, z: -372.13507}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &747366348
 GameObject:
   m_ObjectHideFlags: 0
@@ -765,12 +831,44 @@ PrefabInstance:
       value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 3720491296095361428, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
+      propertyPath: bounceScale.m_Curve.Array.data[1].time
+      value: 0.50109005
+      objectReference: {fileID: 0}
+    - target: {fileID: 3720491296095361428, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
+      propertyPath: bounceScale.m_Curve.Array.data[2].time
+      value: 1.0016172
+      objectReference: {fileID: 0}
+    - target: {fileID: 3720491296095361428, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
+      propertyPath: bounceScale.m_Curve.Array.data[1].value
+      value: 0.8478193
+      objectReference: {fileID: 0}
+    - target: {fileID: 3720491296095361428, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
+      propertyPath: bounceScale.m_Curve.Array.data[2].value
+      value: 0.99927187
+      objectReference: {fileID: 0}
+    - target: {fileID: 3720491296095361428, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
+      propertyPath: bounceScale.m_Curve.Array.data[1].inSlope
+      value: -0.0015223795
+      objectReference: {fileID: 0}
+    - target: {fileID: 3720491296095361428, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
+      propertyPath: bounceScale.m_Curve.Array.data[1].outSlope
+      value: -0.0015223795
+      objectReference: {fileID: 0}
+    - target: {fileID: 3720491296095361428, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
+      propertyPath: bounceScale.m_Curve.Array.data[1].outWeight
+      value: 0.71314704
+      objectReference: {fileID: 0}
+    - target: {fileID: 3720491296095361428, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
       propertyPath: deathEvent.m_PersistentCalls.m_Calls.Array.size
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3720491296095361428, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
       propertyPath: deathEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7006093425984090003, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
+      propertyPath: m_Force.y
+      value: -1000
       objectReference: {fileID: 0}
     - target: {fileID: 7324192649113593654, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
       propertyPath: m_BackGroundColor.b
@@ -1323,3 +1421,4 @@ SceneRoots:
   - {fileID: 1403221865}
   - {fileID: 2005175927}
   - {fileID: 224180730}
+  - {fileID: 662392096}

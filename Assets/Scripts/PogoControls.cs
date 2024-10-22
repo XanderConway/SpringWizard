@@ -56,6 +56,7 @@ public class PogoControls : PlayerSubject, TimerObserver
     // Parameters for jump forces
     public float baseJumpForce = 1.0f;
     public float maxChargedJumpForce = 1.0f;
+    public float maxCompressTime = 1.0f;
     public float compressTime = 0.4f;
 
     // Used for spring compression animation (Aesthetic)
@@ -70,6 +71,7 @@ public class PogoControls : PlayerSubject, TimerObserver
     public List<Collider> playerCollders; // Colliders that will be disabled when the player dies
     public GameObject[] pogoStickComponents;
     public GameObject deathCollider;
+    public GameObject deathParticleEffect;
     private bool dead { get; set; }
     private UnityEvent<DeathData> deathEvent = new UnityEvent<DeathData>();
     private Rigidbody[] ragdollBones;
@@ -102,7 +104,10 @@ public class PogoControls : PlayerSubject, TimerObserver
     private bool isChargingJump = false;
 
     public AudioClip[] jumpFxs;
-    public AudioSource audioSource;
+    public AudioClip[] hurtFxs;
+
+    public AudioSource pogoAudioSource;
+    public AudioSource voiceAudioSource;
 
 
     public UnityEvent<DeathData> getDeathEvent()
@@ -256,15 +261,21 @@ public class PogoControls : PlayerSubject, TimerObserver
         Physics.IgnoreLayerCollision(3, 4, true);
 
 
-        if (jumpFxs.Length > 0 && audioSource)
+        if (jumpFxs.Length > 0 && pogoAudioSource)
         {
             int choice = UnityEngine.Random.Range(0, jumpFxs.Length);
-            audioSource.PlayOneShot(jumpFxs[choice]);
+            pogoAudioSource.PlayOneShot(jumpFxs[choice]);
         }
     }
 
     float jumpForce = 0;
-    public float velocitySpringBonus = 10f;
+    public float velocitySpringMultiplier = 0.2f;
+    private float chargedCompressTime = 0;
+
+    float compressHalfTime;
+    float decompressHalfTime;
+
+    public float pogoCastRadius = 40f;
     void detectJumping()
     {
         Vector3 pogoCastStart = leanChild.transform.position + leanChild.transform.rotation * pogoRayCastOffset;
@@ -272,56 +283,70 @@ public class PogoControls : PlayerSubject, TimerObserver
         RaycastHit hit;
         LayerMask layerMask = ~0; // Collide with every layer
         
-        layerMask = ~LayerMask.GetMask("Water");
-        
-         if (flipType > 0)
-        {
-            if (currTrick > 0)
-            {
-                layerMask = ~0;
-                Physics.IgnoreLayerCollision(3, 4, false);
-            }
-        }
+        layerMask = ~LayerMask.GetMask("Player");
 
-        if (Physics.Raycast(pogoCastStart, -1 * leanChild.transform.up, out hit, pogoRayCastLength, layerMask))
+        if (Physics.SphereCast(pogoCastStart, pogoCastRadius, -1 * leanChild.transform.up, out hit, pogoRayCastLength, layerMask))
         {
             // Compress the spring if there is ground below us and we are moving downwards
             if (!grounded && rb.velocity.y <= 0)
             {
                 grounded = true;
                 jumpForce = baseJumpForce;
-                if (isChargingJump)
-                {
-                    jumpForce += maxChargedJumpForce;
-                }
+
+                jumpForce += Math.Max(Math.Abs(rb.velocity.y) * velocitySpringMultiplier, 100);
+
+                //if (isChargingJump)
+                //{
+                //    jumpForce += maxChargedJumpForce;
+                //}
+                chargedCompressTime = compressTime;
+
+                compressHalfTime = compressTime / 2;
+                decompressHalfTime = compressTime / 2;
+
                 lastGroundedPosition = transform.position;
                 groundedEvent();
             }
         }
-        
 
         if (grounded)
         {
             groundedTimer += Time.deltaTime;
 
-            // Current compression is inital_velocity * cos(time)
-            float maxCompression = jumpForce * springMaxCompression;
-            float bounceAmount = maxCompression * (-0.5f * Mathf.Cos(groundedTimer / compressTime * 2 * Mathf.PI) + 0.5f);
-            
-            // The spring is fully compressed, begin decompressing
-            if (bounceAmount > 1)
+            // For animations, we only want to slow down during compression, not while the spring is moving back up
+            if (isChargingJump && groundedTimer < compressHalfTime && compressHalfTime < maxCompressTime)
             {
-                bounceAmount = 1;
-                //groundedTimer = compressTime - groundedTimer;
+                // Compress the spring longer, and decompress faster, keeping the ratio the same
+                compressHalfTime += Time.deltaTime;
+                decompressHalfTime = compressTime / (compressHalfTime / compressTime);
+
+                jumpForce += (Time.deltaTime / maxCompressTime) * maxChargedJumpForce;
             }
+
+            // Current compression is inital_velocity * cos(time)
+
+            float maxCompression = jumpForce * springMaxCompression;
+            float bounceAmount;
+            float squashFactor;
+            if (groundedTimer < compressHalfTime)
+            {
+                bounceAmount = maxCompression * (-0.5f * Mathf.Cos(groundedTimer / compressHalfTime * Mathf.PI) + 0.5f);
+                squashFactor = bounceScale.Evaluate(groundedTimer / (2 * compressHalfTime));
+            } else
+            {
+                bounceAmount = maxCompression * (-0.5f * Mathf.Cos((groundedTimer - compressHalfTime) / decompressHalfTime * Mathf.PI + Mathf.PI) + 0.5f);
+                squashFactor = bounceScale.Evaluate((groundedTimer - compressHalfTime) / (2 * decompressHalfTime) + 0.5f);
+            }
+
+            // The spring is fully compressed, begin decompressing
+            bounceAmount = Mathf.Clamp(bounceAmount, 0, 1);
 
             mainPogoBody.transform.localPosition = pogoBodyHeightOffGround + springLength * Vector3.down * bounceAmount;
 
-            float squashFactor = bounceScale.Evaluate(groundedTimer / compressTime);
             pogoStick.transform.localScale = new Vector3(1, squashFactor, 1);
         }
 
-        if (groundedTimer > compressTime)
+        if (groundedTimer > compressHalfTime + decompressHalfTime)
         {
             {
                 Jump(jumpForce);
@@ -483,6 +508,16 @@ public class PogoControls : PlayerSubject, TimerObserver
         return dead;
     }
 
+    // Todo use names to 
+    public void playVoice(AudioClip voice)
+    {
+        if(voiceAudioSource != null)
+        {
+            Debug.Log("Playing Scream");
+            voiceAudioSource.PlayOneShot(voice);
+        }
+    }
+
 
     void OnCollisionEnter(Collision collision)
     {
@@ -504,6 +539,19 @@ public class PogoControls : PlayerSubject, TimerObserver
 
                 if(impactForce > lethalImpactThreshold)
                 {
+                    if(deathParticleEffect != null)
+                    {
+                        GameObject deathEffect = Instantiate(deathParticleEffect, contactPoints[i].point, Quaternion.identity);
+                        Destroy(deathEffect, 1.0f);
+                    }
+
+
+                    if (hurtFxs.Length > 0)
+                    {
+                        int voiceLine = UnityEngine.Random.Range(0, hurtFxs.Length);
+                        playVoice(hurtFxs[voiceLine]);
+                    }
+
                     setDead(true);
                     break;
                 }
@@ -518,6 +566,8 @@ public class PogoControls : PlayerSubject, TimerObserver
         Vector3 pogoCastStart = leanChild.transform.position + leanChild.transform.rotation * pogoRayCastOffset;
         Vector3 pogoCastEnd = pogoCastStart + leanChild.transform.up * (-pogoRayCastLength);
         Gizmos.DrawLine(pogoCastStart, pogoCastEnd);
+
+        Gizmos.DrawSphere(pogoCastStart + leanChild.transform.up * (-pogoRayCastLength + pogoCastRadius), pogoCastRadius);
 
         // Draw the pogo stick center
         Gizmos.DrawSphere(pogoStick.transform.position + leanChild.transform.rotation * flipAxisOffset, 4);

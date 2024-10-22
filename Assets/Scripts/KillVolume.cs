@@ -5,6 +5,7 @@ using UnityEngine;
 public class KillVolume : MonoBehaviour
 {
     // Start is called before the first frame update
+    public AudioClip fallScream;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -15,6 +16,11 @@ public class KillVolume : MonoBehaviour
         if(playerControls != null )
         {
             playerControls.setDead(true);
+
+            if (fallScream != null)
+            {
+                playerControls.playVoice(fallScream);
+            }
         }
         
     }
