@@ -81,7 +81,6 @@ public class PogoControls : PlayerSubject, TimerObserver
     public AudioClip[] jumpFxs;
     public AudioSource audioSource;
 
-
     // Start is called before the first frame update
     void Start()
     {
@@ -132,6 +131,7 @@ public class PogoControls : PlayerSubject, TimerObserver
         Debug.Log("Jump released");
         isChargingJump = false;
     }
+
 
     void FixedUpdate()
     {
