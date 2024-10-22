@@ -66,7 +66,11 @@ public class PogoControls : PlayerSubject, TimerObserver
     public float lethalImpactThreshold = 0;
     public GameObject ragdollBody;
     public GameObject[] pogoStickComponents;
+
     public Camera cam; //Hacky fix for camera issues
+    private Vector3 camStartPosition;
+    private Quaternion camStartRotation;
+
     public GameObject deathPogoStick; // Disable the acutal pogostick and replace it with a dummy on death
 
     private bool dead { get; set; }
@@ -78,7 +82,6 @@ public class PogoControls : PlayerSubject, TimerObserver
     // These won't be needed once we have an animator
     private Quaternion[] startBoneRotations;
     private Vector3[] startBonePositions;
-    private Vector3 startCameraPosition;
 
     public AnimationCurve bounceScale;
     private float groundedTimer = 0;
@@ -86,12 +89,12 @@ public class PogoControls : PlayerSubject, TimerObserver
 
     // Transforms used for rotations
     public Transform pogoStick; // Will flip around it's side axis
+    private Vector3 pogoStickStartPosition; // Used to keep the pogostick a constant distance from it's parent 
+
     public Transform leanChild; // Will rotate around forward axis, should be the child of pogostick
     private Rigidbody rb;
     private PlayerInputActions playerInputActions;
     private Vector2 leanInputVector;
-    private float maxChargeTime = 2.0f;
-    private float chargeTime = 0.0f;
     private bool isChargingJump = false;
 
     public AudioClip[] jumpFxs;
@@ -118,7 +121,7 @@ public class PogoControls : PlayerSubject, TimerObserver
         playerInputActions.Player.Restart.Enable();
         playerInputActions.Player.Restart.performed += OnRestart;
 
-        startCameraPosition = cam.transform.localPosition;
+
         startBoneRotations = new Quaternion[ragdollBones.Length];
         startBonePositions = new Vector3[ragdollBones.Length];
         for (int i = 0; i < ragdollBones.Length; i++)
@@ -130,6 +133,11 @@ public class PogoControls : PlayerSubject, TimerObserver
         }
 
         ToggleRagdoll(false);
+           
+        camStartPosition = cam.transform.localPosition;
+        camStartRotation = cam.transform.localRotation;
+
+        pogoStickStartPosition = pogoStick.transform.localPosition;
 
         NotifyTrickObservers(PlayerTricks.None);
     }
@@ -143,7 +151,6 @@ public class PogoControls : PlayerSubject, TimerObserver
     {
         Debug.Log("Jump held");
         isChargingJump = true;
-        chargeTime = 0.0f;
     }
 
     private void OnChargeJumpReleased(InputAction.CallbackContext context)
@@ -351,6 +358,7 @@ public class PogoControls : PlayerSubject, TimerObserver
         }
     }
 
+
     void rotatePlayer()
     {
         leanInputVector = playerInputActions.Player.Lean.ReadValue<Vector2>();
@@ -431,7 +439,9 @@ public class PogoControls : PlayerSubject, TimerObserver
             {
                 ragdollBones[i].gameObject.transform.localRotation = startBoneRotations[i];
                 ragdollBones[i].gameObject.transform.localPosition = startBonePositions[i];
-                cam.transform.localPosition = startCameraPosition;
+                cam.transform.localPosition = camStartPosition;
+                cam.transform.localRotation = camStartRotation;
+                pogoStick.localPosition = pogoStickStartPosition;
             }
         } else
         {
