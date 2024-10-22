@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Splines;
+using Unity.Mathematics;
 
 /*
  * POGO STICK CONTROLS
@@ -81,7 +83,19 @@ public class PogoControls : PlayerSubject, TimerObserver
     public AudioClip[] jumpFxs;
     public AudioSource audioSource;
 
-
+    // Rail grinding variables
+    private bool isGrinding = false;
+    private RailScript currentRailScript;
+    private float grindElapsedTime;
+    private float timeForFullSpline;
+    private bool normalDir;
+    public float grindSpeed = 15f; // 200 
+    public float heightOffset = 1f; // 10
+    public float lerpSpeed = 15f; // 200
+    private bool reEnableCollidersPending = false;
+    private float colliderReEnableDelay = 0.1f; 
+    private float colliderReEnableTimer = 0f;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -127,6 +141,13 @@ public class PogoControls : PlayerSubject, TimerObserver
 
     private void OnChargeJumpReleased(InputAction.CallbackContext context)
     {
+        if (isGrinding)
+        {
+        EndGrinding();
+        // Not sure if needed, experiment with this
+        rb.AddForce(Vector3.up * baseJumpForce, ForceMode.VelocityChange);
+        }
+
         //float jumpForce = Mathf.Lerp(baseJumpForce, maxChargedJumpForce, chargeTime / maxChargeTime);
         //Jump(jumpForce);
         Debug.Log("Jump released");
@@ -135,11 +156,17 @@ public class PogoControls : PlayerSubject, TimerObserver
 
     void FixedUpdate()
     {
-        if (!dead)
+        if (isGrinding)
+        {
+            MoveAlongRail();
+        }
+        else if (!dead)
         {
             detectJumping();
             countFlips();
+           
         }
+
         else if (isChargingJump)
         {
             dead = false;
@@ -157,11 +184,27 @@ public class PogoControls : PlayerSubject, TimerObserver
 
     private void Update()
     {
-        handleControls();
-        if (!dead)
+    handleControls();
+
+    // Very jank timer for a smoother jump at the end of a rail
+    if (reEnableCollidersPending)
+    {
+        colliderReEnableTimer += Time.deltaTime;
+        if (colliderReEnableTimer >= colliderReEnableDelay)
+        {
+            SetPlayerCollidersTrigger(false);
+            Physics.IgnoreLayerCollision(3, 4, false);
+            reEnableCollidersPending = false; 
+        }
+    }
+
+    if (!dead)
+    {
+        if (!isGrinding)
         {
             rotatePlayer();
         }
+    }
     }
 
     // Called when the pogo stick hits the ground
@@ -333,6 +376,10 @@ public class PogoControls : PlayerSubject, TimerObserver
 
     void rotatePlayer()
     {
+        if (isGrinding)
+        {
+            return;
+        }
         leanInputVector = playerInputActions.Player.Lean.ReadValue<Vector2>();
         float forwardInput = leanInputVector.y;
         float sideInput = leanInputVector.x;
@@ -443,7 +490,11 @@ public class PogoControls : PlayerSubject, TimerObserver
             Debug.LogWarning("No Rigidbody attached to this object.");
             return;
         }
-
+        if (collision.gameObject.CompareTag("Rail"))
+        {
+            StartGrinding(collision.gameObject);
+            return;
+        }
         ContactPoint[] contactPoints = new ContactPoint[collision.contactCount];
         collision.GetContacts(contactPoints);
 
@@ -504,4 +555,99 @@ public class PogoControls : PlayerSubject, TimerObserver
         //TODO Implement action after Times up
         throw new NotImplementedException();
     }
+    void StartGrinding(GameObject railObject)
+    {
+
+        if (isGrinding)
+            return;
+
+        isGrinding = true;
+        currentRailScript = railObject.GetComponent<RailScript>();
+        if (currentRailScript == null)
+        {
+            Debug.LogError("RailScript not found on the rail object.");
+            isGrinding = false;
+            return;
+        }
+
+        Vector3 splinePoint;
+        float normalizedTime = currentRailScript.CalculateTargetRailPoint(transform.position, out splinePoint);
+        grindElapsedTime = normalizedTime;
+
+        float3 pos, forward, up;
+        SplineUtility.Evaluate(currentRailScript.railSpline.Spline, normalizedTime, out pos, out forward, out up);
+        currentRailScript.CalculateDirection(forward, transform.forward);
+        normalDir = currentRailScript.normalDir;
+
+        transform.position = splinePoint + (transform.up * heightOffset);
+
+        rb.isKinematic = true;
+        SetPlayerCollidersTrigger(true);
+    }
+
+    void MoveAlongRail()
+    {
+    if (currentRailScript == null)
+        return;
+
+    float deltaProgress = (grindSpeed / currentRailScript.totalSplineLength) * Time.deltaTime;
+    grindElapsedTime += normalDir ? deltaProgress : -deltaProgress;
+
+    float progress = grindElapsedTime;
+
+    // For debugging: check that progress doesn't end early
+    // Debug.Log($"Progress: {progress}, GrindElapsedTime: {grindElapsedTime}, DeltaProgress: {deltaProgress}");
+
+    if (progress < -0.01f || progress > 1.01f)
+    {
+        EndGrinding();
+        
+        return;
+    }
+
+        float3 pos, tangent, up;
+        float3 nextPosFloat, nextTan, nextUp;
+
+        // Evaluate current position on the spline
+        SplineUtility.Evaluate(currentRailScript.railSpline.Spline, progress, out pos, out tangent, out up);
+
+        float nextProgress = progress + (normalDir ? deltaProgress : -deltaProgress);
+        SplineUtility.Evaluate(currentRailScript.railSpline.Spline, nextProgress, out nextPosFloat, out nextTan, out nextUp);
+
+        Vector3 worldPos = currentRailScript.LocalToWorldConversion(pos);
+        Vector3 nextPos = currentRailScript.LocalToWorldConversion(nextPosFloat);
+
+        transform.position = worldPos + (transform.up * heightOffset);
+
+        Quaternion targetRotation = Quaternion.LookRotation(nextPos - worldPos, up);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, lerpSpeed * Time.deltaTime);
+    }
+
+void EndGrinding()
+{
+    isGrinding = false;
+    currentRailScript = null;
+    rb.isKinematic = false;
+
+    // Experiment with this and maybe remove in the future
+    Physics.IgnoreLayerCollision(3, 4, true);
+    transform.position += transform.up * 0.5f;
+
+
+    rb.AddForce(leanChild.transform.up * 200f, ForceMode.Impulse);
+    pogoStick.transform.localScale = Vector3.one;
+
+
+    reEnableCollidersPending = true;
+    colliderReEnableTimer = 0f; 
+}
+
+void SetPlayerCollidersTrigger(bool isTrigger)
+{
+    Collider[] colliders = GetComponentsInChildren<Collider>();
+    foreach (Collider col in colliders)
+    {
+        col.isTrigger = isTrigger;
+    }
+}
 }
