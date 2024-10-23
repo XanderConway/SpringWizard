@@ -77,8 +77,9 @@ public class UITimer : TimerSubject
         NotifyTimesUp(true);
         timerText.text = "Time's up!";
 
-        Scene scene = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(scene.name);
+        SceneManager.LoadScene(2);
+        //Scene scene = SceneManager.GetActiveScene();
+        //SceneManager.LoadScene(scene.name);
     }
 
 
