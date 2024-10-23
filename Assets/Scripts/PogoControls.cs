@@ -617,7 +617,7 @@ public class PogoControls : PlayerSubject, TimerObserver
         Gizmos.DrawSphere(pogoCastStart + leanChild.transform.up * (-pogoRayCastLength + pogoCastRadius), pogoCastRadius);
 
         // Draw the pogo stick center
-        Gizmos.DrawSphere(pogoStick.transform.position + leanChild.transform.rotation * flipAxisOffset, 4);
+        Gizmos.DrawSphere(pogoStick.transform.position + leanChild.transform.rotation * flipAxisOffset, 0.3f);
     }
 
     public void ApplySpringboardForce(float force)
