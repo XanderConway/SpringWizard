@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -12,7 +13,7 @@ public class UITimer : TimerSubject
 
 
     //UI elements
-    public Text timerText;
+    public TextMeshProUGUI timerText;
 
 
     // Update is called once per frame

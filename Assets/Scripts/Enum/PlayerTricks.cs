@@ -6,5 +6,6 @@ public enum PlayerTricks
       NoHandsBackFlip,
       NoFeetFrontFlip,
       NoFeetBackFlip,
-      None
+      None,
+      Death,
 }

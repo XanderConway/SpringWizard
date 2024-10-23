@@ -1,6 +1,21 @@
 using System;
+using System.Collections.Generic;
+using UnityEditor.Build;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
+
+
+public class DeathData
+{
+    public Vector3 lastGroundedPosition;
+    public Vector3 deathPosition;
+    public DeathData(Vector3 lastGroundedPosition, Vector3 deathPosition)
+    {
+        this.lastGroundedPosition = lastGroundedPosition;
+        this.deathPosition = deathPosition;
+    }
+}
 
 /*
  * POGO STICK CONTROLS
@@ -34,6 +49,7 @@ public class PogoControls : PlayerSubject, TimerObserver
     // Jump detection parameters
     public float pogoRayCastLength = 10f;
     public Vector3 pogoRayCastOffset = Vector3.zero;
+    public float pogoCastRadius = 40f;
 
     // The axis to rotate the player around when doing flips in the air
     public Vector3 flipAxisOffset = Vector3.zero;
@@ -41,28 +57,38 @@ public class PogoControls : PlayerSubject, TimerObserver
     // Parameters for jump forces
     public float baseJumpForce = 1.0f;
     public float maxChargedJumpForce = 1.0f;
+    public float maxCompressTime = 1.0f;
     public float compressTime = 0.4f;
 
-    // Used for spring compression animation (Purely Aesthetic)
+    // Used for spring compression animation (Aesthetic)
     public GameObject mainPogoBody;
+    public float velocitySpringMultiplier = 0.2f;
     public float springLength = 1.0f;
     public float springMaxCompression = 0.003f;
     private Vector3 pogoBodyHeightOffGround;
+    public GameObject jumpParticle;
 
-    // To handle player Death
+    // Parameters to handle Ragdoll and player death
     public float lethalImpactThreshold = 0;
-    public GameObject ragdollBody;
+    public GameObject ragdollBody; // The body of the character that will ragdoll on death
+    public List<Collider> playerCollders; // Colliders that will be disabled when the player dies
     public GameObject[] pogoStickComponents;
-    public Camera cam; //Hacky fix for camera issues
-    public GameObject deathPogoStick; // Disable the acutal pogostick and replace it with a dummy on death
-    private bool dead = false;
-    private Vector3 respawnPoint;
+    public GameObject deathCollider;
+    public GameObject deathParticleEffect;
+    private bool dead { get; set; }
+    private UnityEvent<DeathData> deathEvent = new UnityEvent<DeathData>();
     private Rigidbody[] ragdollBones;
-
-    // These won't be needed once we have an animator
     private Quaternion[] startBoneRotations;
     private Vector3[] startBonePositions;
-    private Vector3 startCameraPosition;
+
+    private List<Collider> ragDollColliders;
+
+
+    public Camera cam; //Hacky fix for camera issues
+    private Vector3 camStartPosition;
+    private Quaternion camStartRotation;
+
+    private Vector3 lastGroundedPosition;
 
     public AnimationCurve bounceScale;
     private float groundedTimer = 0;
@@ -70,17 +96,28 @@ public class PogoControls : PlayerSubject, TimerObserver
 
     // Transforms used for rotations
     public Transform pogoStick; // Will flip around it's side axis
+    private Vector3 pogoStickStartPosition; // Used to keep the pogostick a constant distance from it's parent 
     public Transform leanChild; // Will rotate around forward axis, should be the child of pogostick
+
     private Rigidbody rb;
+
+    // Input parameters
     private PlayerInputActions playerInputActions;
     private Vector2 leanInputVector;
-    private float maxChargeTime = 2.0f;
-    private float chargeTime = 0.0f;
     private bool isChargingJump = false;
 
     public AudioClip[] jumpFxs;
-    public AudioSource audioSource;
+    public AudioClip[] hurtFxs;
+    public AudioClip[] flipFxs;
 
+    public AudioSource pogoAudioSource;
+    public AudioSource voiceAudioSource;
+
+
+    public UnityEvent<DeathData> getDeathEvent()
+    {
+        return deathEvent;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -97,7 +134,7 @@ public class PogoControls : PlayerSubject, TimerObserver
         playerInputActions.Player.Restart.Enable();
         playerInputActions.Player.Restart.performed += OnRestart;
 
-        startCameraPosition = cam.transform.localPosition;
+
         startBoneRotations = new Quaternion[ragdollBones.Length];
         startBonePositions = new Vector3[ragdollBones.Length];
         for (int i = 0; i < ragdollBones.Length; i++)
@@ -108,8 +145,12 @@ public class PogoControls : PlayerSubject, TimerObserver
             }
         }
 
-        ToggleRagdoll(false);
+        camStartPosition = cam.transform.localPosition;
+        camStartRotation = cam.transform.localRotation;
 
+        pogoStickStartPosition = pogoStick.transform.localPosition;
+
+        ToggleRagdoll(false);
         NotifyTrickObservers(PlayerTricks.None);
     }
 
@@ -120,16 +161,11 @@ public class PogoControls : PlayerSubject, TimerObserver
 
     void OnChargeJumpStarted(InputAction.CallbackContext context)
     {
-        Debug.Log("Jump held");
         isChargingJump = true;
-        chargeTime = 0.0f;
     }
 
     private void OnChargeJumpReleased(InputAction.CallbackContext context)
     {
-        //float jumpForce = Mathf.Lerp(baseJumpForce, maxChargedJumpForce, chargeTime / maxChargeTime);
-        //Jump(jumpForce);
-        Debug.Log("Jump released");
         isChargingJump = false;
     }
 
@@ -139,19 +175,6 @@ public class PogoControls : PlayerSubject, TimerObserver
         {
             detectJumping();
             countFlips();
-        }
-        else if (isChargingJump)
-        {
-            dead = false;
-            setDead(false);
-            transform.position = respawnPoint + Vector3.up * 10;
-            transform.rotation = Quaternion.identity;
-
-            pogoStick.transform.localPosition = Vector3.zero;
-            pogoStick.rotation = Quaternion.identity;
-
-            leanChild.transform.localPosition = Vector3.zero;
-            leanChild.rotation = Quaternion.identity;
         }
     }
 
@@ -173,14 +196,12 @@ public class PogoControls : PlayerSubject, TimerObserver
         {
             if (currTrick > 0)
             {
-                // Debug.Log("ICE");
                 NotifyTrickObservers(PlayerTricks.NoHandsFrontFlip);
 
             }
             else if (currTrick < 0)
             {
                 NotifyTrickObservers(PlayerTricks.NoFeetFrontFlip);
-                // Debug.Log("EARTH");
             }
             else
             {
@@ -192,12 +213,10 @@ public class PogoControls : PlayerSubject, TimerObserver
             {
                 if (currTrick > 0)
                 {
-                    // Debug.Log("FIRE");
                     NotifyTrickObservers(PlayerTricks.NoHandsBackFlip);
                 }
                 else if (currTrick < 0)
                 {
-                    // Debug.Log("AIR");
                     NotifyTrickObservers(PlayerTricks.NoFeetBackFlip);
                 }
                 else
@@ -225,15 +244,20 @@ public class PogoControls : PlayerSubject, TimerObserver
         Physics.IgnoreLayerCollision(3, 4, true);
 
 
-        if (jumpFxs.Length > 0 && audioSource)
+        if (jumpFxs.Length > 0 && pogoAudioSource)
         {
             int choice = UnityEngine.Random.Range(0, jumpFxs.Length);
-            audioSource.PlayOneShot(jumpFxs[choice]);
+            pogoAudioSource.PlayOneShot(jumpFxs[choice]);
         }
     }
 
+    // TODO Clean up global variables
     float jumpForce = 0;
-    public float velocitySpringBonus = 10f;
+    private float chargedCompressTime = 0;
+
+    float compressHalfTime;
+    float decompressHalfTime;
+    RaycastHit groundHit;
     void detectJumping()
     {
         Vector3 pogoCastStart = leanChild.transform.position + leanChild.transform.rotation * pogoRayCastOffset;
@@ -241,60 +265,74 @@ public class PogoControls : PlayerSubject, TimerObserver
         RaycastHit hit;
         LayerMask layerMask = ~0; // Collide with every layer
         
-        layerMask = ~LayerMask.GetMask("Water");
-        
-         if (flipType > 0)
-        {
-            if (currTrick > 0)
-            {
-                layerMask = ~0;
-                Physics.IgnoreLayerCollision(3, 4, false);
-            }
-        }
+        layerMask = ~LayerMask.GetMask("Player");
 
-        if (Physics.Raycast(pogoCastStart, -1 * leanChild.transform.up, out hit, pogoRayCastLength, layerMask))
+        if (Physics.SphereCast(pogoCastStart, pogoCastRadius, -1 * leanChild.transform.up, out hit, pogoRayCastLength, layerMask))
         {
             // Compress the spring if there is ground below us and we are moving downwards
             if (!grounded && rb.velocity.y <= 0)
             {
                 grounded = true;
                 jumpForce = baseJumpForce;
-                if (isChargingJump)
-                {
-                    jumpForce += maxChargedJumpForce;
-                }
+
+                jumpForce += Math.Max(Math.Abs(rb.velocity.y) * velocitySpringMultiplier, 100);
+
+                chargedCompressTime = compressTime;
+
+                compressHalfTime = compressTime / 2;
+                decompressHalfTime = compressTime / 2;
+
+                lastGroundedPosition = transform.position;
+
+                groundHit = hit;
                 groundedEvent();
             }
         }
-        //else if ice trick is triggered
-        
 
         if (grounded)
         {
-            respawnPoint = transform.position;
             groundedTimer += Time.deltaTime;
 
-            // Current compression is inital_velocity * cos(time)
-            float maxCompression = jumpForce * springMaxCompression;
-            float bounceAmount = maxCompression * (-0.5f * Mathf.Cos(groundedTimer / compressTime * 2 * Mathf.PI) + 0.5f);
-            
-            // The spring is fully compressed, begin decompressing
-            if (bounceAmount > 1)
+            // For animations, we only want to slow down during compression, not while the spring is moving back up
+            if (isChargingJump && groundedTimer < compressHalfTime && compressHalfTime < maxCompressTime)
             {
-                bounceAmount = 1;
-                //groundedTimer = compressTime - groundedTimer;
+                // Compress the spring longer, and decompress faster, keeping the ratio the same
+                compressHalfTime += Time.deltaTime;
+                decompressHalfTime = compressTime / (compressHalfTime / compressTime);
+
+                jumpForce += (Time.deltaTime / maxCompressTime) * maxChargedJumpForce;
             }
+
+            // Current compression is inital_velocity * cos(time)
+
+            float maxCompression = jumpForce * springMaxCompression;
+            float bounceAmount;
+            float squashFactor;
+            if (groundedTimer < compressHalfTime)
+            {
+                bounceAmount = maxCompression * (-0.5f * Mathf.Cos(groundedTimer / compressHalfTime * Mathf.PI) + 0.5f);
+                squashFactor = bounceScale.Evaluate(groundedTimer / (2 * compressHalfTime));
+            } else
+            {
+                bounceAmount = maxCompression * (-0.5f * Mathf.Cos((groundedTimer - compressHalfTime) / decompressHalfTime * Mathf.PI + Mathf.PI) + 0.5f);
+                squashFactor = bounceScale.Evaluate((groundedTimer - compressHalfTime) / (2 * decompressHalfTime) + 0.5f);
+            }
+
+            // The spring is fully compressed, begin decompressing
+            bounceAmount = Mathf.Clamp(bounceAmount, 0, 1);
 
             mainPogoBody.transform.localPosition = pogoBodyHeightOffGround + springLength * Vector3.down * bounceAmount;
 
-            //float squashFactor = bounceScale.Evaluate(groundedTimer / compressTime);
-            //pogoStick.transform.localScale = new Vector3(1, squashFactor, 1);
+            pogoStick.transform.localScale = new Vector3(1, squashFactor, 1);
         }
 
-        if (groundedTimer > compressTime)
+        if (groundedTimer > compressHalfTime + decompressHalfTime)
         {
             {
                 Jump(jumpForce);
+
+                GameObject jumpEffect = Instantiate(jumpParticle, pogoStick.transform.position, Quaternion.FromToRotation(Vector3.up, groundHit.normal));
+                Destroy(jumpEffect, 1.0f);
 
                 groundedTimer = 0;
                 fireJumpBoost = 0;
@@ -318,18 +356,24 @@ public class PogoControls : PlayerSubject, TimerObserver
 
         if (currentFlipAngle > 270)
         {
-            Debug.Log("Front Flip!");
             flipType = 1;
             currentFlipAngle = 0;
+
+            if(flipFxs.Length > 0)
+            {
+                pogoAudioSource.PlayOneShot(flipFxs[0]);
+            }
         } 
 
         if (currentFlipAngle < -270)
         {
-            Debug.Log("Back Flip!");
             flipType = -1;
             currentFlipAngle = 0;
+
+            pogoAudioSource.PlayOneShot(flipFxs[1]);
         }
     }
+
 
     void rotatePlayer()
     {
@@ -388,6 +432,14 @@ public class PogoControls : PlayerSubject, TimerObserver
         }
     }
 
+    private void setCollidersActive(List<Collider> components, bool active)
+    {
+        for (int i = 0; i < components.Count; i++)
+        {
+            components[i].enabled = active;
+        }
+    }
+
     public void ToggleRagdoll(bool useRagdoll)
     {
 
@@ -396,6 +448,7 @@ public class PogoControls : PlayerSubject, TimerObserver
 
             ragdollBone.isKinematic = !useRagdoll;
             ragdollBone.gameObject.GetComponent<Collider>().enabled = useRagdoll;
+            ragdollBone.velocity = rb.velocity;
         }
 
 
@@ -404,26 +457,36 @@ public class PogoControls : PlayerSubject, TimerObserver
             pogoStickComponents[i].SetActive(!useRagdoll);
         }
 
-        // This can be buggy and won't be needed once we have animations
+        // Setting bone positions manually can be buggy, and won't be needed once we have animation
         if (!useRagdoll)
         {
             for (int i = 0; i < ragdollBones.Length; i++)
             {
                 ragdollBones[i].gameObject.transform.localRotation = startBoneRotations[i];
                 ragdollBones[i].gameObject.transform.localPosition = startBonePositions[i];
-                cam.transform.localPosition = startCameraPosition;
+                cam.transform.localPosition = camStartPosition;
+                cam.transform.localRotation = camStartRotation;
+                pogoStick.localPosition = pogoStickStartPosition;
             }
+
+            setCollidersActive(playerCollders, true);
+            rb.isKinematic = false;
         } else
         {
-            //GameObject tempPogoStick = Instantiate(deathPogoStick, pogoStickComponents[1].transform);
-            //Destroy(tempPogoStick, 1.0f);
-
+            setCollidersActive(playerCollders, false);
+            rb.isKinematic = true;
         }
     }
 
     // Disable player model, and spawn rag doll.
     public void setDead(bool isDead)
     {
+        if(isDead)
+        {
+            DeathData data = new DeathData(lastGroundedPosition, transform.position);
+            deathEvent.Invoke(data);
+            NotifyTrickObservers(PlayerTricks.Death);
+        }
         dead = isDead;
         ToggleRagdoll(isDead);
 
@@ -432,6 +495,16 @@ public class PogoControls : PlayerSubject, TimerObserver
     public bool IsDead()
     {
         return dead;
+    }
+
+    // Todo use names to 
+    public void playVoice(AudioClip voice)
+    {
+        if(voiceAudioSource != null)
+        {
+            Debug.Log("Playing Scream");
+            voiceAudioSource.PlayOneShot(voice);
+        }
     }
 
 
@@ -449,14 +522,25 @@ public class PogoControls : PlayerSubject, TimerObserver
 
         for (int i = 0; i < contactPoints.Length; i++)
         {   
-            // Extremely hacky solution for now
-            if (contactPoints[i].thisCollider.gameObject.name == "wizard_pose_v001")
+            if (deathCollider != null && contactPoints[i].thisCollider.gameObject == deathCollider)
             {
                 float impactForce = collision.relativeVelocity.magnitude;
 
                 if(impactForce > lethalImpactThreshold)
                 {
-                    Debug.Log("DEATH " + impactForce);
+                    if(deathParticleEffect != null)
+                    {
+                        GameObject deathEffect = Instantiate(deathParticleEffect, contactPoints[i].point, Quaternion.identity);
+                        Destroy(deathEffect, 1.0f);
+                    }
+
+
+                    if (hurtFxs.Length > 0)
+                    {
+                        int voiceLine = UnityEngine.Random.Range(0, hurtFxs.Length);
+                        playVoice(hurtFxs[voiceLine]);
+                    }
+
                     setDead(true);
                     break;
                 }
@@ -471,6 +555,8 @@ public class PogoControls : PlayerSubject, TimerObserver
         Vector3 pogoCastStart = leanChild.transform.position + leanChild.transform.rotation * pogoRayCastOffset;
         Vector3 pogoCastEnd = pogoCastStart + leanChild.transform.up * (-pogoRayCastLength);
         Gizmos.DrawLine(pogoCastStart, pogoCastEnd);
+
+        Gizmos.DrawSphere(pogoCastStart + leanChild.transform.up * (-pogoRayCastLength + pogoCastRadius), pogoCastRadius);
 
         // Draw the pogo stick center
         Gizmos.DrawSphere(pogoStick.transform.position + leanChild.transform.rotation * flipAxisOffset, 4);
