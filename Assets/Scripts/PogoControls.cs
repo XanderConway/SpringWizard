@@ -712,8 +712,8 @@ public class PogoControls : PlayerSubject, TimerObserver
 
         transform.position = worldPos + (transform.up * heightOffset);
 
-        Quaternion targetRotation = Quaternion.LookRotation(nextPos - worldPos, up);
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, lerpSpeed * Time.deltaTime);
+        //Quaternion targetRotation = Quaternion.LookRotation(nextPos - worldPos, up);
+        //transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, lerpSpeed * Time.deltaTime);
     }
 
 void EndGrinding()

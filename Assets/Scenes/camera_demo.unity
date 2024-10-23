@@ -471,17 +471,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2102643154736519835, guid: f4a0229da9825964f9d9fbb3d32e4010, type: 3}
   m_PrefabInstance: {fileID: 1869294550}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &263611748 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3720491296095361428, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
-  m_PrefabInstance: {fileID: 1403221865}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e6895922ac2ed04e8d8324cfadc7584, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &275648612 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8750781227356101015, guid: 5fe725b08128a734abfb4e1215b68b4d, type: 3}
@@ -1244,10 +1233,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48752ccd428bbcc42a98ea7be14b1d6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _player: {fileID: 263611748}
-  _collectibes: []
-  _trickScoreText: {fileID: 1302946740}
-  _trickNameText: {fileID: 635507407}
+  player: {fileID: 0}
+  collectibesParent: {fileID: 0}
+  trickScoreText: {fileID: 0}
+  trickNameText: {fileID: 0}
+  comboScoreText: {fileID: 0}
 --- !u!1001 &434071028
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2994,7 +2984,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   countdownTime: 60
-  timerText: {fileID: 1180774843}
+  timerText: {fileID: 0}
 --- !u!114 &1180774843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3556,15 +3546,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8829146388634044418, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1652
+      value: -488
       objectReference: {fileID: 0}
     - target: {fileID: 8829146388634044418, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 849
+      value: 386
       objectReference: {fileID: 0}
     - target: {fileID: 8829146388634044418, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -482
+      value: 387.7
       objectReference: {fileID: 0}
     - target: {fileID: 8829146388634044418, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3596,31 +3586,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9208229659224443851, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.000011444092
+      value: 1.2500238
       objectReference: {fileID: 0}
     - target: {fileID: 9208229659224443851, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 40
+      value: 66.500015
       objectReference: {fileID: 0}
     - target: {fileID: 9208229659224443851, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -149.99997
+      value: -154.97502
       objectReference: {fileID: 0}
     - target: {fileID: 9208229659224443851, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9957089
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9208229659224443851, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.092541374
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9208229659224443851, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.00000008459604
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9208229659224443851, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.000000008621736
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4311,8 +4301,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1819560568}
   - component: {fileID: 1819560571}
-  - component: {fileID: 1819560570}
-  - component: {fileID: 1819560569}
+  - component: {fileID: 1819560572}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -4335,55 +4324,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1835378264}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1819560569
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1819560567}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa7155796051b734daa718462081dc5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_BindingMode: 1
-  m_FollowOffset: {x: 0, y: 40, z: -150}
-  m_XDamping: 1.8
-  m_YDamping: 1.8
-  m_ZDamping: 0.65
-  m_AngularDampingMode: 0
-  m_PitchDamping: 0
-  m_YawDamping: 0.1
-  m_RollDamping: 0
-  m_AngularDamping: 0
---- !u!114 &1819560570
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1819560567}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4044717213e31446939f7bd49c896ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TrackedObjectOffset: {x: 0, y: 10, z: 10}
-  m_LookaheadTime: 0
-  m_LookaheadSmoothing: 0
-  m_LookaheadIgnoreY: 0
-  m_HorizontalDamping: 0.5
-  m_VerticalDamping: 0.5
-  m_ScreenX: 0.5
-  m_ScreenY: 0.5
-  m_DeadZoneWidth: 0.065
-  m_DeadZoneHeight: 0.547
-  m_SoftZoneWidth: 0.11
-  m_SoftZoneHeight: 0.547
-  m_BiasX: 0
-  m_BiasY: 0
-  m_CenterOnActivate: 1
 --- !u!114 &1819560571
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -4396,6 +4336,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1819560572
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1819560567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd6043bde05a7fc4cba197d06915c1e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Damping: {x: 0, y: 0, z: 0}
+  ShoulderOffset: {x: 0.5, y: 26.2, z: -59.99}
+  VerticalArmLength: 0.4
+  CameraSide: 1
+  CameraDistance: 2
+  CameraCollisionFilter:
+    serializedVersion: 2
+    m_Bits: 0
+  IgnoreTag: 
+  CameraRadius: 0.2
+  DampingIntoCollision: 0
+  DampingFromCollision: 2
 --- !u!1 &1835378262
 GameObject:
   m_ObjectHideFlags: 0
@@ -4431,7 +4395,7 @@ MonoBehaviour:
   m_LockStageInInspector: 
   m_StreamingVersion: 20170927
   m_Priority: 10
-  m_StandbyUpdate: 2
+  m_StandbyUpdate: 1
   m_LookAt: {fileID: 1403221866}
   m_Follow: {fileID: 1403221866}
   m_Lens:
@@ -4461,8 +4425,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1835378262}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.075805455, y: 0.57111514, z: -0.05307955, w: 0.815637}
-  m_LocalPosition: {x: -1792.9539, y: 889, z: -533.30304}
+  m_LocalRotation: {x: 0, y: 0.5735764, z: 0, w: 0.8191521}
+  m_LocalPosition: {x: -546.08057, y: 412.6, z: 366.02832}
   m_LocalScale: {x: 1, y: 1.5529, z: 0.12843491}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5522,35 +5486,35 @@ MonoBehaviour:
       TangentIn:
         x: -0
         y: -0
-        z: -49.25203
+        z: -23.994587
       TangentOut:
         x: 0
         y: 0
-        z: 49.25203
+        z: 23.994587
       Rotation:
         value:
-          x: 0.32604042
-          y: 0.389888
-          z: -0.14975241
-          w: 0.8480914
+          x: 0.03954523
+          y: -0.048437007
+          z: -0.3434557
+          w: 0.937085
     - Position:
-        x: 277.61926
-        y: -329.88892
+        x: -28.3
+        y: -9.8
         z: 238.06952
       TangentIn:
         x: -0
         y: -0
-        z: -108.847435
+        z: -60.843422
       TangentOut:
         x: 0
         y: 0
-        z: 72.26043
+        z: 97.81249
       Rotation:
         value:
-          x: 0.3916741
-          y: 0.5899873
-          z: 0.021182433
-          w: 0.7057319
+          x: 0.2610067
+          y: 0.31479195
+          z: -0.055167165
+          w: 0.9108996
     - Position:
         x: 461.61926
         y: -374.88892
@@ -5558,17 +5522,17 @@ MonoBehaviour:
       TangentIn:
         x: -0
         y: -0
-        z: -18.066002
+        z: -92.06759
       TangentOut:
         x: 0
         y: 0
-        z: 33.340103
+        z: 100.52378
       Rotation:
         value:
-          x: 0.6308699
-          y: -0.04331753
-          z: 0.13495724
-          w: 0.7628324
+          x: 0.50416404
+          y: -0.121126615
+          z: 0.1804448
+          w: 0.83581495
     - Position:
         x: -135.38074
         y: -498.88892
