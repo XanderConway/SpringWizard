@@ -169,6 +169,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7839310378828360355}
   - component: {fileID: 6495972874095575582}
+  - component: {fileID: 53117325417515965}
   m_Layer: 0
   m_Name: Virtual Camera
   m_TagString: Untagged
@@ -231,6 +232,36 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 3804969909183207884}
+--- !u!114 &53117325417515965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 414961275286371511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e501d18bb52cf8c40b1853ca4904654f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_CollideAgainst:
+    serializedVersion: 2
+    m_Bits: 1
+  m_IgnoreTag: 
+  m_TransparentLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_MinimumDistanceFromTarget: 0.1
+  m_AvoidObstacles: 1
+  m_DistanceLimit: 0
+  m_MinimumOcclusionTime: 0
+  m_CameraRadius: 0.1
+  m_Strategy: 0
+  m_MaximumEffort: 4
+  m_SmoothingTime: 0
+  m_Damping: 0
+  m_DampingWhenOccluded: 0
+  m_OptimalTargetDistance: 0
 --- !u!1 &422698638293378123
 GameObject:
   m_ObjectHideFlags: 0
@@ -447,7 +478,7 @@ Transform:
   m_GameObject: {fileID: 1367968252796130015}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -37.7, z: -0.70400095}
+  m_LocalPosition: {x: 0, y: 0, z: -0.70400095}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3573,8 +3604,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3804969909183207884}
   - component: {fileID: 6555683567650563470}
-  - component: {fileID: 9116478605813825240}
-  - component: {fileID: 3221160774273359269}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -3609,55 +3638,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &9116478605813825240
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6188161827623690632}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4044717213e31446939f7bd49c896ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TrackedObjectOffset: {x: 0, y: 0, z: 0}
-  m_LookaheadTime: 0
-  m_LookaheadSmoothing: 0
-  m_LookaheadIgnoreY: 0
-  m_HorizontalDamping: 0.5
-  m_VerticalDamping: 0.5
-  m_ScreenX: 0.5
-  m_ScreenY: 0.5
-  m_DeadZoneWidth: 0
-  m_DeadZoneHeight: 0
-  m_SoftZoneWidth: 0.8
-  m_SoftZoneHeight: 0.8
-  m_BiasX: 0
-  m_BiasY: 0
-  m_CenterOnActivate: 1
---- !u!114 &3221160774273359269
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6188161827623690632}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa7155796051b734daa718462081dc5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_BindingMode: 1
-  m_FollowOffset: {x: 0, y: 0, z: -10}
-  m_XDamping: 1
-  m_YDamping: 1
-  m_ZDamping: 1
-  m_AngularDampingMode: 0
-  m_PitchDamping: 0
-  m_YawDamping: 0
-  m_RollDamping: 0
-  m_AngularDamping: 0
 --- !u!1 &6226602044943942324
 GameObject:
   m_ObjectHideFlags: 0
@@ -4101,7 +4081,7 @@ Transform:
   m_GameObject: {fileID: 7178682417247575503}
   serializedVersion: 2
   m_LocalRotation: {x: -0.000000015192201, y: -0.00000008940698, z: -1.3582889e-15, w: 1}
-  m_LocalPosition: {x: -95, y: 49, z: -71.5}
+  m_LocalPosition: {x: 0, y: 10.9, z: -25}
   m_LocalScale: {x: 500, y: 500, z: 500}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5102,7 +5082,7 @@ Transform:
   m_GameObject: {fileID: 8722310485764097514}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 182.09154, y: -19.8, z: 34.895992}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -5172,7 +5152,7 @@ MonoBehaviour:
   pogoRayCastLength: 6.58
   pogoRayCastOffset: {x: 0, y: 4.97, z: 0}
   pogoCastRadius: 0.8
-  flipAxisOffset: {x: 0, y: 3.42, z: -0.63}
+  flipAxisOffset: {x: 0, y: 2.76, z: -0.6}
   baseJumpForce: 10
   maxChargedJumpForce: 25
   maxCompressTime: 0.5

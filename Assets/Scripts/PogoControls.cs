@@ -323,7 +323,7 @@ public class PogoControls : PlayerSubject, TimerObserver
                 grounded = true;
                 jumpForce = baseJumpForce;
 
-                jumpForce += Math.Max(Math.Abs(rb.velocity.y) * velocitySpringMultiplier, 100);
+                jumpForce += Math.Min(Math.Abs(rb.velocity.y) * velocitySpringMultiplier, 100);
 
                 chargedCompressTime = compressTime;
 
@@ -727,7 +727,7 @@ void EndGrinding()
     transform.position += transform.up * 0.5f;
 
 
-    rb.AddForce(leanChild.transform.up * 200f, ForceMode.Impulse);
+    rb.AddForce(leanChild.transform.up * 50f, ForceMode.Impulse);
     pogoStick.transform.localScale = Vector3.one;
 
 
