@@ -18,8 +18,28 @@ public class PauseMenu : MonoBehaviour
     private List<Button> menuButtons;
     private int selectedButtonIndex = 0; // Track currently selected button
 
-    void Awake()
+    //void Awake()
+    //{
+    //    playerInputActions = new PlayerInputActions();
+    //    playerInputActions.Player.Pause.Enable();
+    //    playerInputActions.Player.Pause.performed += OnPause;
+
+    //    // Enable button navigation
+    //    playerInputActions.Player.Navigate.Enable();
+    //    playerInputActions.Player.Navigate.performed += OnNavigate;
+
+    //    playerInputActions.Player.Select.Enable();
+    //    playerInputActions.Player.Select.performed += OnSelect;
+    //}
+
+    void Start()
     {
+        Time.timeScale = 1;
+        this.gameObject.SetActive(false);
+
+        // Initialize the list of buttons in the order you want them to be navigated
+        menuButtons = new List<Button> { resumeButton, restartButton, mainMenuButton };
+
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Pause.Enable();
         playerInputActions.Player.Pause.performed += OnPause;
@@ -30,15 +50,6 @@ public class PauseMenu : MonoBehaviour
 
         playerInputActions.Player.Select.Enable();
         playerInputActions.Player.Select.performed += OnSelect;
-    }
-
-    void Start()
-    {
-        Time.timeScale = 1;
-        this.gameObject.SetActive(false);
-
-        // Initialize the list of buttons in the order you want them to be navigated
-        menuButtons = new List<Button> { resumeButton, restartButton, mainMenuButton };
 
     }
 
@@ -81,6 +92,7 @@ public class PauseMenu : MonoBehaviour
     // Handle navigation (up/down) using arrow keys or joystick
     void OnNavigate(InputAction.CallbackContext context)
     {
+        Debug.Log("navigating");
         Vector2 inputDirection = context.ReadValue<Vector2>();
 
         if (inputDirection.y > 0) // Up arrow or up on joystick
@@ -99,6 +111,8 @@ public class PauseMenu : MonoBehaviour
         // Calculate new selected button index
         selectedButtonIndex = (selectedButtonIndex + direction + menuButtons.Count) % menuButtons.Count;
 
+        Debug.Log("selectedIndex " + selectedButtonIndex);
+
         // Highlight the new selected button
         HighlightButton(selectedButtonIndex);
     }
@@ -108,6 +122,7 @@ public class PauseMenu : MonoBehaviour
     {
         if (menuButtons != null && menuButtons.Count > 0 && menuButtons[index] != null)
         {
+            Debug.Log("Highlighting " + index);
             Button button = menuButtons[index];
             button.Select(); // Highlight the button visually
         }
