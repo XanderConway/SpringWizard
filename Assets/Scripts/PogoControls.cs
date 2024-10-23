@@ -555,6 +555,7 @@ public class PogoControls : PlayerSubject, TimerObserver
         //TODO Implement action after Times up
         throw new NotImplementedException();
     }
+
     void StartGrinding(GameObject railObject)
     {
 
@@ -623,31 +624,31 @@ public class PogoControls : PlayerSubject, TimerObserver
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, lerpSpeed * Time.deltaTime);
     }
 
-void EndGrinding()
-{
-    isGrinding = false;
-    currentRailScript = null;
-    rb.isKinematic = false;
-
-    // Experiment with this and maybe remove in the future
-    Physics.IgnoreLayerCollision(3, 4, true);
-    transform.position += transform.up * 0.5f;
-
-
-    rb.AddForce(leanChild.transform.up * 200f, ForceMode.Impulse);
-    pogoStick.transform.localScale = Vector3.one;
-
-
-    reEnableCollidersPending = true;
-    colliderReEnableTimer = 0f; 
-}
-
-void SetPlayerCollidersTrigger(bool isTrigger)
-{
-    Collider[] colliders = GetComponentsInChildren<Collider>();
-    foreach (Collider col in colliders)
+    void EndGrinding()
     {
-        col.isTrigger = isTrigger;
+        isGrinding = false;
+        currentRailScript = null;
+        rb.isKinematic = false;
+
+        // Experiment with this and maybe remove in the future
+        Physics.IgnoreLayerCollision(3, 4, true);
+        transform.position += transform.up * 0.5f;
+
+
+        rb.AddForce(leanChild.transform.up * 200f, ForceMode.Impulse);
+        pogoStick.transform.localScale = Vector3.one;
+
+
+        reEnableCollidersPending = true;
+        colliderReEnableTimer = 0f; 
     }
-}
+
+    void SetPlayerCollidersTrigger(bool isTrigger)
+    {
+        Collider[] colliders = GetComponentsInChildren<Collider>();
+        foreach (Collider col in colliders)
+        {
+            col.isTrigger = isTrigger;
+        }
+    }
 }
