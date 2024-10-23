@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Collector
+  - Rail
   layers:
   - Default
   - TransparentFX
