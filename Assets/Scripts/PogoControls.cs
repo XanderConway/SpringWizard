@@ -1,6 +1,8 @@
 using System;
+using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 /*
  * POGO STICK CONTROLS
@@ -455,7 +457,7 @@ public class PogoControls : PlayerSubject, TimerObserver
                 float impactForce = collision.relativeVelocity.magnitude;
 
                 if(impactForce > lethalImpactThreshold)
-                {
+                {   SceneManager.LoadScene(2);
                     Debug.Log("DEATH " + impactForce);
                     setDead(true);
                     break;
