@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor.Build;
+using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 
 public class DeathData
@@ -169,6 +170,7 @@ public class PogoControls : PlayerSubject, TimerObserver
         isChargingJump = false;
     }
 
+
     void FixedUpdate()
     {
         if (!dead)
@@ -288,6 +290,8 @@ public class PogoControls : PlayerSubject, TimerObserver
                 groundedEvent();
             }
         }
+        //else if ice trick is triggered
+        
 
         if (grounded)
         {

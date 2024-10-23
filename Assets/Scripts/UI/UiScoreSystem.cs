@@ -127,6 +127,7 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
 
     void OnDisable()
     {
+        PlayerPrefs.SetInt("score", _trickScore);
         player.RemoveObserver(this);
     }
 }

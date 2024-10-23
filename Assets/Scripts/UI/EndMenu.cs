@@ -1,15 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.InputSystem;
 
-public class MainMenu : MonoBehaviour
-{
-    [SerializeField] private Button playButton;
-    [SerializeField] private Button settingsButton;
+
+public class EndMenu : MonoBehaviour
+{   
+    [SerializeField] private Text _trickScoreText;
+    [SerializeField] private Button BackToMainButton;
     [SerializeField] private Button quitButton;
+
+    private float playerScore;
 
     private PlayerInputActions playerInputActions;
     private List<Button> menuButtons;
@@ -38,14 +41,23 @@ public class MainMenu : MonoBehaviour
 
     void Start()
     {
+         _trickScoreText.text = "Score: " + playerScore;
+
         // Initialize the list of buttons
-        menuButtons = new List<Button> { playButton, settingsButton, quitButton };
+        menuButtons = new List<Button> { BackToMainButton, quitButton };
 
         // Highlight the first button by default
         HighlightButton(selectedButtonIndex);
+        
 
 
     }
+
+    void OnEnable()
+    {
+        playerScore  =  PlayerPrefs.GetInt("score");
+    }
+
 
     void OnDisable()
     {
@@ -111,13 +123,15 @@ public class MainMenu : MonoBehaviour
     }
 
     // Button actions
-    public void PlayGame()
+    public void BackToMain()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        //load scene 0
+        SceneManager.LoadScene(0);
     }
 
     public void QuitGame()
     {
         Application.Quit();
     }
+
 }
