@@ -9,7 +9,10 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 4cb9e2d6e52e1e3418ded7fac65e4735
   - enabled: 1
-    path: Assets/Scenes/09,04_demo.unity
-    guid: e30d2f831f08b644cbada93196385c74
+    path: Assets/Scenes/Ancient Ruins.unity
+    guid: 34a066a7e0f8046a1bd5530dc47e9bf0
+  - enabled: 1
+    path: Assets/Scenes/EndMenu.unity
+    guid: 45f0fbc35cdb21846a1b005d0754f57a
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: fa61ecae9ec54d5439762283db948a68, type: 2}
