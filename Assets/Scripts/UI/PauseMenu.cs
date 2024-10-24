@@ -18,28 +18,8 @@ public class PauseMenu : MonoBehaviour
     private List<Button> menuButtons;
     private int selectedButtonIndex = 0; // Track currently selected button
 
-    //void Awake()
-    //{
-    //    playerInputActions = new PlayerInputActions();
-    //    playerInputActions.Player.Pause.Enable();
-    //    playerInputActions.Player.Pause.performed += OnPause;
-
-    //    // Enable button navigation
-    //    playerInputActions.Player.Navigate.Enable();
-    //    playerInputActions.Player.Navigate.performed += OnNavigate;
-
-    //    playerInputActions.Player.Select.Enable();
-    //    playerInputActions.Player.Select.performed += OnSelect;
-    //}
-
-    void Start()
+    void Awake()
     {
-        Time.timeScale = 1;
-        this.gameObject.SetActive(false);
-
-        // Initialize the list of buttons in the order you want them to be navigated
-        menuButtons = new List<Button> { resumeButton, restartButton, mainMenuButton };
-
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Pause.Enable();
         playerInputActions.Player.Pause.performed += OnPause;
@@ -50,6 +30,26 @@ public class PauseMenu : MonoBehaviour
 
         playerInputActions.Player.Select.Enable();
         playerInputActions.Player.Select.performed += OnSelect;
+    }
+
+    void Start()
+    {
+        Time.timeScale = 1;
+        this.gameObject.SetActive(false);
+
+        // Initialize the list of buttons in the order you want them to be navigated
+        menuButtons = new List<Button> { resumeButton, restartButton, mainMenuButton };
+
+        //playerInputActions = new PlayerInputActions();
+        //playerInputActions.Player.Pause.Enable();
+        //playerInputActions.Player.Pause.performed += OnPause;
+
+        //// Enable button navigation
+        //playerInputActions.Player.Navigate.Enable();
+        //playerInputActions.Player.Navigate.performed += OnNavigate;
+
+        //playerInputActions.Player.Select.Enable();
+        //playerInputActions.Player.Select.performed += OnSelect;
 
     }
 
@@ -136,6 +136,7 @@ public class PauseMenu : MonoBehaviour
     // Handle button selection (e.g., pressing Enter or the action button)
     void OnSelect(InputAction.CallbackContext context)
     {
+        Debug.Log("Selecting");
         // Simulate clicking the currently selected button
         menuButtons[selectedButtonIndex].onClick.Invoke();
 
@@ -151,7 +152,7 @@ public class PauseMenu : MonoBehaviour
         playerInputActions.Player.Select.Disable();
 
 
-        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 
     public void backToMainMenu()

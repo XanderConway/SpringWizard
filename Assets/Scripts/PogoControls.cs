@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.Splines;
 using Unity.Mathematics;
-using UnityEngine.SceneManagement;
 
 
 public class DeathData
@@ -172,7 +170,7 @@ public class PogoControls : PlayerSubject, TimerObserver
 
     void OnRestart(InputAction.CallbackContext context)
     {
-        transform.position = new Vector3(-1625, 900, -456);
+
     }
 
     void OnChargeJumpStarted(InputAction.CallbackContext context)
