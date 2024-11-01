@@ -44,7 +44,8 @@ public class PogoControls : PlayerSubject, TimerObserver
 
     // Trick detection parameters
     private int currTrick = 0;
-    private int flipType = 0;
+    private int numFrontFlips = 0;
+    private int numBackFlips = 0;
     private Vector3 prevPogoUp = Vector3.up;
 
     // Jump detection parameters
@@ -253,8 +254,8 @@ public class PogoControls : PlayerSubject, TimerObserver
     void groundedEvent()
     {
         GameObject effect = null;
-        
-        if (flipType > 0)
+
+        for (int i = 0; i < numFrontFlips; i++)
         {
             if (currTrick > 0)
             {
@@ -270,25 +271,22 @@ public class PogoControls : PlayerSubject, TimerObserver
                 NotifyTrickObservers(PlayerTricks.FrontFlip);
             }
         }
-        else if (flipType < 0)
+
+        for (int i = 0; i < numBackFlips; i++)
         {
+            if (currTrick > 0)
             {
-                if (currTrick > 0)
-                {
-                    NotifyTrickObservers(PlayerTricks.NoHandsBackFlip);
-                }
-                else if (currTrick < 0)
-                {
-                    NotifyTrickObservers(PlayerTricks.NoFeetBackFlip);
-                }
-                else
-                {
-                    NotifyTrickObservers(PlayerTricks.BackFlip);
-                }
+                NotifyTrickObservers(PlayerTricks.NoHandsBackFlip);
+            }
+            else if (currTrick < 0)
+            {
+                NotifyTrickObservers(PlayerTricks.NoFeetBackFlip);
+            }
+            else
+            {
+                NotifyTrickObservers(PlayerTricks.BackFlip);
             }
         }
-        
-        
 
         if(effect)
         {
@@ -296,7 +294,8 @@ public class PogoControls : PlayerSubject, TimerObserver
         }
 
         currTrick = 0;
-        flipType = 0;
+        numFrontFlips = 0;
+        numBackFlips = 0;
     }
 
     private void Jump(float force)
@@ -420,7 +419,7 @@ public class PogoControls : PlayerSubject, TimerObserver
 
         if (currentFlipAngle > 270)
         {
-            flipType = 1;
+            numFrontFlips += 1;
             currentFlipAngle = 0;
 
             if(flipFxs.Length > 0)
@@ -431,7 +430,7 @@ public class PogoControls : PlayerSubject, TimerObserver
 
         if (currentFlipAngle < -270)
         {
-            flipType = -1;
+            numBackFlips += 1;
             currentFlipAngle = 0;
 
             pogoAudioSource.PlayOneShot(flipFxs[1]);
