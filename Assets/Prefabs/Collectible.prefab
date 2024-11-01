@@ -120,4 +120,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   collectible:
     collectibleId: 
-    points: 1000
+    points: 500
