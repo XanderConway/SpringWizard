@@ -308,6 +308,17 @@
                 },
                 {
                     "name": "",
+                    "id": "c3a55013-0ec1-4617-9fed-fc2b39ac0fd0",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Charge Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "f6ec8379-ae8f-4d9d-88dc-eda0af4dc17e",
                     "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
