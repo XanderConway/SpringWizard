@@ -50,19 +50,19 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
                 break;
             case PlayerTricks.NoHandsFrontFlip:
                 _trickName = "No Hands Front Flip!";
-                trickValue += 200;
+                trickValue += 125;
                 break;
             case PlayerTricks.NoHandsBackFlip:
                 _trickName = "No Hands Back Flip!";
-                trickValue += 200;
+                trickValue += 125;
                 break;
             case PlayerTricks.NoFeetFrontFlip:
                 _trickName = "No Feet Front Flip!";
-                trickValue += 200;
+                trickValue += 125;
                 break;
             case PlayerTricks.NoFeetBackFlip:
                 _trickName = "No Feet Back Flip!";
-                trickValue += 200;
+                trickValue += 125;
                 break;
             default:
                 _trickName = "";
@@ -100,7 +100,7 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
 
     private void updateScoreCollected(CollectibleData collectibleData)
     {
-        _trickScore += collectibleData.points;
+        _trickScore += (int)(collectibleData.points * (1 + combo / 10.0f));
         UpdateUI();
         Debug.Log("Collected!");
     }

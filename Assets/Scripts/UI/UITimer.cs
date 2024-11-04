@@ -4,10 +4,17 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System;
 
 public class UITimer : TimerSubject
 {
     public float countdownTime = 60f; //Default
+    public AudioSource audioSource;
+    public AudioClip lowTimeClip;
+    public float musicChangeThreshold = 20f;
+
+    private bool clipPlayed = false;
+
     private float currentTime;
     private bool isTimerRunning = false;
 
@@ -25,6 +32,21 @@ public class UITimer : TimerSubject
 
             NotifyTime(currentTime);  // Notify observers of remaining time
             UpdateTimerUI(currentTime);
+
+
+            if(currentTime < musicChangeThreshold && audioSource != null)
+            {
+                audioSource.pitch = 1.2f;
+
+                if(!clipPlayed)
+                {
+                    if(lowTimeClip != null)
+                    {
+                        audioSource.PlayOneShot(lowTimeClip);
+                    }
+                    clipPlayed = true;
+                }
+            }
 
             if (currentTime <= 0)
             {
@@ -88,6 +110,8 @@ public class UITimer : TimerSubject
     private void UpdateTimerUI(float remainingTime)
     {
         // Update the UI with the remaining time
-        timerText.text = "Time Left: " + Mathf.CeilToInt(remainingTime).ToString();
+        TimeSpan timeSpan = TimeSpan.FromSeconds(remainingTime);
+        string formatTimer = timeSpan.Minutes.ToString("00") + ":" + timeSpan.Seconds.ToString("00");
+        timerText.text = "Time Left: " + formatTimer;
     }
 }

@@ -44,7 +44,8 @@ public class PogoControls : PlayerSubject, TimerObserver
 
     // Trick detection parameters
     private int currTrick = 0;
-    private int flipType = 0;
+    private int numFrontFlips = 0;
+    private int numBackFlips = 0;
     private Vector3 prevPogoUp = Vector3.up;
 
     // Jump detection parameters
@@ -148,6 +149,11 @@ public class PogoControls : PlayerSubject, TimerObserver
         playerInputActions.Player.Restart.Enable();
         playerInputActions.Player.Restart.performed += OnRestart;
 
+        playerInputActions.Player.Trick1.Enable();
+        playerInputActions.Player.Trick1.performed += PerformTrick1;
+        playerInputActions.Player.Trick2.Enable();
+        playerInputActions.Player.Trick2.performed += PerformTrick2;
+
 
         startBoneRotations = new Quaternion[ragdollBones.Length];
         startBonePositions = new Vector3[ragdollBones.Length];
@@ -178,6 +184,18 @@ public class PogoControls : PlayerSubject, TimerObserver
         isChargingJump = true;
     }
 
+    private bool trick1 = false;
+    void PerformTrick1(InputAction.CallbackContext context)
+    {
+        trick1 = true;
+    }
+
+    private bool trick2 = false;
+    void PerformTrick2(InputAction.CallbackContext context)
+    {
+        trick2 = true;
+    }
+
     private void OnChargeJumpReleased(InputAction.CallbackContext context)
     {
         if (isGrinding)
@@ -189,7 +207,6 @@ public class PogoControls : PlayerSubject, TimerObserver
 
         //float jumpForce = Mathf.Lerp(baseJumpForce, maxChargedJumpForce, chargeTime / maxChargeTime);
         //Jump(jumpForce);
-        Debug.Log("Jump released");
         isChargingJump = false;
     }
 
@@ -237,8 +254,8 @@ public class PogoControls : PlayerSubject, TimerObserver
     void groundedEvent()
     {
         GameObject effect = null;
-        
-        if (flipType > 0)
+
+        for (int i = 0; i < numFrontFlips; i++)
         {
             if (currTrick > 0)
             {
@@ -254,25 +271,22 @@ public class PogoControls : PlayerSubject, TimerObserver
                 NotifyTrickObservers(PlayerTricks.FrontFlip);
             }
         }
-        else if (flipType < 0)
+
+        for (int i = 0; i < numBackFlips; i++)
         {
+            if (currTrick > 0)
             {
-                if (currTrick > 0)
-                {
-                    NotifyTrickObservers(PlayerTricks.NoHandsBackFlip);
-                }
-                else if (currTrick < 0)
-                {
-                    NotifyTrickObservers(PlayerTricks.NoFeetBackFlip);
-                }
-                else
-                {
-                    NotifyTrickObservers(PlayerTricks.BackFlip);
-                }
+                NotifyTrickObservers(PlayerTricks.NoHandsBackFlip);
+            }
+            else if (currTrick < 0)
+            {
+                NotifyTrickObservers(PlayerTricks.NoFeetBackFlip);
+            }
+            else
+            {
+                NotifyTrickObservers(PlayerTricks.BackFlip);
             }
         }
-        
-        
 
         if(effect)
         {
@@ -280,7 +294,8 @@ public class PogoControls : PlayerSubject, TimerObserver
         }
 
         currTrick = 0;
-        flipType = 0;
+        numFrontFlips = 0;
+        numBackFlips = 0;
     }
 
     private void Jump(float force)
@@ -404,7 +419,7 @@ public class PogoControls : PlayerSubject, TimerObserver
 
         if (currentFlipAngle > 270)
         {
-            flipType = 1;
+            numFrontFlips += 1;
             currentFlipAngle = 0;
 
             if(flipFxs.Length > 0)
@@ -415,7 +430,7 @@ public class PogoControls : PlayerSubject, TimerObserver
 
         if (currentFlipAngle < -270)
         {
-            flipType = -1;
+            numBackFlips += 1;
             currentFlipAngle = 0;
 
             pogoAudioSource.PlayOneShot(flipFxs[1]);
@@ -475,12 +490,14 @@ public class PogoControls : PlayerSubject, TimerObserver
     {
 
         // Currently just changing colour as a place holder for animations
-        if(Input.GetKey(KeyCode.Q))
+        if(trick1)
         {
             currTrick = 1;
-        } else if(Input.GetKey(KeyCode.E))
+            trick1 = false;
+        } else if(trick2)
         {
             currTrick = -1;
+            trick2 = false;
         }
     }
 
