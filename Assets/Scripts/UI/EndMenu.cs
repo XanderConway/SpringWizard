@@ -24,7 +24,8 @@ public class EndMenu : MonoBehaviour
 
     void Start()
     {
-         _trickScoreText.text =  "" + playerScore;
+        playerScore = PlayerPrefs.GetInt("score");
+        _trickScoreText.text =  "" + playerScore;
 
         // Initialize the list of buttons
         menuButtons = new List<Button> { BackToMainButton, quitButton };

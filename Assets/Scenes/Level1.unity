@@ -6302,6 +6302,10 @@ PrefabInstance:
       propertyPath: audioSource
       value: 
       objectReference: {fileID: 966509413}
+    - target: {fileID: 3300572958902752833, guid: e52ef816a32c60640885cf9c708f509a, type: 3}
+      propertyPath: countdownTime
+      value: 90
+      objectReference: {fileID: 0}
     - target: {fileID: 6224929477138315565, guid: e52ef816a32c60640885cf9c708f509a, type: 3}
       propertyPath: player
       value: 
