@@ -123,7 +123,7 @@ public class PogoControls : PlayerSubject, TimerObserver
     public float lerpSpeed = 15f; // 200
     private bool reEnableCollidersPending = false;
     private float colliderReEnableDelay = 0.1f; 
-    private float colliderReEnableTimer = 0f;
+    private float colliderReEnableTimer = 0f; 
     
     public AudioSource pogoAudioSource;
     public AudioSource voiceAudioSource;
@@ -172,6 +172,9 @@ public class PogoControls : PlayerSubject, TimerObserver
 
         ToggleRagdoll(false);
         NotifyTrickObservers(PlayerTricks.None);
+
+        // TODO move setting updates to a different script
+        AudioListener.volume = PlayerPrefs.GetFloat("Volume", 1.0f);
     }
 
     void OnRestart(InputAction.CallbackContext context)
@@ -292,6 +295,11 @@ public class PogoControls : PlayerSubject, TimerObserver
         {
             Destroy(effect, 1.5f);
         }
+
+        // The pogo stick could have had it's position shifted, since it's pivot point changed, so we reset the pivot point
+        //transform.position = pogoStick.transform.position;
+        //pogoStick.transform.localPosition = pogoStickStartPosition;
+
 
         currTrick = 0;
         numFrontFlips = 0;
@@ -458,7 +466,7 @@ public class PogoControls : PlayerSubject, TimerObserver
         if (grounded)
         {
             float angleDiff = Vector3.SignedAngle(Vector3.up, pogoStick.up, transform.right);
-            if (angleDiff > maxLeanForwardAngle || angleDiff < maxLeanBackwardAngle)
+            if ((angleDiff > maxLeanForwardAngle && flipAngle > 0) || (angleDiff < maxLeanBackwardAngle && flipAngle < 0))
             {
                 flipAngle = 0;
             }
@@ -484,6 +492,17 @@ public class PogoControls : PlayerSubject, TimerObserver
 
         currentLeanAngle = Mathf.Clamp(currentLeanAngle, -maxLeanAngle, maxLeanAngle);
         leanChild.localRotation = Quaternion.AngleAxis(currentLeanAngle, Vector3.forward);
+
+
+        // Adjust positions so that the child position is always the same distance from the parent
+        Vector3 posDiff = pogoStick.transform.position - transform.position;
+        //Vector3 horizontalDiff = posDiff - Vector3.Dot(Vector3.up, posDiff) * Vector3.up;
+
+        posDiff *= 0.002f;
+
+        //horizontalDiff *= 0.01f;
+        transform.position += posDiff;
+        pogoStick.position -= posDiff;
     }
 
     void handleControls()
