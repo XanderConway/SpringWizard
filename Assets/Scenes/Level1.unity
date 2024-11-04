@@ -6302,30 +6302,6 @@ PrefabInstance:
       propertyPath: audioSource
       value: 
       objectReference: {fileID: 966509413}
-    - target: {fileID: 4434691494108671514, guid: e52ef816a32c60640885cf9c708f509a, type: 3}
-      propertyPath: m_Colors.m_SelectedColor.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4434691494108671514, guid: e52ef816a32c60640885cf9c708f509a, type: 3}
-      propertyPath: m_Colors.m_SelectedColor.g
-      value: 0.59095424
-      objectReference: {fileID: 0}
-    - target: {fileID: 4434691494108671514, guid: e52ef816a32c60640885cf9c708f509a, type: 3}
-      propertyPath: m_Colors.m_SelectedColor.r
-      value: 0.990566
-      objectReference: {fileID: 0}
-    - target: {fileID: 5708648767618446470, guid: e52ef816a32c60640885cf9c708f509a, type: 3}
-      propertyPath: m_Colors.m_SelectedColor.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5708648767618446470, guid: e52ef816a32c60640885cf9c708f509a, type: 3}
-      propertyPath: m_Colors.m_SelectedColor.g
-      value: 0.4155548
-      objectReference: {fileID: 0}
-    - target: {fileID: 5708648767618446470, guid: e52ef816a32c60640885cf9c708f509a, type: 3}
-      propertyPath: m_Colors.m_SelectedColor.r
-      value: 0.9433962
-      objectReference: {fileID: 0}
     - target: {fileID: 6224929477138315565, guid: e52ef816a32c60640885cf9c708f509a, type: 3}
       propertyPath: player
       value: 
@@ -6334,18 +6310,6 @@ PrefabInstance:
       propertyPath: collectibesParent
       value: 
       objectReference: {fileID: 678671098}
-    - target: {fileID: 6624323964736437401, guid: e52ef816a32c60640885cf9c708f509a, type: 3}
-      propertyPath: m_Colors.m_SelectedColor.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6624323964736437401, guid: e52ef816a32c60640885cf9c708f509a, type: 3}
-      propertyPath: m_Colors.m_SelectedColor.g
-      value: 0.42802835
-      objectReference: {fileID: 0}
-    - target: {fileID: 6624323964736437401, guid: e52ef816a32c60640885cf9c708f509a, type: 3}
-      propertyPath: m_Colors.m_SelectedColor.r
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
