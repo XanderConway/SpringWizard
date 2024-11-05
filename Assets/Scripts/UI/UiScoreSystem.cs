@@ -21,7 +21,10 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     [SerializeField] private TextMeshProUGUI comboScoreText;
 
 
-    private float combo = 0;
+   private bool _isInCombo = false;
+    private int _comboCount  = 0;
+    // a variable to handle tripple combo count
+    private bool _tripleCombo = false;
     private PlayerTricks _prevTrick = PlayerTricks.None;
 
 
@@ -29,10 +32,11 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     public void UpdateTrickObserver(PlayerTricks playerTricks)
     {
        TrickDisplay(playerTricks);
+       comboCount(playerTricks);
        UpdateUI();
     }
 
-    //TODO: for now I will have the trick name and score here, but this should be moved to a separate class
+    //TODO: for now we will have the trick name and score here, but this is better to be moved to a separate class
 
     private void TrickDisplay(PlayerTricks playerTrick){
 
@@ -70,24 +74,54 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
                 break;
         }
 
-        _trickScore += (int)(trickValue * (1 + combo / 10.0f));
+        _trickScore += (int)(trickValue * (1 + _comboCount / 10.0f));
+    }
 
-        if(playerTrick != _prevTrick)
+    void comboCount(PlayerTricks trick)
+    {
+        if (trick == PlayerTricks.None)
         {
-            combo += 1;
-            _prevTrick = playerTrick;
+            _isInCombo = false;
+            _tripleCombo = false;
+            _comboCount = 0;
+            // Debug.Log("Player is not in a combo");
         }
-
-        if(playerTrick == PlayerTricks.Death)
+        else
         {
-            combo = 0;
+            if (_isInCombo && _prevTrick == trick)
+            {
+                _isInCombo = false;
+                _tripleCombo = false;
+                _comboCount = 0;
+            }
+
+            else if (_isInCombo)
+            {
+                _comboCount++;
+                if (_comboCount % 3 == 0)
+                {
+                    _tripleCombo = true;
+                    Debug.Log("Player is in a triple combo");
+                }
+                else
+                {
+                    _tripleCombo = false;
+                }
+            }
+            else
+            {
+                _isInCombo = true;
+                _comboCount = 0;
+            }
+
+            _prevTrick = trick;
         }
     }
     private IEnumerator UpdateUIForLimitedTime(float displayTime)
     {
         trickNameText.text = _trickName;
         trickScoreText.text = "Score: " + _trickScore;
-        comboScoreText.text = "Combo: x" + combo;
+        comboScoreText.text = "Combo: x" + _comboCount;
 
         yield return new WaitForSeconds(displayTime);
         trickNameText.text = "";
@@ -100,7 +134,7 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
 
     private void updateScoreCollected(CollectibleData collectibleData)
     {
-        _trickScore += (int)(collectibleData.points * (1 + combo / 10.0f));
+        _trickScore += (int)(collectibleData.points * (1 + _comboCount / 10.0f));
         UpdateUI();
         Debug.Log("Collected!");
     }

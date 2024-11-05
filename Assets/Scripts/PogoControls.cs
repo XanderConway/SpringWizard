@@ -48,6 +48,14 @@ public class PogoControls : PlayerSubject, TimerObserver
     private int numBackFlips = 0;
     private Vector3 prevPogoUp = Vector3.up;
 
+    // Combo detection parameters
+    private bool _isInCombo = false;
+    private int _comboCount  = 0;
+    // a variable to handle tripple combo count
+    private bool _tripleCombo = false;
+    private PlayerTricks _prevTrick = PlayerTricks.None;
+
+
     // Jump detection parameters
     public float pogoRayCastLength = 10f;
     public Vector3 pogoRayCastOffset = Vector3.zero;
@@ -61,6 +69,8 @@ public class PogoControls : PlayerSubject, TimerObserver
     public float maxChargedJumpForce = 1.0f;
     public float maxCompressTime = 1.0f;
     public float compressTime = 0.4f;
+
+    public float maxJumpForce = 1.5f;
 
     // Used for spring compression animation (Aesthetic)
     public GameObject mainPogoBody;
@@ -258,20 +268,25 @@ public class PogoControls : PlayerSubject, TimerObserver
     {
         GameObject effect = null;
 
+        if (numBackFlips == 0 && numFrontFlips == 0)
+        {
+            performTrick(PlayerTricks.None);
+        }
+
         for (int i = 0; i < numFrontFlips; i++)
         {
             if (currTrick > 0)
             {
-                NotifyTrickObservers(PlayerTricks.NoHandsFrontFlip);
+                performTrick(PlayerTricks.NoHandsFrontFlip);
 
             }
             else if (currTrick < 0)
             {
-                NotifyTrickObservers(PlayerTricks.NoFeetFrontFlip);
+                performTrick(PlayerTricks.NoFeetFrontFlip);
             }
             else
             {
-                NotifyTrickObservers(PlayerTricks.FrontFlip);
+                performTrick(PlayerTricks.FrontFlip);
             }
         }
 
@@ -279,15 +294,15 @@ public class PogoControls : PlayerSubject, TimerObserver
         {
             if (currTrick > 0)
             {
-                NotifyTrickObservers(PlayerTricks.NoHandsBackFlip);
+                performTrick(PlayerTricks.NoHandsBackFlip);
             }
             else if (currTrick < 0)
             {
-                NotifyTrickObservers(PlayerTricks.NoFeetBackFlip);
+                performTrick(PlayerTricks.NoFeetBackFlip);
             }
             else
             {
-                NotifyTrickObservers(PlayerTricks.BackFlip);
+                performTrick(PlayerTricks.BackFlip);
             }
         }
 
@@ -342,6 +357,8 @@ public class PogoControls : PlayerSubject, TimerObserver
             if (!grounded && rb.velocity.y <= 0)
             {
                 grounded = true;
+
+                
                 jumpForce = baseJumpForce;
 
                 jumpForce += Math.Min(Math.Abs(rb.velocity.y) * velocitySpringMultiplier, 100);
@@ -357,9 +374,7 @@ public class PogoControls : PlayerSubject, TimerObserver
                 groundedEvent();
             }
         }
-        //else if ice trick is triggered
         
-
         if (grounded)
         {
             groundedTimer += Time.deltaTime;
@@ -399,11 +414,28 @@ public class PogoControls : PlayerSubject, TimerObserver
 
         if (groundedTimer > compressHalfTime + decompressHalfTime)
         {
-            {
-                Jump(jumpForce);
+            {  
+                
+                float comboMultiplier = Mathf.Min(1.0f + (_comboCount * 0.1f), 1.3f); // Increase jump height with combo, capped at 1.3x
 
-                GameObject jumpEffect = Instantiate(jumpParticle, pogoStick.transform.position, Quaternion.FromToRotation(Vector3.up, groundHit.normal));
-                Destroy(jumpEffect, 1.0f);
+                if(_tripleCombo)
+                {   
+                     Jump(jumpForce * 1.2f * comboMultiplier);
+                     GameObject jumpEffect = Instantiate(jumpParticle, pogoStick.transform.position, Quaternion.FromToRotation(Vector3.up, groundHit.normal));
+                     jumpEffect.transform.localScale *= 2;
+                     Destroy(jumpEffect, 1.0f);
+
+                    GameObject secondJumpEffect = Instantiate(jumpParticle, pogoStick.transform.position + Vector3.up * 10f, Quaternion.FromToRotation(Vector3.up, groundHit.normal));
+                    secondJumpEffect.transform.localScale *= 2;
+                    Destroy(secondJumpEffect, 1.0f);
+
+                }
+                else
+                {   
+                     Jump(jumpForce * comboMultiplier);
+                     GameObject jumpEffect = Instantiate(jumpParticle, pogoStick.transform.position, Quaternion.FromToRotation(Vector3.up, groundHit.normal));
+                     Destroy(jumpEffect, 1.0f);
+                }
 
                 groundedTimer = 0;
                 fireJumpBoost = 0;
@@ -411,6 +443,7 @@ public class PogoControls : PlayerSubject, TimerObserver
             }
         }
     }
+
 
     void countFlips()
     {
@@ -444,6 +477,55 @@ public class PogoControls : PlayerSubject, TimerObserver
             pogoAudioSource.PlayOneShot(flipFxs[1]);
         }
     }
+
+    void comboCount(PlayerTricks trick)
+    {
+        if (trick == PlayerTricks.None)
+        {
+            _isInCombo = false;
+            _tripleCombo = false;
+            _comboCount = 0;
+            // Debug.Log("Player is not in a combo");
+        }
+        else
+        {
+            if (_isInCombo && _prevTrick == trick)
+            {
+                _isInCombo = false;
+                _tripleCombo = false;
+                _comboCount = 0;
+            }
+
+            else if (_isInCombo)
+            {
+                _comboCount++;
+                if (_comboCount % 3 == 0)
+                {
+                    _tripleCombo = true;
+                    Debug.Log("Player is in a triple combo");
+                }
+                else
+                {
+                    _tripleCombo = false;
+                }
+            }
+            else
+            {
+                _isInCombo = true;
+                _comboCount = 0;
+            }
+
+            _prevTrick = trick;
+        }
+    }
+
+    void performTrick(PlayerTricks trick)
+    {
+        NotifyTrickObservers(trick);
+        comboCount(trick);
+    }
+
+    
 
 
     void rotatePlayer()
@@ -573,7 +655,7 @@ public class PogoControls : PlayerSubject, TimerObserver
         {
             DeathData data = new DeathData(lastGroundedPosition, transform.position);
             deathEvent.Invoke(data);
-            NotifyTrickObservers(PlayerTricks.Death);
+            performTrick(PlayerTricks.Death);
         }
         dead = isDead;
         ToggleRagdoll(isDead);
