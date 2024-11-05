@@ -37,12 +37,13 @@ public class RailScript : MonoBehaviour
         return time;
     }
 
-    public void CalculateDirection(float3 railForward, Vector3 playerForward)
-    {
-        float angle = Vector3.Angle(railForward, playerForward.normalized);
-        if (angle > 90f)
-            normalDir = false;
-        else
-            normalDir = true;
-    }
+public void CalculateDirection(float3 railForward, Vector3 playerForward)
+{
+    Vector3 railForwardFlat = new Vector3(railForward.x, 0, railForward.z).normalized;
+    Vector3 playerForwardFlat = new Vector3(playerForward.x, 0, playerForward.z).normalized;
+
+    float angle = Vector3.Angle(railForwardFlat, playerForwardFlat);
+    
+    normalDir = angle <= 90f;
+}
 }
