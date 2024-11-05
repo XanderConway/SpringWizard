@@ -112,6 +112,6 @@ public class UITimer : TimerSubject
         // Update the UI with the remaining time
         TimeSpan timeSpan = TimeSpan.FromSeconds(remainingTime);
         string formatTimer = timeSpan.Minutes.ToString("00") + ":" + timeSpan.Seconds.ToString("00");
-        timerText.text = "Time Left: " + formatTimer;
+        timerText.text = formatTimer;
     }
 }

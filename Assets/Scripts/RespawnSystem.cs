@@ -15,6 +15,9 @@ public class RespawnSystem: MonoBehaviour
 
     public GameObject respawnText;
 
+    public bool drawRespawnLocations;
+    public float respawnRad = 5f;
+
     private bool enableRespawn;
 
     public float respawnDelay = 1.0f;
@@ -95,6 +98,16 @@ public class RespawnSystem: MonoBehaviour
     }
 
 
-
-
+    private void OnDrawGizmos()
+    {
+        if(drawRespawnLocations)
+        {
+            Gizmos.color = Color.blue;
+            for (int i = 1; i < respawnPointParent.childCount; i++)
+            {
+                Transform pos = respawnPointParent.GetChild(i);
+                Gizmos.DrawSphere(pos.position, respawnRad);
+            }
+        }
+    }
 }

@@ -23,13 +23,6 @@ public class PauseMenu : MonoBehaviour
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Pause.Enable();
         playerInputActions.Player.Pause.performed += OnPause;
-
-        // Enable button navigation
-        playerInputActions.Player.Navigate.Enable();
-        playerInputActions.Player.Navigate.performed += OnNavigate;
-
-        playerInputActions.Player.Select.Enable();
-        playerInputActions.Player.Select.performed += OnSelect;
     }
 
     void Start()
@@ -40,17 +33,6 @@ public class PauseMenu : MonoBehaviour
         // Initialize the list of buttons in the order you want them to be navigated
         menuButtons = new List<Button> { resumeButton, restartButton, mainMenuButton };
 
-        //playerInputActions = new PlayerInputActions();
-        //playerInputActions.Player.Pause.Enable();
-        //playerInputActions.Player.Pause.performed += OnPause;
-
-        //// Enable button navigation
-        //playerInputActions.Player.Navigate.Enable();
-        //playerInputActions.Player.Navigate.performed += OnNavigate;
-
-        //playerInputActions.Player.Select.Enable();
-        //playerInputActions.Player.Select.performed += OnSelect;
-
     }
 
     void OnEnable()
@@ -58,15 +40,7 @@ public class PauseMenu : MonoBehaviour
         if (playerInputActions != null)
         {
             playerInputActions.Player.Pause.Enable();
-            playerInputActions.Player.Navigate.Enable();
-            playerInputActions.Player.Select.Enable();
         }
-    }
-
-    void OnDisable()
-    {
-        playerInputActions.Player.Navigate.Disable();
-        playerInputActions.Player.Select.Disable();
     }
 
 
@@ -89,68 +63,9 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
-    // Handle navigation (up/down) using arrow keys or joystick
-    void OnNavigate(InputAction.CallbackContext context)
-    {
-        Debug.Log("navigating");
-        Vector2 inputDirection = context.ReadValue<Vector2>();
-
-        if (inputDirection.y > 0) // Up arrow or up on joystick
-        {
-            MoveSelection(-1); // Move up in the menu
-        }
-        else if (inputDirection.y < 0) // Down arrow or down on joystick
-        {
-            MoveSelection(1); // Move down in the menu
-        }
-    }
-
-    // Move the selection up or down
-    private void MoveSelection(int direction)
-    {
-        // Calculate new selected button index
-        selectedButtonIndex = (selectedButtonIndex + direction + menuButtons.Count) % menuButtons.Count;
-
-        Debug.Log("selectedIndex " + selectedButtonIndex);
-
-        // Highlight the new selected button
-        HighlightButton(selectedButtonIndex);
-    }
-
-    // Highlight the selected button
-    private void HighlightButton(int index)
-    {
-        if (menuButtons != null && menuButtons.Count > 0 && menuButtons[index] != null)
-        {
-            Debug.Log("Highlighting " + index);
-            Button button = menuButtons[index];
-            button.Select(); // Highlight the button visually
-        }
-        else
-        {
-            Debug.LogError("Button at index " + index + " is null or not assigned.");
-        }
-    }
-
-
-    // Handle button selection (e.g., pressing Enter or the action button)
-    void OnSelect(InputAction.CallbackContext context)
-    {
-        Debug.Log("Selecting");
-        // Simulate clicking the currently selected button
-        menuButtons[selectedButtonIndex].onClick.Invoke();
-
-
-    }
-
     public void restartGame()
     {
         playerInputActions.Player.Pause.Disable();
-
-        playerInputActions.Player.Navigate.Disable();
-
-        playerInputActions.Player.Select.Disable();
-
 
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
@@ -158,10 +73,6 @@ public class PauseMenu : MonoBehaviour
     public void backToMainMenu()
     {
         playerInputActions.Player.Pause.Disable();
-
-        playerInputActions.Player.Navigate.Disable();
-
-        playerInputActions.Player.Select.Disable();
 
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
