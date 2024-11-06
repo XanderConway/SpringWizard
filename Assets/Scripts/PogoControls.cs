@@ -512,7 +512,7 @@ public class PogoControls : PlayerSubject, TimerObserver
             else
             {
                 _isInCombo = true;
-                _comboCount = 0;
+                _comboCount = 1;
             }
 
             _prevTrick = trick;

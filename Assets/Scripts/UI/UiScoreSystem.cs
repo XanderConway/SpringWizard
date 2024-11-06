@@ -111,7 +111,7 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
             else
             {
                 _isInCombo = true;
-                _comboCount = 0;
+                _comboCount = 1;
             }
 
             _prevTrick = trick;
@@ -119,6 +119,19 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     }
     private IEnumerator UpdateUIForLimitedTime(float displayTime)
     {
+        if (_tripleCombo)
+        {
+            trickNameText.color = Color.red;
+        }
+
+        else if ((_comboCount + 1) % 3 == 0)
+        {
+            trickNameText.color = Color.yellow;
+        }
+        else
+        {
+            trickNameText.color = Color.white;
+        }
         trickNameText.text = _trickName;
         trickScoreText.text = "Score: " + _trickScore;
         comboScoreText.text = "Combo: x" + _comboCount;
