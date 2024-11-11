@@ -22,6 +22,8 @@ public class UITimer : TimerSubject
     //UI elements
     public TextMeshProUGUI timerText;
 
+    private bool stopTimer;
+
 
     // Update is called once per frame
     void Update()
@@ -71,8 +73,23 @@ public class UITimer : TimerSubject
 
 
     public void StartTimer(){
-        currentTime = countdownTime;
+
         isTimerRunning = true;
+
+        if (LevelManager.Instance != null && LevelManager.Instance.currentLevel != null)
+        {
+            countdownTime = LevelManager.Instance.currentLevel.timeLimit;
+            
+            if(LevelManager.Instance.currentIsPractice)
+            {
+                isTimerRunning = false;
+                timerText.text = "Practice";
+
+            }
+        }
+        currentTime = countdownTime;
+
+
         NotifyIsRunning(isTimerRunning);
     }
 
@@ -99,7 +116,7 @@ public class UITimer : TimerSubject
         NotifyTimesUp(true);
         timerText.text = "Time's up!";
 
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene("EndMenu");
         //Scene scene = SceneManager.GetActiveScene();
         //SceneManager.LoadScene(scene.name);
     }

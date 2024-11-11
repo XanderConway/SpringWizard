@@ -17,11 +17,15 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
 
     //UI Elements
     [SerializeField] private TextMeshProUGUI trickScoreText;
+    [SerializeField] private TextMeshProUGUI collectedDisplayText;
+
     [SerializeField] private TextMeshProUGUI trickNameText;
     [SerializeField] private TextMeshProUGUI comboScoreText;
 
 
     private float combo = 0;
+    private int totalCollectables = 0;
+    private int numCollected = 0;
     private PlayerTricks _prevTrick = PlayerTricks.None;
 
 
@@ -101,6 +105,8 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     private void updateScoreCollected(CollectibleData collectibleData)
     {
         _trickScore += (int)(collectibleData.points * (1 + combo / 10.0f));
+        numCollected += 1;
+        collectedDisplayText.text = $"Scrolls: {numCollected} / {totalCollectables}";
         UpdateUI();
         Debug.Log("Collected!");
     }
@@ -118,16 +124,22 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
         {
             Collectible[] collectibles = collectibesParent.GetComponentsInChildren<Collectible>();
 
+            totalCollectables = collectibles.Length;
+
             foreach (Collectible c in collectibles)
             {
                 c.getEvent().AddListener(updateScoreCollected);
             }
         }
+
+        collectedDisplayText.text = $"Scrolls: {numCollected} / {totalCollectables}";
     }
 
     void OnDisable()
     {
+        // Todo store score in LevelManager
         PlayerPrefs.SetInt("score", _trickScore);
+        PlayerPrefs.SetString("numCollected", $"{numCollected} / {totalCollectables}");
         player.RemoveObserver(this);
     }
 }

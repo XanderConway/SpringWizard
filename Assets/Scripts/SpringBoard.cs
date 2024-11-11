@@ -1,16 +1,41 @@
+using UnityEditor.Animations;
 using UnityEngine;
 
 public class Springboard : MonoBehaviour
 {
-    public float springForce = 20f;  
-    
-    private void OnCollisionEnter(Collision collision)
+    public Vector3 springForce = Vector3.zero;
+    private Animator animController;
+
+    public AudioClip bounceSound;
+    private AudioSource audioSource;
+
+    private void Start()
     {
-        PogoControls pogoControls = collision.gameObject.GetComponent<PogoControls>();
+        animController = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        PogoControls pogoControls = other.gameObject.GetComponentInParent<PogoControls>();
+        animController.SetTrigger("Pop");
         
         if (pogoControls != null)
         {
-            pogoControls.ApplySpringboardForce(springForce);
+            Debug.Log("Adding Force");
+            Rigidbody rb = pogoControls.gameObject.GetComponent<Rigidbody>();
+            pogoControls.ResetJumpState();
+            rb.velocity = new Vector3(0, 1);
+            rb.angularVelocity = Vector3.zero;
+            rb.AddForce(springForce, ForceMode.VelocityChange);
+            //rb.AddForce(springForce);
+            audioSource.PlayOneShot(bounceSound);
         }
+    }
+
+    public void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(transform.position, transform.position + (transform.rotation *  springForce).normalized * 100);
     }
 }

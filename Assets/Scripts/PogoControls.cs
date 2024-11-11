@@ -5,6 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.Splines;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 
 
 public class DeathData
@@ -209,7 +210,7 @@ public class PogoControls : PlayerSubject, TimerObserver
     {
         if (isGrinding)
         {
-        EndGrinding();
+        EndGrinding(Vector3.zero);
         // Not sure if needed, experiment with this
         rb.AddForce(Vector3.up * baseJumpForce, ForceMode.VelocityChange);
         }
@@ -396,11 +397,7 @@ public class PogoControls : PlayerSubject, TimerObserver
             }
 
             // The spring is fully compressed, begin decompressing
-            bounceAmount = Mathf.Clamp(bounceAmount, 0, 1);
-
-            mainPogoBody.transform.localPosition = pogoBodyHeightOffGround + springLength * Vector3.down * bounceAmount;
-
-            pogoStick.transform.localScale = new Vector3(1, squashFactor, 1);
+            ApplyJumpAnimation(bounceAmount, squashFactor);
         }
 
         if (groundedTimer > compressHalfTime + decompressHalfTime)
@@ -416,6 +413,22 @@ public class PogoControls : PlayerSubject, TimerObserver
                 grounded = false;
             }
         }
+    }
+
+    private void ApplyJumpAnimation(float bounceAmount, float squashFactor)
+    {
+
+        bounceAmount = Mathf.Clamp(bounceAmount, 0, 1);
+        mainPogoBody.transform.localPosition = pogoBodyHeightOffGround + springLength * Vector3.down * bounceAmount;
+        pogoStick.transform.localScale = new Vector3(1, squashFactor, 1);
+    }
+
+    public void ResetJumpState()
+    {
+        groundedTimer = 0;
+        grounded = false;
+
+        ApplyJumpAnimation(0, 1);
     }
 
     void countFlips()
@@ -775,7 +788,9 @@ void MoveAlongRail()
 
     if (progress < -0.01f || progress > 1.01f)
     {
-        EndGrinding();
+        Vector3 endDir = SplineUtility.EvaluateTangent(currentRailScript.railSpline.Spline, Mathf.Clamp(progress, 0f, 1f)) * (normalDir ? 1 : -1);
+        EndGrinding(endDir);
+        
         return;
     }
 
@@ -812,8 +827,10 @@ void MoveAlongRail()
     }
 }
 
-void EndGrinding()
+void EndGrinding(Vector3 jumpDir)
 {
+
+    Debug.Log("Ending Grinding" + jumpDir);
     isGrinding = false;
     currentRailScript = null;
     rb.isKinematic = false;
@@ -829,7 +846,7 @@ void EndGrinding()
     Physics.IgnoreLayerCollision(3, 4, true);
     transform.position += transform.up * 0.5f;
 
-    rb.AddForce(leanChild.transform.up * 50f, ForceMode.Impulse);
+    rb.AddForce(jumpDir.normalized * 35f, ForceMode.Impulse);
     pogoStick.transform.localScale = Vector3.one;
 
     reEnableCollidersPending = true;

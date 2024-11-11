@@ -59,14 +59,14 @@ public class RespawnSystem: MonoBehaviour
 
             if(respawnTimer > respawnDelay)
             {
-                if(respawnText != null)
-                {
-                    respawnText.SetActive(true);
-                }
+                //if(respawnText != null)
+                //{
+                //    respawnText.SetActive(true);
+                //}
             }
 
             // Choose the closest respawn point to the players last grounded position
-            if(resPressed && respawnPointParent && respawnPointParent.childCount > 0)
+            if(respawnTimer > respawnDelay && respawnPointParent && respawnPointParent.childCount > 0)
             {
 
                 Transform closestPoint = respawnPointParent.GetChild(0);

@@ -12,7 +12,7 @@ public class EndMenu : MonoBehaviour
     [SerializeField] private Button BackToMainButton;
     [SerializeField] private Button quitButton;
 
-    private float playerScore;
+    private int playerScore;
 
     private PlayerInputActions playerInputActions;
     private List<Button> menuButtons;
@@ -25,10 +25,19 @@ public class EndMenu : MonoBehaviour
     void Start()
     {
         playerScore = PlayerPrefs.GetInt("score");
+        string numCollected = PlayerPrefs.GetString("numCollected");
         _trickScoreText.text =  "" + playerScore;
 
         // Initialize the list of buttons
         menuButtons = new List<Button> { BackToMainButton, quitButton };
+
+        if(LevelManager.Instance != null && LevelManager.Instance.currentLevel != null)
+        {
+            ScoreData scoreData = new ScoreData(numCollected, playerScore);
+
+            LevelManager.Instance.scoreMap[LevelManager.Instance.currentLevel.levelId] = scoreData;
+            LevelManager.Instance.saveScores();
+        }
     }
 
     // Button actions
