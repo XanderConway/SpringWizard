@@ -1,4 +1,3 @@
-using UnityEditor.Animations;
 using UnityEngine;
 
 public class Springboard : MonoBehaviour
@@ -27,7 +26,7 @@ public class Springboard : MonoBehaviour
             pogoControls.ResetJumpState();
             rb.velocity = new Vector3(0, 1);
             rb.angularVelocity = Vector3.zero;
-            rb.AddForce(springForce, ForceMode.VelocityChange);
+            rb.AddForce(transform.rotation * springForce, ForceMode.VelocityChange);
             //rb.AddForce(springForce);
             audioSource.PlayOneShot(bounceSound);
         }

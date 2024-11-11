@@ -2491,7 +2491,8 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 1.3322677e-15
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4664874697241297718, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
     m_RemovedGameObjects:
     - {fileID: 414961275286371511, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
     m_AddedGameObjects:
@@ -2522,11 +2523,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1346593297168411652, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.99685913
+      value: 0.9944468
       objectReference: {fileID: 0}
     - target: {fileID: 1346593297168411652, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.07919525
+      value: -0.10524063
       objectReference: {fileID: 0}
     - target: {fileID: 1346593297168411652, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: m_LocalRotation.y
@@ -2538,7 +2539,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1346593297168411652, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -9.085
+      value: -12.082
       objectReference: {fileID: 0}
     - target: {fileID: 1346593297168411652, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -2555,6 +2556,10 @@ PrefabInstance:
     - target: {fileID: 3030074647547019876, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: springForce.y
       value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030074647547019876, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
+      propertyPath: springForce.z
+      value: -10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2583,31 +2588,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1346593297168411652, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9732128
+      value: 0.98299086
       objectReference: {fileID: 0}
     - target: {fileID: 1346593297168411652, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.19975163
+      value: -0.14412789
       objectReference: {fileID: 0}
     - target: {fileID: 1346593297168411652, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.113825075
+      value: -0.11362712
       objectReference: {fileID: 0}
     - target: {fileID: 1346593297168411652, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.0002471284
+      value: 0.006714623
       objectReference: {fileID: 0}
     - target: {fileID: 1346593297168411652, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -22.876
+      value: -16.369
       objectReference: {fileID: 0}
     - target: {fileID: 1346593297168411652, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -13.92
+      value: -13.582
       objectReference: {fileID: 0}
     - target: {fileID: 1346593297168411652, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 2.859
+      value: 2.745
       objectReference: {fileID: 0}
     - target: {fileID: 1872336173944633022, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: m_Name
@@ -2615,7 +2620,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3030074647547019876, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: springForce.y
-      value: 140
+      value: 125
       objectReference: {fileID: 0}
     - target: {fileID: 3030074647547019876, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: springForce.z
@@ -2660,11 +2665,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1346593297168411652, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9954412
+      value: 0.9975527
       objectReference: {fileID: 0}
     - target: {fileID: 1346593297168411652, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.0953773
+      value: -0.06991945
       objectReference: {fileID: 0}
     - target: {fileID: 1346593297168411652, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: m_LocalRotation.y
@@ -2676,7 +2681,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1346593297168411652, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -10.946
+      value: -8.019
       objectReference: {fileID: 0}
     - target: {fileID: 1346593297168411652, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -2696,7 +2701,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3030074647547019876, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: springForce.z
-      value: -20
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 7265618837426113459, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: m_Size.z
@@ -2903,7 +2908,7 @@ MonoBehaviour:
   m_Strategy: 1
   m_MaximumEffort: 4
   m_SmoothingTime: 0
-  m_Damping: 0
+  m_Damping: 0.67
   m_DampingWhenOccluded: 0
   m_OptimalTargetDistance: 0
 --- !u!114 &1551062097
@@ -2958,8 +2963,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 555952478}
-  sensitivity: {x: 200, y: 200}
-  verticalClampAngleTop: -45
+  sensitivity: {x: 200, y: 150}
+  verticalClampAngleTop: -20
   verticalClampAngleBottom: 40
   cameraDistance: {x: 0, y: 8.58, z: -13}
   cameraAngle: {x: 30, y: 0, z: 0}
@@ -3020,6 +3025,10 @@ PrefabInstance:
     - target: {fileID: 3030074647547019876, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
       propertyPath: springForce.y
       value: 140
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030074647547019876, guid: feebd200cf1c7614ba73d12548ac0bdd, type: 3}
+      propertyPath: springForce.z
+      value: -15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
