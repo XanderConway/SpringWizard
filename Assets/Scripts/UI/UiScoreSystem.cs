@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 public class UiScoreSystem : MonoBehaviour, TrickObserver
 {
-    [SerializeField] private PlayerSubject player;
+    [SerializeField] private TrickSubject player;
     [SerializeField] private GameObject collectibesParent;
 
     private int _totalScore = 0;
@@ -105,7 +105,7 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
             
             _isInCombo = false;
             _tricksInCombo.Clear();
-            _totalScore += _trickScore;
+            _totalScore += _trickScore * _validComboCount;
             _trickScore = 0;
             _validComboCount = 0;
         }

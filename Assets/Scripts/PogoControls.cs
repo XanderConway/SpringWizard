@@ -29,7 +29,7 @@ public class DeathData
  * E -> Perform trick 2 (Needs to be performed with a flip for effect)
  */
 
-public class PogoControls : PlayerSubject, TimerObserver
+public class PogoControls : TrickSubject, TimerObserver
 {
     // Rotation parameters
     public float rotationSpeed = 360f;
@@ -694,7 +694,7 @@ void OnCollisionEnter(Collision collision)
 
     public void ApplySpringboardForce(float force)
     {
-        if (grounded)
+        if (grounded) 
         {
             jumpForce += force;
         }
@@ -856,6 +856,8 @@ void EndGrinding(Vector3 jumpDir)
 
     reEnableCollidersPending = true;
     colliderReEnableTimer = 0f; 
+
+    NotifyTrickObservers(PlayerTricks.RailGrinding);
 }
 
 void SetPlayerCollidersTrigger(bool isTrigger)

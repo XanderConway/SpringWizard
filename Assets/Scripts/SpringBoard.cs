@@ -17,6 +17,7 @@ public class Springboard : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         PogoControls pogoControls = other.gameObject.GetComponentInParent<PogoControls>();
+
         animController.SetTrigger("Pop");
         
         if (pogoControls != null)
@@ -29,6 +30,8 @@ public class Springboard : MonoBehaviour
             rb.AddForce(transform.rotation * springForce, ForceMode.VelocityChange);
             //rb.AddForce(springForce);
             audioSource.PlayOneShot(bounceSound);
+
+            pogoControls.NotifyTrickObservers(PlayerTricks.springboard);
         }
     }
 

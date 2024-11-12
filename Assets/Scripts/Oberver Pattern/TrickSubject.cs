@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class PlayerSubject : MonoBehaviour
+public abstract class TrickSubject : MonoBehaviour
 {
     private List<TrickObserver> observers = new List<TrickObserver>();
 
