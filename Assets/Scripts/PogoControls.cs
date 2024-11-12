@@ -265,6 +265,11 @@ public class PogoControls : PlayerSubject, TimerObserver
     {
         GameObject effect = null;
 
+        if (numBackFlips == 0 && numFrontFlips == 0)
+        {
+            NotifyTrickObservers(PlayerTricks.None);
+        }
+
         for (int i = 0; i < numFrontFlips; i++)
         {
             if (currTrick > 0)
