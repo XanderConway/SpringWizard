@@ -36,7 +36,8 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     //combo system
     private List<PlayerTricks> _tricksInCombo = new List<PlayerTricks>();
     private bool _isInCombo = false;
-    
+    private int _validComboCount = 0;
+     
 
 
     //hashmap of tricks to score and name
@@ -49,7 +50,10 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
         {PlayerTricks.NoHandsFrontFlip, (125, "No Hands Front Flip")},
         {PlayerTricks.NoHandsBackFlip, (125, "No Hands Back Flip")},
         {PlayerTricks.NoFeetFrontFlip, (125, "No Feet Front Flip")},
-        {PlayerTricks.NoFeetBackFlip, (125, "No Feet Back Flip")}
+        {PlayerTricks.NoFeetBackFlip, (125, "No Feet Back Flip")},
+        {PlayerTricks.springboard, (150, "Springboard")},
+        {PlayerTricks.RailGrinding, (200, "Rail Grinding")},
+        {PlayerTricks.WallJump, (200, "Wall Jump")}
     };
 
     public void UpdateTrickObserver(PlayerTricks playerTricks)
@@ -64,12 +68,12 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
         
         comboCount(playerTrick);
 
-        if(_tricksInCombo.Count <= 1){
+        if(_validComboCount <= 1){
             _trickName = trickScores[playerTrick].name;
         }
         else{
             _trickName = "";
-            for (int i = 0; i < _tricksInCombo.Count; i++)
+            for (int i = 0; i < _tricksInCombo.Count ; i++)
             {
                 _trickName += trickScores[_tricksInCombo[i]].name;
                 if (i < _tricksInCombo.Count - 1)
@@ -79,25 +83,14 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
             }
         }
         
-
-        int updateToTotal;
-        
-        if (_tricksInCombo.Count > 1){
-            updateToTotal = _trickScore * _tricksInCombo.Count;
-        }
-        else{
-            updateToTotal = trickScores[playerTrick].score;
-        }
-        _totalScore += updateToTotal;
-
     }
 
     private string trickScoreDisplay(bool math){
-        if (math && _tricksInCombo.Count > 1 ){
-            return "" + _trickScore + "x" + _tricksInCombo.Count;
+        if (math && _validComboCount > 1 ){
+            return "" + _trickScore + "x" + _validComboCount;
         }
         else if(_trickScore != 0){
-            int curr_total = _trickScore * _tricksInCombo.Count;
+            int curr_total = _trickScore * _validComboCount;
             return "" + curr_total;
         }
         else{
@@ -109,27 +102,34 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     {
         if (trick == PlayerTricks.None || trick == PlayerTricks.Death)
         {
+            
             _isInCombo = false;
             _tricksInCombo.Clear();
+            _totalScore += _trickScore;
             _trickScore = 0;
+            _validComboCount = 0;
         }
         else
         {   
         
             if (_isInCombo && _tricksInCombo[_tricksInCombo.Count - 1] == trick)
-            {
+            {   
                 _isInCombo = false;
                 _tricksInCombo.Clear();
+                if(!_tricksInCombo.Contains(trick)){
+                    _validComboCount += 1;
+                }
                 _tricksInCombo.Add(trick);
                 _trickScore = trickScores[trick].score;
             }
             else{
                 _isInCombo = true;
+                if(!_tricksInCombo.Contains(trick)){
+                    _validComboCount += 1;
+                }
                 _tricksInCombo.Add(trick);
-                _trickScore += trickScores[trick].score;
-
-            }
-           
+                _trickScore += trickScores[trick].score; 
+            } 
         }
     }
 
@@ -139,6 +139,7 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
         trickScoreText.text = trickScoreDisplay(true);
         yield return new WaitForSeconds(0.5f);
         trickScoreText.text = trickScoreDisplay(false);
+        trickNameText.text = _trickName;
         yield return new WaitForSeconds(1.0f);
         trickScoreText.text = "";
         trickNameText.text = "";
@@ -147,13 +148,13 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     private void UpdateUI()
     {
         totalScoreText.text = "Score: " + _totalScore;
-        comboScoreText.text = "Combo: x" + _tricksInCombo.Count;
+        comboScoreText.text = "Combo: x" + _validComboCount;
         StartCoroutine(UpdateWithTime());
     }
 
     private void updateScoreCollected(CollectibleData collectibleData)
     {
-        _totalScore += (int)(collectibleData.points * (1 + _tricksInCombo.Count / 10.0f));
+        _totalScore += (int)(collectibleData.points * (1 + _validComboCount / 10.0f));
         numCollected += 1;
         collectedDisplayText.text = $"Scrolls: {numCollected} / {totalCollectables}";
         UpdateUI();
