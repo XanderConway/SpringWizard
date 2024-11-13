@@ -17,9 +17,17 @@ public class Collectible : MonoBehaviour
 
     private UnityEvent<CollectibleData> collectibleEvent;
 
+    public AudioClip collectionNoise;
+    private AudioSource audioSource;
+
     void OnEnable()
     {
         collectibleEvent = new UnityEvent<CollectibleData>();
+    }
+
+    private void Start()
+    {
+        audioSource = gameObject.GetComponentInParent<AudioSource>();
     }
 
 
@@ -35,6 +43,10 @@ public class Collectible : MonoBehaviour
         {
             // Logic for what happens when the player collects the item
             collectibleEvent.Invoke(collectible);
+            if (audioSource != null)
+            {
+                audioSource.PlayOneShot(collectionNoise);
+            }
             Destroy(gameObject);
         }
     }

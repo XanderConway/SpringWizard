@@ -70,11 +70,12 @@ public class RespawnSystem: MonoBehaviour
             {
 
                 Transform closestPoint = respawnPointParent.GetChild(0);
-                float minDistance = (currentDeathData.lastGroundedPosition - closestPoint.position).magnitude;
+                //float minDistance = (currentDeathData.lastGroundedPosition - closestPoint.position).magnitude;
+                float minDistance = (currentDeathData.deathPosition - closestPoint.position).magnitude;
 
-                for(int i = 1; i < respawnPointParent.childCount; i++)
+                for (int i = 1; i < respawnPointParent.childCount; i++)
                 {
-                    float distance = (currentDeathData.lastGroundedPosition - respawnPointParent.GetChild(i).position).magnitude;
+                    float distance = (currentDeathData.deathPosition - respawnPointParent.GetChild(i).position).magnitude;
                     if(distance < minDistance)
                     {
                         minDistance = distance;
