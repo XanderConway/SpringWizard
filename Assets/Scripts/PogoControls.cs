@@ -64,6 +64,7 @@ public class PogoControls : TrickSubject, TimerObserver
     public float compressTime = 0.4f;
 
     // Used for spring compression animation (Aesthetic)
+    public PlayerAnimator animator;
     public GameObject mainPogoBody;
     public float velocitySpringMultiplier = 0.2f;
     public float springLength = 1.0f;
@@ -165,9 +166,9 @@ public class PogoControls : TrickSubject, TimerObserver
         playerInputActions.Player.Trick2.Enable();
         playerInputActions.Player.Trick2.performed += PerformTrick2;
         playerInputActions.Player.Trick3.Enable();
-        playerInputActions.Player.Trick3.performed += PerformTrick3;
+        //playerInputActions.Player.Trick3.performed += PerformTrick3;
         playerInputActions.Player.Trick4.Enable();
-        playerInputActions.Player.Trick4.performed += PerformTrick4;
+        //playerInputActions.Player.Trick4.performed += PerformTrick4;
 
 
         startBoneRotations = new Quaternion[ragdollBones.Length];
@@ -206,25 +207,27 @@ public class PogoControls : TrickSubject, TimerObserver
     void PerformTrick1(InputAction.CallbackContext context)
     {
         trick1 = true;
-        BroadcastMessage("PlayTrick1Animation");
+        animator.PlayTrick1Animation();
+        //BroadcastMessage("PlayTrick1Animation");
     }
 
     private bool trick2 = false;
     void PerformTrick2(InputAction.CallbackContext context)
     {
         trick2 = true;
-        BroadcastMessage("PlayTrick2Animation");
+        animator.PlayTrick2Animation();
+        //BroadcastMessage("PlayTrick2Animation");
     }
 
-    void PerformTrick3(InputAction.CallbackContext context)
-    {
-        BroadcastMessage("PlayTrick3Animation");
-    }
+    //void PerformTrick3(InputAction.CallbackContext context)
+    //{
+    //    BroadcastMessage("PlayTrick3Animation");
+    //}
 
-    void PerformTrick4(InputAction.CallbackContext context)
-    {
-        BroadcastMessage("PlayTrick4Animation");
-    }
+    //void PerformTrick4(InputAction.CallbackContext context)
+    //{
+    //    BroadcastMessage("PlayTrick4Animation");
+    //}
 
     private void OnChargeJumpReleased(InputAction.CallbackContext context)
     {

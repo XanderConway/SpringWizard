@@ -471,7 +471,7 @@ Transform:
   m_GameObject: {fileID: 7178682417247575503}
   serializedVersion: 2
   m_LocalRotation: {x: 0.0000000025353777, y: -0.000000041240824, z: 4.0077475e-10, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -25}
+  m_LocalPosition: {x: 0, y: 0, z: -0.4540062}
   m_LocalScale: {x: 500, y: 500, z: 500}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -855,6 +855,7 @@ MonoBehaviour:
   maxChargedJumpForce: 50
   maxCompressTime: 0.5
   compressTime: 0.3
+  animator: {fileID: 4739786035268828135}
   mainPogoBody: {fileID: 5244567125300186198}
   velocitySpringMultiplier: 0.2
   springLength: 0.4
@@ -2174,6 +2175,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c98acbb7926c9f7428316b47e818725c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 0}
 --- !u!1 &9017509612216153812 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 391773653927355662, guid: 3a29ffed4c74eaa4d91e8771873fdff0, type: 3}
