@@ -286,17 +286,6 @@
                 },
                 {
                     "name": "",
-                    "id": "9c5ececb-2882-4238-bed1-44e56bfff734",
-                    "path": "<Gamepad>/buttonSouth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Charge Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "a87d2fa0-ee40-41b9-a0ec-5bb694282082",
                     "path": "<Keyboard>/space",
                     "interactions": "",
