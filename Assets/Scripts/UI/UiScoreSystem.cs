@@ -58,11 +58,8 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
 
     public void UpdateTrickObserver(PlayerTricks playerTricks)
     {
-        Debug.Log("Trick: " + playerTricks + ", is in combo: " + _isInCombo);
         TrickDisplay(playerTricks);
-        if(playerTricks != PlayerTricks.None || playerTricks != PlayerTricks.Death){
-            UpdateUI();
-        }
+        UpdateUI();
     }
 
     //TODO: for now I will have the trick name and score here, but this should be moved to a separate class
