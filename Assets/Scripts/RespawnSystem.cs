@@ -13,8 +13,6 @@ public class RespawnSystem: MonoBehaviour
 
     private PlayerInputActions playerInputActions;
 
-    public GameObject respawnText;
-
     public bool drawRespawnLocations;
     public float respawnRad = 5f;
 
@@ -89,7 +87,7 @@ public class RespawnSystem: MonoBehaviour
 
                 player.pogoStick.rotation = Quaternion.identity;
 
-                respawnText.SetActive(false);
+                //respawnText.SetActive(false);
                 enableRespawn = false;
 
             }

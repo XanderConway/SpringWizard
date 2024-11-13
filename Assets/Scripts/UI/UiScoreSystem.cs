@@ -26,9 +26,6 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     [SerializeField] private TextMeshProUGUI trickNameText;
     [SerializeField] private TextMeshProUGUI trickScoreText;
 
-    [SerializeField] private TextMeshProUGUI comboScoreText;
-
-
     private int totalCollectables = 0;
     private int numCollected = 0;
 
@@ -47,17 +44,19 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
         {PlayerTricks.Death, (0, "")},
         {PlayerTricks.FrontFlip, (100, "Front Flip")},
         {PlayerTricks.BackFlip, (100, "Back Flip")},
-        {PlayerTricks.NoHands, (100, "No Hands")},
-        {PlayerTricks.Kickflip, (100, "Kick Flip")},
-        {PlayerTricks.springboard, (150, "Springboard")},
+        {PlayerTricks.NoHands, (50, "No Hands")},
+        {PlayerTricks.Kickflip, (50, "Kick Flip")},
+        {PlayerTricks.springboard, (200, "Springboard")},
         {PlayerTricks.RailGrinding, (200, "Rail Grinding")},
-        {PlayerTricks.WallJump, (200, "Wall Jump")}
+        {PlayerTricks.WallJump, (75, "Wall Jump")}
     };
 
     public void UpdateTrickObserver(PlayerTricks playerTricks)
     {
         TrickDisplay(playerTricks);
-        UpdateUI();
+
+        bool comboEnded = playerTricks == PlayerTricks.None || playerTricks == PlayerTricks.Death;
+        UpdateUI(comboEnded);
     }
 
     //TODO: for now I will have the trick name and score here, but this should be moved to a separate class
@@ -117,48 +116,41 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
         else
         {
             
-            if (_isInCombo && _tricksInCombo[_tricksInCombo.Count - 1] == trick)
+            _isInCombo = true;
+            if (!_tricksInCombo.Contains(trick))
             {
-                _isInCombo = false;
-                _tricksInCombo.Clear();
-                if (!_tricksInCombo.Contains(trick))
-                {
-                    _validComboCount = 1;
-                }
+                _validComboCount += 1;
                 _tricksInCombo.Add(trick);
-                _trickScore = trickScores[trick].score;
-                return;
             }
-            else
-            {
-                _isInCombo = true;
-                if (!_tricksInCombo.Contains(trick))
-                {
-                    _validComboCount += 1;
-                }
-                _tricksInCombo.Add(trick);
-                _trickScore += trickScores[trick].score;
-            }
+            _trickScore += trickScores[trick].score;
         }
     }
 
     private IEnumerator UpdateWithTime()
     {
-        trickNameText.text = _trickName;
-        trickScoreText.text = trickScoreDisplay(true);
-        yield return new WaitForSeconds(1.0f);
-        trickScoreText.text = trickScoreDisplay(false);
-        trickNameText.text = _trickName;
-        yield return new WaitForSeconds(1.0f);
+        //trickNameText.text = _trickName;
+        //trickScoreText.text = trickScoreDisplay(true);
+        //yield return new WaitForSeconds(1.0f);
+        //trickScoreText.text = trickScoreDisplay(false);
+        //trickNameText.text = _trickName;
+        yield return new WaitForSeconds(0.5f);
         trickScoreText.text = "";
         trickNameText.text = "";
     }
 
-    private void UpdateUI()
+    private void UpdateUI(bool comboEnded)
     {
         totalScoreText.text = "Score: " + _totalScore;
-        comboScoreText.text = "Combo: x" + _validComboCount;
-        StartCoroutine(UpdateWithTime());
+
+        if(!comboEnded)
+        {
+            trickNameText.text = _trickName;
+            trickScoreText.text = trickScoreDisplay(true);
+        } else
+        {
+            trickScoreText.text = trickScoreDisplay(false);
+            StartCoroutine(UpdateWithTime());
+        }
     }
 
     private void updateScoreCollected(CollectibleData collectibleData)
@@ -166,7 +158,7 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
         _totalScore += (int)(collectibleData.points * (1 + _validComboCount / 10.0f));
         numCollected += 1;
         collectedDisplayText.text = $"Scrolls: {numCollected} / {totalCollectables}";
-        UpdateUI();
+        UpdateUI(false);
         Debug.Log("Collected!");
     }
 
