@@ -2,10 +2,8 @@ public enum PlayerTricks
 {     
       FrontFlip,
       BackFlip,
-      NoHandsFrontFlip,
-      NoHandsBackFlip,
-      NoFeetFrontFlip,
-      NoFeetBackFlip,
+      NoHands,
+      Kickflip,
       springboard,
       RailGrinding,
       WallJump,

@@ -280,37 +280,24 @@ public class PogoControls : TrickSubject, TimerObserver
             NotifyTrickObservers(PlayerTricks.WallJump);
         }
 
+        if (currTrick > 0)
+        {
+            NotifyTrickObservers(PlayerTricks.NoHands);
+
+        }
+        else if (currTrick < 0)
+        {
+            NotifyTrickObservers(PlayerTricks.Kickflip);
+        }
+
         for (int i = 0; i < numFrontFlips; i++)
         {
-            if (currTrick > 0)
-            {
-                NotifyTrickObservers(PlayerTricks.NoHandsFrontFlip);
-
-            }
-            else if (currTrick < 0)
-            {
-                NotifyTrickObservers(PlayerTricks.NoFeetFrontFlip);
-            }
-            else
-            {
-                NotifyTrickObservers(PlayerTricks.FrontFlip);
-            }
+            NotifyTrickObservers(PlayerTricks.FrontFlip);
         }
 
         for (int i = 0; i < numBackFlips; i++)
         {
-            if (currTrick > 0)
-            {
-                NotifyTrickObservers(PlayerTricks.NoHandsBackFlip);
-            }
-            else if (currTrick < 0)
-            {
-                NotifyTrickObservers(PlayerTricks.NoFeetBackFlip);
-            }
-            else
-            {
-                NotifyTrickObservers(PlayerTricks.BackFlip);
-            }
+            NotifyTrickObservers(PlayerTricks.BackFlip);
         }
 
         if (effect)
