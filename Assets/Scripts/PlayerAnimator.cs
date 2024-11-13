@@ -58,4 +58,12 @@ public class PlayerAnimator : MonoBehaviour
             animator.SetBool("IsRailGrinding", false);
         }
     }
+
+    void PlayChargingJumpAnimation(bool isChargingJump) {
+        if (isChargingJump) {
+            animator.Play("Charging Jump");
+        } else {
+            animator.SetBool("IsChargingJump", false);
+        }
+    }
 }

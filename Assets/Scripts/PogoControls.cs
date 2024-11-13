@@ -430,6 +430,7 @@ public class PogoControls : TrickSubject, TimerObserver
                 decompressHalfTime = compressTime / (compressHalfTime / compressTime);
 
                 jumpForce += (Time.deltaTime / maxCompressTime) * maxChargedJumpForce;
+                BroadcastMessage("PlayChargingJumpAnimation", true);
             }
 
             // Current compression is inital_velocity * cos(time)
@@ -469,7 +470,7 @@ public class PogoControls : TrickSubject, TimerObserver
 
     private void ApplyJumpAnimation(float bounceAmount, float squashFactor)
     {
-
+        BroadcastMessage("PlayChargingJumpAnimation", false);
         bounceAmount = Mathf.Clamp(bounceAmount, 0, 1);
         mainPogoBody.transform.localPosition = pogoBodyHeightOffGround + springLength * Vector3.down * bounceAmount;
         pogoStick.transform.localScale = new Vector3(1, squashFactor, 1);
