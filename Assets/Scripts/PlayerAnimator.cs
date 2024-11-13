@@ -53,6 +53,7 @@ public class PlayerAnimator : MonoBehaviour
 
     void PlayRailGrindingAnimation(bool isRailGrinding) {
         if (isRailGrinding) {
+            animator.SetBool("IsRailGrinding", true);
             animator.Play("rail grind part 1");
         } else {
             animator.SetBool("IsRailGrinding", false);
@@ -61,6 +62,7 @@ public class PlayerAnimator : MonoBehaviour
 
     void PlayChargingJumpAnimation(bool isChargingJump) {
         if (isChargingJump) {
+            animator.SetBool("IsChargingJump", true);
             animator.Play("Charging Jump");
         } else {
             animator.SetBool("IsChargingJump", false);
