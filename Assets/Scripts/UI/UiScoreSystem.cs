@@ -47,10 +47,8 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
         {PlayerTricks.Death, (0, "")},
         {PlayerTricks.FrontFlip, (100, "Front Flip")},
         {PlayerTricks.BackFlip, (100, "Back Flip")},
-        {PlayerTricks.NoHandsFrontFlip, (125, "No Hands Front Flip")},
-        {PlayerTricks.NoHandsBackFlip, (125, "No Hands Back Flip")},
-        {PlayerTricks.NoFeetFrontFlip, (125, "No Feet Front Flip")},
-        {PlayerTricks.NoFeetBackFlip, (125, "No Feet Back Flip")},
+        {PlayerTricks.NoHands, (100, "No Hands")},
+        {PlayerTricks.Kickflip, (100, "Kick Flip")},
         {PlayerTricks.springboard, (150, "Springboard")},
         {PlayerTricks.RailGrinding, (200, "Rail Grinding")},
         {PlayerTricks.WallJump, (200, "Wall Jump")}
@@ -148,7 +146,7 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     {
         trickNameText.text = _trickName;
         trickScoreText.text = trickScoreDisplay(true);
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1.0f);
         trickScoreText.text = trickScoreDisplay(false);
         trickNameText.text = _trickName;
         yield return new WaitForSeconds(1.0f);
