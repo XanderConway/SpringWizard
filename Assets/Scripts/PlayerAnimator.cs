@@ -34,4 +34,20 @@ public class PlayerAnimator : MonoBehaviour
         animator.SetBool("IsLeaningFront", forwardInput == 1);
         animator.SetBool("IsLeaningBack", forwardInput == -1);
     }
+
+    void PlayTrick1Animation() {
+        animator.SetTrigger("NoHandsTrick1Trigger");
+    }
+
+    void PlayTrick2Animation() {
+        animator.SetTrigger("PogoKickFlipTrigger");
+    }
+
+    void PlayTrick3Animation() {
+        animator.SetTrigger("ScissorKickTrigger");
+    }
+
+    void PlayTrick4Animation() {
+        animator.SetTrigger("NoHandsTrick2Trigger");
+    }
 }

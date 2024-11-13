@@ -99,7 +99,7 @@ public class PogoControls : TrickSubject, TimerObserver
 
     public AnimationCurve bounceScale;
     private float groundedTimer = 0;
-    private bool grounded = false;
+    private bool isGrounded = false;
 
     // Transforms used for rotations
     public Transform pogoStick; // Will flip around it's side axis
@@ -164,6 +164,10 @@ public class PogoControls : TrickSubject, TimerObserver
         playerInputActions.Player.Trick1.performed += PerformTrick1;
         playerInputActions.Player.Trick2.Enable();
         playerInputActions.Player.Trick2.performed += PerformTrick2;
+        playerInputActions.Player.Trick3.Enable();
+        playerInputActions.Player.Trick3.performed += PerformTrick3;
+        playerInputActions.Player.Trick4.Enable();
+        playerInputActions.Player.Trick4.performed += PerformTrick4;
 
 
         startBoneRotations = new Quaternion[ragdollBones.Length];
@@ -202,12 +206,24 @@ public class PogoControls : TrickSubject, TimerObserver
     void PerformTrick1(InputAction.CallbackContext context)
     {
         trick1 = true;
+        BroadcastMessage("PlayTrick1Animation");
     }
 
     private bool trick2 = false;
     void PerformTrick2(InputAction.CallbackContext context)
     {
         trick2 = true;
+        BroadcastMessage("PlayTrick2Animation");
+    }
+
+    void PerformTrick3(InputAction.CallbackContext context)
+    {
+        BroadcastMessage("PlayTrick3Animation");
+    }
+
+    void PerformTrick4(InputAction.CallbackContext context)
+    {
+        BroadcastMessage("PlayTrick4Animation");
     }
 
     private void OnChargeJumpReleased(InputAction.CallbackContext context)
@@ -378,9 +394,9 @@ public class PogoControls : TrickSubject, TimerObserver
             }
 
             // Compress the spring if there is ground below us and we are moving downwards
-            if (!grounded && rb.velocity.y <= 0)
+            if (!isGrounded && rb.velocity.y <= 0)
             {
-                grounded = true;
+                isGrounded = true;
                 jumpForce = baseJumpForce;
 
                 jumpForce += Math.Min(Math.Abs(rb.velocity.y) * velocitySpringMultiplier, 100);
@@ -402,7 +418,7 @@ public class PogoControls : TrickSubject, TimerObserver
         }
 
 
-        if (grounded)
+        if (isGrounded)
         {
             groundedTimer += Time.deltaTime;
 
@@ -446,7 +462,7 @@ public class PogoControls : TrickSubject, TimerObserver
 
                 groundedTimer = 0;
                 fireJumpBoost = 0;
-                grounded = false;
+                isGrounded = false;
             }
         }
     }
@@ -462,14 +478,14 @@ public class PogoControls : TrickSubject, TimerObserver
     public void ResetJumpState()
     {
         groundedTimer = 0;
-        grounded = false;
+        isGrounded = false;
 
         ApplyJumpAnimation(0, 1);
     }
 
     void countFlips()
     {
-        if (!grounded)
+        if (!isGrounded)
         {
             float angleDiff = Vector3.SignedAngle(prevPogoUp, pogoStick.up, transform.right);
             currentFlipAngle += angleDiff;
@@ -519,7 +535,7 @@ public class PogoControls : TrickSubject, TimerObserver
         flipAngle *= flipSpeedMultiplier.Evaluate(dotProduct);
 
         // Rotate around the foot of the pogo stick when grounded, and the center when in the air
-        if (grounded)
+        if (isGrounded)
         {
             float angleDiff = Vector3.SignedAngle(Vector3.up, pogoStick.up, transform.right);
             if ((angleDiff > maxLeanForwardAngle && flipAngle > 0) || (angleDiff < maxLeanBackwardAngle && flipAngle < 0))
@@ -728,7 +744,7 @@ public class PogoControls : TrickSubject, TimerObserver
 
     public void ApplySpringboardForce(float force)
     {
-        if (grounded)
+        if (isGrounded)
         {
             jumpForce += force;
         }

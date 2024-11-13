@@ -116,6 +116,24 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Trick3"",
+                    ""type"": ""Button"",
+                    ""id"": ""9087f052-2bda-45d2-a11a-7d9c96eafde6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Trick4"",
+                    ""type"": ""Button"",
+                    ""id"": ""156d4f3f-3f6b-44c3-a5ce-1619935c87ea"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -463,7 +481,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""d38531c6-a4b1-4e0f-b937-4eebf96b158c"",
-                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -474,7 +492,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""8de49911-acfb-4dd2-bd06-3750fca93b5e"",
-                    ""path"": ""<Keyboard>/q"",
+                    ""path"": ""<Keyboard>/1"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -485,7 +503,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""54d4be5b-88b2-43a3-a6aa-b6999033d800"",
-                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -496,11 +514,55 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""5c1b8eed-71f6-45fb-9026-2a472777e091"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Keyboard>/2"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Trick2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d2f6a0f5-64bd-4ac2-8cb6-54e870543129"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Trick3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fc974fd7-db80-4279-aff7-ac642d129af9"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Trick3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4d6aa521-cc0d-47be-8ddb-d091452fe9ad"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Trick4"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d465d6b5-f4e3-4b9a-8ef2-d358999220a8"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Trick4"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -521,6 +583,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Respawn = m_Player.FindAction("Respawn", throwIfNotFound: true);
         m_Player_Trick1 = m_Player.FindAction("Trick1", throwIfNotFound: true);
         m_Player_Trick2 = m_Player.FindAction("Trick2", throwIfNotFound: true);
+        m_Player_Trick3 = m_Player.FindAction("Trick3", throwIfNotFound: true);
+        m_Player_Trick4 = m_Player.FindAction("Trick4", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -592,6 +656,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Respawn;
     private readonly InputAction m_Player_Trick1;
     private readonly InputAction m_Player_Trick2;
+    private readonly InputAction m_Player_Trick3;
+    private readonly InputAction m_Player_Trick4;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -606,6 +672,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @Respawn => m_Wrapper.m_Player_Respawn;
         public InputAction @Trick1 => m_Wrapper.m_Player_Trick1;
         public InputAction @Trick2 => m_Wrapper.m_Player_Trick2;
+        public InputAction @Trick3 => m_Wrapper.m_Player_Trick3;
+        public InputAction @Trick4 => m_Wrapper.m_Player_Trick4;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -645,6 +713,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Trick2.started += instance.OnTrick2;
             @Trick2.performed += instance.OnTrick2;
             @Trick2.canceled += instance.OnTrick2;
+            @Trick3.started += instance.OnTrick3;
+            @Trick3.performed += instance.OnTrick3;
+            @Trick3.canceled += instance.OnTrick3;
+            @Trick4.started += instance.OnTrick4;
+            @Trick4.performed += instance.OnTrick4;
+            @Trick4.canceled += instance.OnTrick4;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -679,6 +753,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Trick2.started -= instance.OnTrick2;
             @Trick2.performed -= instance.OnTrick2;
             @Trick2.canceled -= instance.OnTrick2;
+            @Trick3.started -= instance.OnTrick3;
+            @Trick3.performed -= instance.OnTrick3;
+            @Trick3.canceled -= instance.OnTrick3;
+            @Trick4.started -= instance.OnTrick4;
+            @Trick4.performed -= instance.OnTrick4;
+            @Trick4.canceled -= instance.OnTrick4;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -708,5 +788,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnRespawn(InputAction.CallbackContext context);
         void OnTrick1(InputAction.CallbackContext context);
         void OnTrick2(InputAction.CallbackContext context);
+        void OnTrick3(InputAction.CallbackContext context);
+        void OnTrick4(InputAction.CallbackContext context);
     }
 }
