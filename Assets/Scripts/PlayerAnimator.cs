@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlayerAnimator : MonoBehaviour
 {
-    private Animator animator;
+    public Animator animator;
     private PlayerInputActions playerInputActions;
     private Vector2 leanInputVector;
     private void Awake() {
@@ -35,11 +35,11 @@ public class PlayerAnimator : MonoBehaviour
         animator.SetBool("IsLeaningBack", forwardInput == -1);
     }
 
-    void PlayTrick1Animation() {
+    public void PlayTrick1Animation() {
         animator.SetTrigger("NoHandsTrick2Trigger");
     }
 
-    void PlayTrick2Animation() {
+    public void PlayTrick2Animation() {
         animator.SetTrigger("PogoKickFlipTrigger");
     }
 
