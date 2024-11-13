@@ -50,4 +50,12 @@ public class PlayerAnimator : MonoBehaviour
     void PlayTrick4Animation() {
         animator.SetTrigger("NoHandsTrick2Trigger");
     }
+
+    void PlayRailGrindingAnimation(bool isRailGrinding) {
+        if (isRailGrinding) {
+            animator.Play("rail grind part 1");
+        } else {
+            animator.SetBool("IsRailGrinding", false);
+        }
+    }
 }

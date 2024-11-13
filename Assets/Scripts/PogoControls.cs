@@ -829,6 +829,7 @@ public class PogoControls : TrickSubject, TimerObserver
 
         rb.isKinematic = true;
         SetPlayerCollidersTrigger(true);
+        BroadcastMessage("PlayRailGrindingAnimation", isGrinding);
     }
 
     void MoveAlongRail()
@@ -908,6 +909,7 @@ public class PogoControls : TrickSubject, TimerObserver
         colliderReEnableTimer = 0f;
 
         NotifyTrickObservers(PlayerTricks.RailGrinding);
+        BroadcastMessage("PlayRailGrindingAnimation", isGrinding);
     }
 
     void SetPlayerCollidersTrigger(bool isTrigger)
