@@ -102,7 +102,7 @@
                     "id": "af9cfa3f-6fcc-461f-b759-5badd1e10606",
                     "path": "2DVector",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "StickDeadzone(min=0.05)",
                     "groups": "",
                     "action": "Lean",
                     "isComposite": true,
