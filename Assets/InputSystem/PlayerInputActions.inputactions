@@ -470,7 +470,7 @@
                 {
                     "name": "",
                     "id": "d38531c6-a4b1-4e0f-b937-4eebf96b158c",
-                    "path": "<Gamepad>/buttonNorth",
+                    "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -514,7 +514,7 @@
                 {
                     "name": "",
                     "id": "54d4be5b-88b2-43a3-a6aa-b6999033d800",
-                    "path": "<Gamepad>/buttonEast",
+                    "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -546,34 +546,12 @@
                 },
                 {
                     "name": "",
-                    "id": "d2f6a0f5-64bd-4ac2-8cb6-54e870543129",
-                    "path": "<Gamepad>/buttonSouth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Trick3",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "fc974fd7-db80-4279-aff7-ac642d129af9",
                     "path": "<Keyboard>/3",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Trick3",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "4d6aa521-cc0d-47be-8ddb-d091452fe9ad",
-                    "path": "<Gamepad>/buttonWest",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Trick4",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

@@ -4,6 +4,8 @@ public enum PlayerTricks
       BackFlip,
       NoHands,
       Kickflip,
+      ScissorKick,
+      HandlessBarSpin,
       springboard,
       RailGrinding,
       WallJump,

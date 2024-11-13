@@ -44,7 +44,7 @@ public class PogoControls : TrickSubject, TimerObserver
     public AnimationCurve flipSpeedMultiplier;
 
     // Trick detection parameters
-    private int currTrick = 0;
+    private PlayerTricks currTrick = PlayerTricks.None;
     private int numFrontFlips = 0;
     private int numBackFlips = 0;
     private Vector3 prevPogoUp = Vector3.up;
@@ -64,7 +64,6 @@ public class PogoControls : TrickSubject, TimerObserver
     public float compressTime = 0.4f;
 
     // Used for spring compression animation (Aesthetic)
-    public PlayerAnimator animator;
     public GameObject mainPogoBody;
     public float velocitySpringMultiplier = 0.2f;
     public float springLength = 1.0f;
@@ -166,9 +165,9 @@ public class PogoControls : TrickSubject, TimerObserver
         playerInputActions.Player.Trick2.Enable();
         playerInputActions.Player.Trick2.performed += PerformTrick2;
         playerInputActions.Player.Trick3.Enable();
-        //playerInputActions.Player.Trick3.performed += PerformTrick3;
+        playerInputActions.Player.Trick3.performed += PerformTrick3;
         playerInputActions.Player.Trick4.Enable();
-        //playerInputActions.Player.Trick4.performed += PerformTrick4;
+        playerInputActions.Player.Trick4.performed += PerformTrick4;
 
 
         startBoneRotations = new Quaternion[ragdollBones.Length];
@@ -203,31 +202,30 @@ public class PogoControls : TrickSubject, TimerObserver
         isChargingJump = true;
     }
 
-    private bool trick1 = false;
     void PerformTrick1(InputAction.CallbackContext context)
     {
-        trick1 = true;
-        animator.PlayTrick1Animation();
-        //BroadcastMessage("PlayTrick1Animation");
+        currTrick = PlayerTricks.NoHands;
+        BroadcastMessage("PlayTrick1Animation");
     }
 
     private bool trick2 = false;
     void PerformTrick2(InputAction.CallbackContext context)
     {
-        trick2 = true;
-        animator.PlayTrick2Animation();
-        //BroadcastMessage("PlayTrick2Animation");
+        currTrick = PlayerTricks.Kickflip;
+        BroadcastMessage("PlayTrick2Animation");
     }
 
-    //void PerformTrick3(InputAction.CallbackContext context)
-    //{
-    //    BroadcastMessage("PlayTrick3Animation");
-    //}
+    void PerformTrick3(InputAction.CallbackContext context)
+    {
+        currTrick = PlayerTricks.ScissorKick;
+        BroadcastMessage("PlayTrick3Animation");
+    }
 
-    //void PerformTrick4(InputAction.CallbackContext context)
-    //{
-    //    BroadcastMessage("PlayTrick4Animation");
-    //}
+    void PerformTrick4(InputAction.CallbackContext context)
+    {
+        currTrick = PlayerTricks.HandlessBarSpin;
+        BroadcastMessage("PlayTrick4Animation");
+    }
 
     private void OnChargeJumpReleased(InputAction.CallbackContext context)
     {
@@ -260,7 +258,6 @@ public class PogoControls : TrickSubject, TimerObserver
 
     private void Update()
     {
-        handleControls();
 
         // Very jank timer for a smoother jump at the end of a rail
         if (reEnableCollidersPending)
@@ -299,14 +296,8 @@ public class PogoControls : TrickSubject, TimerObserver
             NotifyTrickObservers(PlayerTricks.WallJump);
         }
 
-        if (currTrick > 0)
-        {
-            NotifyTrickObservers(PlayerTricks.NoHands);
-
-        }
-        else if (currTrick < 0)
-        {
-            NotifyTrickObservers(PlayerTricks.Kickflip);
+        if (currTrick != PlayerTricks.None) {
+            NotifyTrickObservers(currTrick);
         }
 
         for (int i = 0; i < numFrontFlips; i++)
@@ -329,7 +320,7 @@ public class PogoControls : TrickSubject, TimerObserver
         //pogoStick.transform.localPosition = pogoStickStartPosition;
 
 
-        currTrick = 0;
+        currTrick = PlayerTricks.None;
         numFrontFlips = 0;
         numBackFlips = 0;
     }
@@ -433,6 +424,7 @@ public class PogoControls : TrickSubject, TimerObserver
                 decompressHalfTime = compressTime / (compressHalfTime / compressTime);
 
                 jumpForce += (Time.deltaTime / maxCompressTime) * maxChargedJumpForce;
+                BroadcastMessage("PlayChargingJumpAnimation", true);
             }
 
             // Current compression is inital_velocity * cos(time)
@@ -472,7 +464,7 @@ public class PogoControls : TrickSubject, TimerObserver
 
     private void ApplyJumpAnimation(float bounceAmount, float squashFactor)
     {
-
+        BroadcastMessage("PlayChargingJumpAnimation", false);
         bounceAmount = Mathf.Clamp(bounceAmount, 0, 1);
         mainPogoBody.transform.localPosition = pogoBodyHeightOffGround + springLength * Vector3.down * bounceAmount;
         pogoStick.transform.localScale = new Vector3(1, squashFactor, 1);
@@ -578,22 +570,6 @@ public class PogoControls : TrickSubject, TimerObserver
         //horizontalDiff *= 0.01f;
         transform.position += posDiff;
         pogoStick.position -= posDiff;
-    }
-
-    void handleControls()
-    {
-
-        // Currently just changing colour as a place holder for animations
-        if (trick1)
-        {
-            currTrick = 1;
-            trick1 = false;
-        }
-        else if (trick2)
-        {
-            currTrick = -1;
-            trick2 = false;
-        }
     }
 
     private void setCollidersActive(List<Collider> components, bool active)

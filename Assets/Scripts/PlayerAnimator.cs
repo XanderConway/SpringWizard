@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlayerAnimator : MonoBehaviour
 {
-    public Animator animator;
+    private Animator animator;
     private PlayerInputActions playerInputActions;
     private Vector2 leanInputVector;
     private void Awake() {
@@ -35,11 +35,11 @@ public class PlayerAnimator : MonoBehaviour
         animator.SetBool("IsLeaningBack", forwardInput == -1);
     }
 
-    public void PlayTrick1Animation() {
-        animator.SetTrigger("NoHandsTrick1Trigger");
+    void PlayTrick1Animation() {
+        animator.SetTrigger("NoHandsTrick2Trigger");
     }
 
-    public void PlayTrick2Animation() {
+    void PlayTrick2Animation() {
         animator.SetTrigger("PogoKickFlipTrigger");
     }
 
@@ -48,14 +48,24 @@ public class PlayerAnimator : MonoBehaviour
     }
 
     void PlayTrick4Animation() {
-        animator.SetTrigger("NoHandsTrick2Trigger");
+        animator.SetTrigger("NoHandsTrick1Trigger");
     }
 
     void PlayRailGrindingAnimation(bool isRailGrinding) {
         if (isRailGrinding) {
+            animator.SetBool("IsRailGrinding", true);
             animator.Play("rail grind part 1");
         } else {
             animator.SetBool("IsRailGrinding", false);
+        }
+    }
+
+    void PlayChargingJumpAnimation(bool isChargingJump) {
+        if (isChargingJump) {
+            animator.SetBool("IsChargingJump", true);
+            animator.Play("Charging Jump");
+        } else {
+            animator.SetBool("IsChargingJump", false);
         }
     }
 }

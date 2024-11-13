@@ -44,8 +44,10 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
         {PlayerTricks.Death, (0, "")},
         {PlayerTricks.FrontFlip, (100, "Front Flip")},
         {PlayerTricks.BackFlip, (100, "Back Flip")},
-        {PlayerTricks.NoHands, (50, "No Hands")},
+        {PlayerTricks.NoHands, (50, "No Handed")},
         {PlayerTricks.Kickflip, (50, "Kick Flip")},
+        {PlayerTricks.ScissorKick, (50, "Scissor Kick")},
+        {PlayerTricks.HandlessBarSpin, (50, "Handless Bar Spin")},
         {PlayerTricks.springboard, (200, "Springboard")},
         {PlayerTricks.RailGrinding, (200, "Rail Grinding")},
         {PlayerTricks.WallJump, (75, "Wall Jump")}
