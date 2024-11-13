@@ -28,7 +28,7 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
 
     [SerializeField] private TextMeshProUGUI comboScoreText;
 
-   
+
     private int totalCollectables = 0;
     private int numCollected = 0;
 
@@ -37,7 +37,7 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     private List<PlayerTricks> _tricksInCombo = new List<PlayerTricks>();
     private bool _isInCombo = false;
     private int _validComboCount = 0;
-     
+
 
 
     //hashmap of tricks to score and name
@@ -58,22 +58,28 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
 
     public void UpdateTrickObserver(PlayerTricks playerTricks)
     {
-       TrickDisplay(playerTricks);
-       UpdateUI();
+        Debug.Log("Trick: " + playerTricks);
+        TrickDisplay(playerTricks);
+        if(playerTricks != PlayerTricks.None && playerTricks != PlayerTricks.Death){
+            UpdateUI();
+        }
     }
 
     //TODO: for now I will have the trick name and score here, but this should be moved to a separate class
 
-    private void TrickDisplay(PlayerTricks playerTrick){
-        
+    private void TrickDisplay(PlayerTricks playerTrick)
+    {
+
         comboCount(playerTrick);
 
-        if(_validComboCount <= 1){
+        if (_validComboCount <= 1)
+        {
             _trickName = trickScores[playerTrick].name;
         }
-        else{
+        else
+        {
             _trickName = "";
-            for (int i = 0; i < _tricksInCombo.Count ; i++)
+            for (int i = 0; i < _tricksInCombo.Count; i++)
             {
                 _trickName += trickScores[_tricksInCombo[i]].name;
                 if (i < _tricksInCombo.Count - 1)
@@ -82,27 +88,31 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
                 }
             }
         }
-        
+
     }
 
-    private string trickScoreDisplay(bool math){
-        if (math && _validComboCount > 1 ){
+    private string trickScoreDisplay(bool math)
+    {
+        if (math && _validComboCount > 1)
+        {
             return "" + _trickScore + "x" + _validComboCount;
         }
-        else if(_trickScore != 0){
+        else if (_trickScore != 0)
+        {
             int curr_total = _trickScore * _validComboCount;
             return "" + curr_total;
         }
-        else{
+        else
+        {
             return "";
         }
     }
-    
+
     void comboCount(PlayerTricks trick)
     {
         if (trick == PlayerTricks.None || trick == PlayerTricks.Death)
         {
-            
+
             _isInCombo = false;
             _tricksInCombo.Clear();
             _totalScore += _trickScore * _validComboCount;
@@ -110,31 +120,34 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
             _validComboCount = 0;
         }
         else
-        {   
-        
+        {
+
             if (_isInCombo && _tricksInCombo[_tricksInCombo.Count - 1] == trick)
-            {   
+            {
                 _isInCombo = false;
                 _tricksInCombo.Clear();
-                if(!_tricksInCombo.Contains(trick)){
+                if (!_tricksInCombo.Contains(trick))
+                {
                     _validComboCount += 1;
                 }
                 _tricksInCombo.Add(trick);
                 _trickScore = trickScores[trick].score;
             }
-            else{
+            else
+            {
                 _isInCombo = true;
-                if(!_tricksInCombo.Contains(trick)){
+                if (!_tricksInCombo.Contains(trick))
+                {
                     _validComboCount += 1;
                 }
                 _tricksInCombo.Add(trick);
-                _trickScore += trickScores[trick].score; 
-            } 
+                _trickScore += trickScores[trick].score;
+            }
         }
     }
 
     private IEnumerator UpdateWithTime()
-    {   
+    {
         trickNameText.text = _trickName;
         trickScoreText.text = trickScoreDisplay(true);
         yield return new WaitForSeconds(0.5f);
@@ -170,7 +183,7 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     {
         // Add as observer to collectibles
 
-        if(collectibesParent != null)
+        if (collectibesParent != null)
         {
             Collectible[] collectibles = collectibesParent.GetComponentsInChildren<Collectible>();
 
