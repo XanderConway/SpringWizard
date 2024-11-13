@@ -103,7 +103,7 @@ public class RespawnSystem: MonoBehaviour
         if(drawRespawnLocations)
         {
             Gizmos.color = Color.blue;
-            for (int i = 1; i < respawnPointParent.childCount; i++)
+            for (int i = 0; i < respawnPointParent.childCount; i++)
             {
                 Transform pos = respawnPointParent.GetChild(i);
                 Gizmos.DrawSphere(pos.position, respawnRad);
