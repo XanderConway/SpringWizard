@@ -44,7 +44,7 @@ public class PogoControls : TrickSubject, TimerObserver
     public AnimationCurve flipSpeedMultiplier;
 
     // Trick detection parameters
-    private int currTrick = 0;
+    private PlayerTricks currTrick = PlayerTricks.None;
     private int numFrontFlips = 0;
     private int numBackFlips = 0;
     private Vector3 prevPogoUp = Vector3.up;
@@ -202,27 +202,28 @@ public class PogoControls : TrickSubject, TimerObserver
         isChargingJump = true;
     }
 
-    private bool trick1 = false;
     void PerformTrick1(InputAction.CallbackContext context)
     {
-        trick1 = true;
+        currTrick = PlayerTricks.NoHands;
         BroadcastMessage("PlayTrick1Animation");
     }
 
     private bool trick2 = false;
     void PerformTrick2(InputAction.CallbackContext context)
     {
-        trick2 = true;
+        currTrick = PlayerTricks.Kickflip;
         BroadcastMessage("PlayTrick2Animation");
     }
 
     void PerformTrick3(InputAction.CallbackContext context)
     {
+        currTrick = PlayerTricks.ScissorKick;
         BroadcastMessage("PlayTrick3Animation");
     }
 
     void PerformTrick4(InputAction.CallbackContext context)
     {
+        currTrick = PlayerTricks.HandlessBarSpin;
         BroadcastMessage("PlayTrick4Animation");
     }
 
@@ -257,7 +258,6 @@ public class PogoControls : TrickSubject, TimerObserver
 
     private void Update()
     {
-        handleControls();
 
         // Very jank timer for a smoother jump at the end of a rail
         if (reEnableCollidersPending)
@@ -296,14 +296,8 @@ public class PogoControls : TrickSubject, TimerObserver
             NotifyTrickObservers(PlayerTricks.WallJump);
         }
 
-        if (currTrick > 0)
-        {
-            NotifyTrickObservers(PlayerTricks.NoHands);
-
-        }
-        else if (currTrick < 0)
-        {
-            NotifyTrickObservers(PlayerTricks.Kickflip);
+        if (currTrick != PlayerTricks.None) {
+            NotifyTrickObservers(currTrick);
         }
 
         for (int i = 0; i < numFrontFlips; i++)
@@ -326,7 +320,7 @@ public class PogoControls : TrickSubject, TimerObserver
         //pogoStick.transform.localPosition = pogoStickStartPosition;
 
 
-        currTrick = 0;
+        currTrick = PlayerTricks.None;
         numFrontFlips = 0;
         numBackFlips = 0;
     }
@@ -576,22 +570,6 @@ public class PogoControls : TrickSubject, TimerObserver
         //horizontalDiff *= 0.01f;
         transform.position += posDiff;
         pogoStick.position -= posDiff;
-    }
-
-    void handleControls()
-    {
-
-        // Currently just changing colour as a place holder for animations
-        if (trick1)
-        {
-            currTrick = 1;
-            trick1 = false;
-        }
-        else if (trick2)
-        {
-            currTrick = -1;
-            trick2 = false;
-        }
     }
 
     private void setCollidersActive(List<Collider> components, bool active)

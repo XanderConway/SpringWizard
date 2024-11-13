@@ -36,7 +36,7 @@ public class PlayerAnimator : MonoBehaviour
     }
 
     void PlayTrick1Animation() {
-        animator.SetTrigger("NoHandsTrick1Trigger");
+        animator.SetTrigger("NoHandsTrick2Trigger");
     }
 
     void PlayTrick2Animation() {
@@ -48,7 +48,7 @@ public class PlayerAnimator : MonoBehaviour
     }
 
     void PlayTrick4Animation() {
-        animator.SetTrigger("NoHandsTrick2Trigger");
+        animator.SetTrigger("NoHandsTrick1Trigger");
     }
 
     void PlayRailGrindingAnimation(bool isRailGrinding) {
