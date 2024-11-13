@@ -366,7 +366,7 @@ public class PogoControls : TrickSubject, TimerObserver
             float normalDotUp = Vector3.Dot(hit.normal, Vector3.up);
 
             // Define a threshold for wall detection (e.g., 0.7 means anything with a slope steeper than ~45 degrees)
-            float wallThreshold = 0.7f;
+            float wallThreshold = 0.75f;
 
             // Check if the surface is a wall
             _isWallJumping = normalDotUp < wallThreshold;

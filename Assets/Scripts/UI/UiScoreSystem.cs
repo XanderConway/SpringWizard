@@ -58,9 +58,9 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
 
     public void UpdateTrickObserver(PlayerTricks playerTricks)
     {
-        Debug.Log("Trick: " + playerTricks);
+        Debug.Log("Trick: " + playerTricks + ", is in combo: " + _isInCombo);
         TrickDisplay(playerTricks);
-        if(playerTricks != PlayerTricks.None && playerTricks != PlayerTricks.Death){
+        if(playerTricks != PlayerTricks.None || playerTricks != PlayerTricks.Death){
             UpdateUI();
         }
     }
@@ -121,17 +121,18 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
         }
         else
         {
-
+            
             if (_isInCombo && _tricksInCombo[_tricksInCombo.Count - 1] == trick)
             {
                 _isInCombo = false;
                 _tricksInCombo.Clear();
                 if (!_tricksInCombo.Contains(trick))
                 {
-                    _validComboCount += 1;
+                    _validComboCount = 1;
                 }
                 _tricksInCombo.Add(trick);
                 _trickScore = trickScores[trick].score;
+                return;
             }
             else
             {
