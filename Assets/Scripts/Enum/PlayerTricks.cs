@@ -6,6 +6,9 @@ public enum PlayerTricks
       NoHandsBackFlip,
       NoFeetFrontFlip,
       NoFeetBackFlip,
+      springboard,
+      RailGrinding,
+      WallJump,
       None,
       Death,
 }

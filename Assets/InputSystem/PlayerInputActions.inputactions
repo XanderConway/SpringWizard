@@ -319,17 +319,6 @@
                 },
                 {
                     "name": "",
-                    "id": "f6ec8379-ae8f-4d9d-88dc-eda0af4dc17e",
-                    "path": "<Gamepad>/leftTrigger",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Restart",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "e27c11d4-b325-409c-92cc-744e97984687",
                     "path": "<Keyboard>/r",
                     "interactions": "",
@@ -354,6 +343,17 @@
                     "name": "",
                     "id": "b09216c1-b23a-4ace-b8af-5143cfeb665d",
                     "path": "<DualShockGamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fa4e7b3c-7879-45b2-91ef-563fff06caad",
+                    "path": "<Gamepad>/start",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

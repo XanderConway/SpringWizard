@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
@@ -9,102 +10,165 @@ using UnityEngine.UI;
 
 public class UiScoreSystem : MonoBehaviour, TrickObserver
 {
-    [SerializeField] private PlayerSubject player;
+    [SerializeField] private TrickSubject player;
     [SerializeField] private GameObject collectibesParent;
 
+    private int _totalScore = 0;
     private int _trickScore = 0;
+
+
     private String _trickName;
 
     //UI Elements
-    [SerializeField] private TextMeshProUGUI trickScoreText;
+    [SerializeField] private TextMeshProUGUI totalScoreText;
     [SerializeField] private TextMeshProUGUI collectedDisplayText;
 
     [SerializeField] private TextMeshProUGUI trickNameText;
+    [SerializeField] private TextMeshProUGUI trickScoreText;
+
     [SerializeField] private TextMeshProUGUI comboScoreText;
 
 
-    private float combo = 0;
     private int totalCollectables = 0;
     private int numCollected = 0;
-    private PlayerTricks _prevTrick = PlayerTricks.None;
 
 
+    //combo system
+    private List<PlayerTricks> _tricksInCombo = new List<PlayerTricks>();
+    private bool _isInCombo = false;
+    private int _validComboCount = 0;
+
+
+
+    //hashmap of tricks to score and name
+    private Dictionary<PlayerTricks, (int score, string name)> trickScores = new Dictionary<PlayerTricks, (int score, string name)>
+    {
+        {PlayerTricks.None, (0, "")},
+        {PlayerTricks.Death, (0, "")},
+        {PlayerTricks.FrontFlip, (100, "Front Flip")},
+        {PlayerTricks.BackFlip, (100, "Back Flip")},
+        {PlayerTricks.NoHandsFrontFlip, (125, "No Hands Front Flip")},
+        {PlayerTricks.NoHandsBackFlip, (125, "No Hands Back Flip")},
+        {PlayerTricks.NoFeetFrontFlip, (125, "No Feet Front Flip")},
+        {PlayerTricks.NoFeetBackFlip, (125, "No Feet Back Flip")},
+        {PlayerTricks.springboard, (150, "Springboard")},
+        {PlayerTricks.RailGrinding, (200, "Rail Grinding")},
+        {PlayerTricks.WallJump, (200, "Wall Jump")}
+    };
 
     public void UpdateTrickObserver(PlayerTricks playerTricks)
     {
-       TrickDisplay(playerTricks);
-       UpdateUI();
+        Debug.Log("Trick: " + playerTricks + ", is in combo: " + _isInCombo);
+        TrickDisplay(playerTricks);
+        if(playerTricks != PlayerTricks.None || playerTricks != PlayerTricks.Death){
+            UpdateUI();
+        }
     }
 
     //TODO: for now I will have the trick name and score here, but this should be moved to a separate class
 
-    private void TrickDisplay(PlayerTricks playerTrick){
+    private void TrickDisplay(PlayerTricks playerTrick)
+    {
 
-        int trickValue = 0;
-        switch(playerTrick)
+        comboCount(playerTrick);
+
+        if (_validComboCount <= 1)
         {
-            case PlayerTricks.FrontFlip:
-                _trickName = "Front Flip!";
-                trickValue += 100;
-                 UpdateUI();
-                break;
-            case PlayerTricks.BackFlip:
-                _trickName = "Back Flip!";
-                trickValue += 100;
-                break;
-            case PlayerTricks.NoHandsFrontFlip:
-                _trickName = "No Hands Front Flip!";
-                trickValue += 125;
-                break;
-            case PlayerTricks.NoHandsBackFlip:
-                _trickName = "No Hands Back Flip!";
-                trickValue += 125;
-                break;
-            case PlayerTricks.NoFeetFrontFlip:
-                _trickName = "No Feet Front Flip!";
-                trickValue += 125;
-                break;
-            case PlayerTricks.NoFeetBackFlip:
-                _trickName = "No Feet Back Flip!";
-                trickValue += 125;
-                break;
-            default:
-                _trickName = "";
-                trickValue += 0;
-                break;
+            _trickName = trickScores[playerTrick].name;
+        }
+        else
+        {
+            _trickName = "";
+            for (int i = 0; i < _tricksInCombo.Count; i++)
+            {
+                _trickName += trickScores[_tricksInCombo[i]].name;
+                if (i < _tricksInCombo.Count - 1)
+                {
+                    _trickName += " + ";
+                }
+            }
         }
 
-        _trickScore += (int)(trickValue * (1 + combo / 10.0f));
+    }
 
-        if(playerTrick != _prevTrick)
+    private string trickScoreDisplay(bool math)
+    {
+        if (math && _validComboCount > 1)
         {
-            combo += 1;
-            _prevTrick = playerTrick;
+            return "" + _trickScore + "x" + _validComboCount;
         }
-
-        if(playerTrick == PlayerTricks.Death)
+        else if (_trickScore != 0)
         {
-            combo = 0;
+            int curr_total = _trickScore * _validComboCount;
+            return "" + curr_total;
+        }
+        else
+        {
+            return "";
         }
     }
-    private IEnumerator UpdateUIForLimitedTime(float displayTime)
+
+    void comboCount(PlayerTricks trick)
+    {
+        if (trick == PlayerTricks.None || trick == PlayerTricks.Death)
+        {
+
+            _isInCombo = false;
+            _tricksInCombo.Clear();
+            _totalScore += _trickScore * _validComboCount;
+            _trickScore = 0;
+            _validComboCount = 0;
+        }
+        else
+        {
+            
+            if (_isInCombo && _tricksInCombo[_tricksInCombo.Count - 1] == trick)
+            {
+                _isInCombo = false;
+                _tricksInCombo.Clear();
+                if (!_tricksInCombo.Contains(trick))
+                {
+                    _validComboCount = 1;
+                }
+                _tricksInCombo.Add(trick);
+                _trickScore = trickScores[trick].score;
+                return;
+            }
+            else
+            {
+                _isInCombo = true;
+                if (!_tricksInCombo.Contains(trick))
+                {
+                    _validComboCount += 1;
+                }
+                _tricksInCombo.Add(trick);
+                _trickScore += trickScores[trick].score;
+            }
+        }
+    }
+
+    private IEnumerator UpdateWithTime()
     {
         trickNameText.text = _trickName;
-        trickScoreText.text = "Score: " + _trickScore;
-        comboScoreText.text = "Combo: x" + combo;
-
-        yield return new WaitForSeconds(displayTime);
+        trickScoreText.text = trickScoreDisplay(true);
+        yield return new WaitForSeconds(0.5f);
+        trickScoreText.text = trickScoreDisplay(false);
+        trickNameText.text = _trickName;
+        yield return new WaitForSeconds(1.0f);
+        trickScoreText.text = "";
         trickNameText.text = "";
     }
 
     private void UpdateUI()
     {
-        StartCoroutine(UpdateUIForLimitedTime(2.0f)); // Display trick name for 2 seconds
+        totalScoreText.text = "Score: " + _totalScore;
+        comboScoreText.text = "Combo: x" + _validComboCount;
+        StartCoroutine(UpdateWithTime());
     }
 
     private void updateScoreCollected(CollectibleData collectibleData)
     {
-        _trickScore += (int)(collectibleData.points * (1 + combo / 10.0f));
+        _totalScore += (int)(collectibleData.points * (1 + _validComboCount / 10.0f));
         numCollected += 1;
         collectedDisplayText.text = $"Scrolls: {numCollected} / {totalCollectables}";
         UpdateUI();
@@ -120,7 +184,7 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     {
         // Add as observer to collectibles
 
-        if(collectibesParent != null)
+        if (collectibesParent != null)
         {
             Collectible[] collectibles = collectibesParent.GetComponentsInChildren<Collectible>();
 
@@ -138,7 +202,7 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     void OnDisable()
     {
         // Todo store score in LevelManager
-        PlayerPrefs.SetInt("score", _trickScore);
+        PlayerPrefs.SetInt("score", _totalScore);
         PlayerPrefs.SetString("numCollected", $"{numCollected} / {totalCollectables}");
         player.RemoveObserver(this);
     }
