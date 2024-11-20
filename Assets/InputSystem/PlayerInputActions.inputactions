@@ -94,6 +94,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Trick3",
+                    "type": "Button",
+                    "id": "9087f052-2bda-45d2-a11a-7d9c96eafde6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Trick4",
+                    "type": "Button",
+                    "id": "156d4f3f-3f6b-44c3-a5ce-1619935c87ea",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -102,7 +120,7 @@
                     "id": "af9cfa3f-6fcc-461f-b759-5badd1e10606",
                     "path": "2DVector",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "StickDeadzone(min=0.05)",
                     "groups": "",
                     "action": "Lean",
                     "isComposite": true,
@@ -286,17 +304,6 @@
                 },
                 {
                     "name": "",
-                    "id": "9c5ececb-2882-4238-bed1-44e56bfff734",
-                    "path": "<Gamepad>/buttonSouth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Charge Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "a87d2fa0-ee40-41b9-a0ec-5bb694282082",
                     "path": "<Keyboard>/space",
                     "interactions": "",
@@ -319,12 +326,12 @@
                 },
                 {
                     "name": "",
-                    "id": "f6ec8379-ae8f-4d9d-88dc-eda0af4dc17e",
-                    "path": "<Gamepad>/leftTrigger",
+                    "id": "ce49a9c5-b9c0-4eac-b740-3c31ce230a66",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Restart",
+                    "action": "Charge Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -354,6 +361,17 @@
                     "name": "",
                     "id": "b09216c1-b23a-4ace-b8af-5143cfeb665d",
                     "path": "<DualShockGamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fa4e7b3c-7879-45b2-91ef-563fff06caad",
+                    "path": "<Gamepad>/start",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -463,7 +481,29 @@
                 {
                     "name": "",
                     "id": "8de49911-acfb-4dd2-bd06-3750fca93b5e",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Trick1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0904fc05-3a39-4af2-bb4d-6dfbaed95baa",
                     "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Trick1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ca2f2f69-c544-4cc3-a695-fd88edf2d7ed",
+                    "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -490,6 +530,61 @@
                     "processors": "",
                     "groups": "",
                     "action": "Trick2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "75f27ae8-b60e-46a0-9b70-8e46fd45f6f7",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Trick2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fc974fd7-db80-4279-aff7-ac642d129af9",
+                    "path": "<Keyboard>/3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Trick3",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f08141e4-858b-491c-a00b-8e73feda1ea7",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Trick3",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d465d6b5-f4e3-4b9a-8ef2-d358999220a8",
+                    "path": "<Keyboard>/4",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Trick4",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a1f78277-dccc-4436-b79e-cc2abbd6150f",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Trick4",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

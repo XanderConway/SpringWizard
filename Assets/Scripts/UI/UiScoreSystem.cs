@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
@@ -9,99 +10,157 @@ using UnityEngine.UI;
 
 public class UiScoreSystem : MonoBehaviour, TrickObserver
 {
-    [SerializeField] private PlayerSubject player;
+    [SerializeField] private TrickSubject player;
     [SerializeField] private GameObject collectibesParent;
 
+    private int _totalScore = 0;
     private int _trickScore = 0;
+
+
     private String _trickName;
 
     //UI Elements
-    [SerializeField] private TextMeshProUGUI trickScoreText;
+    [SerializeField] private TextMeshProUGUI totalScoreText;
+    [SerializeField] private TextMeshProUGUI collectedDisplayText;
+
     [SerializeField] private TextMeshProUGUI trickNameText;
-    [SerializeField] private TextMeshProUGUI comboScoreText;
+    [SerializeField] private TextMeshProUGUI trickScoreText;
+
+    private int totalCollectables = 0;
+    private int numCollected = 0;
 
 
-    private float combo = 0;
-    private PlayerTricks _prevTrick = PlayerTricks.None;
+    //combo system
+    private List<PlayerTricks> _tricksInCombo = new List<PlayerTricks>();
+    private bool _isInCombo = false;
+    private int _validComboCount = 0;
 
 
+
+    //hashmap of tricks to score and name
+    private Dictionary<PlayerTricks, (int score, string name)> trickScores = new Dictionary<PlayerTricks, (int score, string name)>
+    {
+        {PlayerTricks.None, (0, "")},
+        {PlayerTricks.Death, (0, "")},
+        {PlayerTricks.FrontFlip, (100, "Front Flip")},
+        {PlayerTricks.BackFlip, (100, "Back Flip")},
+        {PlayerTricks.NoHands, (50, "No Handed")},
+        {PlayerTricks.Kickflip, (50, "Kick Flip")},
+        {PlayerTricks.ScissorKick, (50, "Scissor Kick")},
+        {PlayerTricks.HandlessBarSpin, (50, "Handless Bar Spin")},
+        {PlayerTricks.springboard, (200, "Springboard")},
+        {PlayerTricks.RailGrinding, (200, "Rail Grinding")},
+        {PlayerTricks.WallJump, (75, "Wall Jump")}
+    };
 
     public void UpdateTrickObserver(PlayerTricks playerTricks)
     {
-       TrickDisplay(playerTricks);
-       UpdateUI();
+        TrickDisplay(playerTricks);
+
+        bool comboEnded = playerTricks == PlayerTricks.None || playerTricks == PlayerTricks.Death;
+        UpdateUI(comboEnded);
     }
 
     //TODO: for now I will have the trick name and score here, but this should be moved to a separate class
 
-    private void TrickDisplay(PlayerTricks playerTrick){
+    private void TrickDisplay(PlayerTricks playerTrick)
+    {
 
-        int trickValue = 0;
-        switch(playerTrick)
+        comboCount(playerTrick);
+
+        if (_validComboCount <= 1)
         {
-            case PlayerTricks.FrontFlip:
-                _trickName = "Front Flip!";
-                trickValue += 100;
-                 UpdateUI();
-                break;
-            case PlayerTricks.BackFlip:
-                _trickName = "Back Flip!";
-                trickValue += 100;
-                break;
-            case PlayerTricks.NoHandsFrontFlip:
-                _trickName = "No Hands Front Flip!";
-                trickValue += 125;
-                break;
-            case PlayerTricks.NoHandsBackFlip:
-                _trickName = "No Hands Back Flip!";
-                trickValue += 125;
-                break;
-            case PlayerTricks.NoFeetFrontFlip:
-                _trickName = "No Feet Front Flip!";
-                trickValue += 125;
-                break;
-            case PlayerTricks.NoFeetBackFlip:
-                _trickName = "No Feet Back Flip!";
-                trickValue += 125;
-                break;
-            default:
-                _trickName = "";
-                trickValue += 0;
-                break;
+            _trickName = trickScores[playerTrick].name;
+        }
+        else
+        {
+            _trickName = "";
+            for (int i = 0; i < _tricksInCombo.Count; i++)
+            {
+                _trickName += trickScores[_tricksInCombo[i]].name;
+                if (i < _tricksInCombo.Count - 1)
+                {
+                    _trickName += " + ";
+                }
+            }
         }
 
-        _trickScore += (int)(trickValue * (1 + combo / 10.0f));
+    }
 
-        if(playerTrick != _prevTrick)
+    private string trickScoreDisplay(bool math)
+    {
+        if (math && _validComboCount > 1)
         {
-            combo += 1;
-            _prevTrick = playerTrick;
+            return "" + _trickScore + "x" + _validComboCount;
         }
-
-        if(playerTrick == PlayerTricks.Death)
+        else if (_trickScore != 0)
         {
-            combo = 0;
+            int curr_total = _trickScore * _validComboCount;
+            return "" + curr_total;
+        }
+        else
+        {
+            return "";
         }
     }
-    private IEnumerator UpdateUIForLimitedTime(float displayTime)
-    {
-        trickNameText.text = _trickName;
-        trickScoreText.text = "Score: " + _trickScore;
-        comboScoreText.text = "Combo: x" + combo;
 
-        yield return new WaitForSeconds(displayTime);
+    void comboCount(PlayerTricks trick)
+    {
+        if (trick == PlayerTricks.None || trick == PlayerTricks.Death)
+        {
+
+            _isInCombo = false;
+            _tricksInCombo.Clear();
+            _totalScore += _trickScore * _validComboCount;
+            _trickScore = 0;
+            _validComboCount = 0;
+        }
+        else
+        {
+            
+            _isInCombo = true;
+            if (!_tricksInCombo.Contains(trick))
+            {
+                _validComboCount += 1;
+                _tricksInCombo.Add(trick);
+            }
+            _trickScore += trickScores[trick].score;
+        }
+    }
+
+    private IEnumerator UpdateWithTime()
+    {
+        //trickNameText.text = _trickName;
+        //trickScoreText.text = trickScoreDisplay(true);
+        //yield return new WaitForSeconds(1.0f);
+        //trickScoreText.text = trickScoreDisplay(false);
+        //trickNameText.text = _trickName;
+        yield return new WaitForSeconds(0.5f);
+        trickScoreText.text = "";
         trickNameText.text = "";
     }
 
-    private void UpdateUI()
+    private void UpdateUI(bool comboEnded)
     {
-        StartCoroutine(UpdateUIForLimitedTime(2.0f)); // Display trick name for 2 seconds
+        totalScoreText.text = "Score: " + _totalScore;
+
+        if(!comboEnded)
+        {
+            trickNameText.text = _trickName;
+            trickScoreText.text = trickScoreDisplay(true);
+        } else
+        {
+            trickScoreText.text = trickScoreDisplay(false);
+            StartCoroutine(UpdateWithTime());
+        }
     }
 
     private void updateScoreCollected(CollectibleData collectibleData)
     {
-        _trickScore += (int)(collectibleData.points * (1 + combo / 10.0f));
-        UpdateUI();
+        _totalScore += (int)(collectibleData.points * (1 + _validComboCount / 10.0f));
+        numCollected += 1;
+        collectedDisplayText.text = $"Scrolls: {numCollected} / {totalCollectables}";
+        UpdateUI(false);
         Debug.Log("Collected!");
     }
 
@@ -114,20 +173,26 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     {
         // Add as observer to collectibles
 
-        if(collectibesParent != null)
+        if (collectibesParent != null)
         {
             Collectible[] collectibles = collectibesParent.GetComponentsInChildren<Collectible>();
+
+            totalCollectables = collectibles.Length;
 
             foreach (Collectible c in collectibles)
             {
                 c.getEvent().AddListener(updateScoreCollected);
             }
         }
+
+        collectedDisplayText.text = $"Scrolls: {numCollected} / {totalCollectables}";
     }
 
     void OnDisable()
     {
-        PlayerPrefs.SetInt("score", _trickScore);
+        // Todo store score in LevelManager
+        PlayerPrefs.SetInt("score", _totalScore);
+        PlayerPrefs.SetString("numCollected", $"{numCollected} / {totalCollectables}");
         player.RemoveObserver(this);
     }
 }

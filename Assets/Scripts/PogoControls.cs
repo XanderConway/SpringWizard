@@ -5,6 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.Splines;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 
 
 public class DeathData
@@ -28,7 +29,7 @@ public class DeathData
  * E -> Perform trick 2 (Needs to be performed with a flip for effect)
  */
 
-public class PogoControls : PlayerSubject, TimerObserver
+public class PogoControls : TrickSubject, TimerObserver
 {
     // Rotation parameters
     public float rotationSpeed = 360f;
@@ -43,7 +44,7 @@ public class PogoControls : PlayerSubject, TimerObserver
     public AnimationCurve flipSpeedMultiplier;
 
     // Trick detection parameters
-    private int currTrick = 0;
+    private PlayerTricks currTrick = PlayerTricks.None;
     private int numFrontFlips = 0;
     private int numBackFlips = 0;
     private Vector3 prevPogoUp = Vector3.up;
@@ -63,6 +64,7 @@ public class PogoControls : PlayerSubject, TimerObserver
     public float compressTime = 0.4f;
 
     // Used for spring compression animation (Aesthetic)
+    public PlayerAnimator animator;
     public GameObject mainPogoBody;
     public float velocitySpringMultiplier = 0.2f;
     public float springLength = 1.0f;
@@ -85,6 +87,10 @@ public class PogoControls : PlayerSubject, TimerObserver
 
     private List<Collider> ragDollColliders;
 
+    private Collider _currentWallCollider;
+    private bool _isWallJumping = false;
+
+
 
     public Camera cam; //Hacky fix for camera issues
     private Vector3 camStartPosition;
@@ -94,7 +100,7 @@ public class PogoControls : PlayerSubject, TimerObserver
 
     public AnimationCurve bounceScale;
     private float groundedTimer = 0;
-    private bool grounded = false;
+    private bool isGrounded = false;
 
     // Transforms used for rotations
     public Transform pogoStick; // Will flip around it's side axis
@@ -122,14 +128,14 @@ public class PogoControls : PlayerSubject, TimerObserver
     public float heightOffset = 1f; // 10
     public float lerpSpeed = 15f; // 200
     private bool reEnableCollidersPending = false;
-    private float colliderReEnableDelay = 0.1f; 
-    private float colliderReEnableTimer = 0f; 
+    private float colliderReEnableDelay = 0.1f;
+    private float colliderReEnableTimer = 0f;
 
     [Header("Grinding Effects")]
-    public GameObject grindParticlePrefab;  
+    public GameObject grindParticlePrefab;
     private ParticleSystem activeGrindParticles;
-    public float particleYOffset = 0.1f; 
-    public Color grindParticleColor = Color.yellow; 
+    public float particleYOffset = 0.1f;
+    public Color grindParticleColor = Color.yellow;
 
     public AudioSource pogoAudioSource;
     public AudioSource voiceAudioSource;
@@ -159,6 +165,10 @@ public class PogoControls : PlayerSubject, TimerObserver
         playerInputActions.Player.Trick1.performed += PerformTrick1;
         playerInputActions.Player.Trick2.Enable();
         playerInputActions.Player.Trick2.performed += PerformTrick2;
+        playerInputActions.Player.Trick3.Enable();
+        playerInputActions.Player.Trick3.performed += PerformTrick3;
+        playerInputActions.Player.Trick4.Enable();
+        playerInputActions.Player.Trick4.performed += PerformTrick4;
 
 
         startBoneRotations = new Quaternion[ragdollBones.Length];
@@ -193,25 +203,40 @@ public class PogoControls : PlayerSubject, TimerObserver
         isChargingJump = true;
     }
 
-    private bool trick1 = false;
     void PerformTrick1(InputAction.CallbackContext context)
     {
-        trick1 = true;
+        currTrick = PlayerTricks.NoHands;
+        animator.PlayTrick1Animation();
+        //BroadcastMessage("PlayTrick1Animation");
     }
 
     private bool trick2 = false;
     void PerformTrick2(InputAction.CallbackContext context)
     {
-        trick2 = true;
+        currTrick = PlayerTricks.Kickflip;
+        animator.PlayTrick2Animation();
+        //BroadcastMessage("PlayTrick2Animation");
+    }
+
+    void PerformTrick3(InputAction.CallbackContext context)
+    {
+        currTrick = PlayerTricks.ScissorKick;
+        BroadcastMessage("PlayTrick3Animation");
+    }
+
+    void PerformTrick4(InputAction.CallbackContext context)
+    {
+        currTrick = PlayerTricks.HandlessBarSpin;
+        BroadcastMessage("PlayTrick4Animation");
     }
 
     private void OnChargeJumpReleased(InputAction.CallbackContext context)
     {
         if (isGrinding)
         {
-        EndGrinding();
-        // Not sure if needed, experiment with this
-        rb.AddForce(Vector3.up * baseJumpForce, ForceMode.VelocityChange);
+            EndGrinding(Vector3.zero);
+            // Not sure if needed, experiment with this
+            rb.AddForce(Vector3.up * baseJumpForce, ForceMode.VelocityChange);
         }
 
         //float jumpForce = Mathf.Lerp(baseJumpForce, maxChargedJumpForce, chargeTime / maxChargeTime);
@@ -230,33 +255,32 @@ public class PogoControls : PlayerSubject, TimerObserver
         {
             detectJumping();
             countFlips();
-           
+
         }
     }
 
     private void Update()
     {
-    handleControls();
 
-    // Very jank timer for a smoother jump at the end of a rail
-    if (reEnableCollidersPending)
-    {
-        colliderReEnableTimer += Time.deltaTime;
-        if (colliderReEnableTimer >= colliderReEnableDelay)
+        // Very jank timer for a smoother jump at the end of a rail
+        if (reEnableCollidersPending)
         {
-            SetPlayerCollidersTrigger(false);
-            Physics.IgnoreLayerCollision(3, 4, false);
-            reEnableCollidersPending = false; 
+            colliderReEnableTimer += Time.deltaTime;
+            if (colliderReEnableTimer >= colliderReEnableDelay)
+            {
+                SetPlayerCollidersTrigger(false);
+                Physics.IgnoreLayerCollision(3, 4, false);
+                reEnableCollidersPending = false;
+            }
         }
-    }
 
-    if (!dead)
-    {
-        if (!isGrinding)
+        if (!dead)
         {
-            rotatePlayer();
+            if (!isGrinding)
+            {
+                rotatePlayer();
+            }
         }
-    }
     }
 
     // Called when the pogo stick hits the ground
@@ -264,40 +288,32 @@ public class PogoControls : PlayerSubject, TimerObserver
     {
         GameObject effect = null;
 
+        if (numBackFlips == 0 && numFrontFlips == 0 && !_isWallJumping)
+        {
+            _currentWallCollider = null;
+            NotifyTrickObservers(PlayerTricks.None);
+        }
+
+        if(_isWallJumping)
+        {
+            NotifyTrickObservers(PlayerTricks.WallJump);
+        }
+
+        if (currTrick != PlayerTricks.None) {
+            NotifyTrickObservers(currTrick);
+        }
+
         for (int i = 0; i < numFrontFlips; i++)
         {
-            if (currTrick > 0)
-            {
-                NotifyTrickObservers(PlayerTricks.NoHandsFrontFlip);
-
-            }
-            else if (currTrick < 0)
-            {
-                NotifyTrickObservers(PlayerTricks.NoFeetFrontFlip);
-            }
-            else
-            {
-                NotifyTrickObservers(PlayerTricks.FrontFlip);
-            }
+            NotifyTrickObservers(PlayerTricks.FrontFlip);
         }
 
         for (int i = 0; i < numBackFlips; i++)
         {
-            if (currTrick > 0)
-            {
-                NotifyTrickObservers(PlayerTricks.NoHandsBackFlip);
-            }
-            else if (currTrick < 0)
-            {
-                NotifyTrickObservers(PlayerTricks.NoFeetBackFlip);
-            }
-            else
-            {
-                NotifyTrickObservers(PlayerTricks.BackFlip);
-            }
+            NotifyTrickObservers(PlayerTricks.BackFlip);
         }
 
-        if(effect)
+        if (effect)
         {
             Destroy(effect, 1.5f);
         }
@@ -307,7 +323,7 @@ public class PogoControls : PlayerSubject, TimerObserver
         //pogoStick.transform.localPosition = pogoStickStartPosition;
 
 
-        currTrick = 0;
+        currTrick = PlayerTricks.None;
         numFrontFlips = 0;
         numBackFlips = 0;
     }
@@ -339,15 +355,45 @@ public class PogoControls : PlayerSubject, TimerObserver
         Vector3 pogoCastEnd = pogoCastStart + leanChild.transform.rotation * leanChild.transform.up * (-pogoRayCastLength);
         RaycastHit hit;
         LayerMask layerMask = ~0; // Collide with every layer
-        
+
         layerMask = ~LayerMask.GetMask("Player");
 
         if (Physics.SphereCast(pogoCastStart, pogoCastRadius, -1 * leanChild.transform.up, out hit, pogoRayCastLength, layerMask))
         {
-            // Compress the spring if there is ground below us and we are moving downwards
-            if (!grounded && rb.velocity.y <= 0)
+
+            //detect if we are on wall
+            // Calculate the dot product of the hit normal and Vector3.up
+            float normalDotUp = Vector3.Dot(hit.normal, Vector3.up);
+
+            // Define a threshold for wall detection (e.g., 0.7 means anything with a slope steeper than ~45 degrees)
+            float wallThreshold = 0.75f;
+
+            // Check if the surface is a wall
+            _isWallJumping = normalDotUp < wallThreshold;
+
+
+            if (_isWallJumping && !isGrinding)
             {
-                grounded = true;
+                // If we are on a new wall, notify observers
+                if (_currentWallCollider == null || _currentWallCollider != hit.collider)
+                {
+                    Debug.Log("On Wall");
+                    // NotifyTrickObservers(PlayerTricks.WallJump);
+
+                    // Store the current wall collider to avoid duplicate notifications
+                    _currentWallCollider = hit.collider;
+                }
+            }
+            else
+            {
+                // Reset the current wall collider if we are not on a wall
+                _currentWallCollider = null;
+            }
+
+            // Compress the spring if there is ground below us and we are moving downwards
+            if (!isGrounded && rb.velocity.y <= 0)
+            {
+                isGrounded = true;
                 jumpForce = baseJumpForce;
 
                 jumpForce += Math.Min(Math.Abs(rb.velocity.y) * velocitySpringMultiplier, 100);
@@ -363,10 +409,13 @@ public class PogoControls : PlayerSubject, TimerObserver
                 groundedEvent();
             }
         }
-        //else if ice trick is triggered
-        
+        else
+        {
+             _currentWallCollider = null;
+        }
 
-        if (grounded)
+
+        if (isGrounded)
         {
             groundedTimer += Time.deltaTime;
 
@@ -378,6 +427,7 @@ public class PogoControls : PlayerSubject, TimerObserver
                 decompressHalfTime = compressTime / (compressHalfTime / compressTime);
 
                 jumpForce += (Time.deltaTime / maxCompressTime) * maxChargedJumpForce;
+                BroadcastMessage("PlayChargingJumpAnimation", true);
             }
 
             // Current compression is inital_velocity * cos(time)
@@ -389,18 +439,15 @@ public class PogoControls : PlayerSubject, TimerObserver
             {
                 bounceAmount = maxCompression * (-0.5f * Mathf.Cos(groundedTimer / compressHalfTime * Mathf.PI) + 0.5f);
                 squashFactor = bounceScale.Evaluate(groundedTimer / (2 * compressHalfTime));
-            } else
+            }
+            else
             {
                 bounceAmount = maxCompression * (-0.5f * Mathf.Cos((groundedTimer - compressHalfTime) / decompressHalfTime * Mathf.PI + Mathf.PI) + 0.5f);
                 squashFactor = bounceScale.Evaluate((groundedTimer - compressHalfTime) / (2 * decompressHalfTime) + 0.5f);
             }
 
             // The spring is fully compressed, begin decompressing
-            bounceAmount = Mathf.Clamp(bounceAmount, 0, 1);
-
-            mainPogoBody.transform.localPosition = pogoBodyHeightOffGround + springLength * Vector3.down * bounceAmount;
-
-            pogoStick.transform.localScale = new Vector3(1, squashFactor, 1);
+            ApplyJumpAnimation(bounceAmount, squashFactor);
         }
 
         if (groundedTimer > compressHalfTime + decompressHalfTime)
@@ -413,18 +460,35 @@ public class PogoControls : PlayerSubject, TimerObserver
 
                 groundedTimer = 0;
                 fireJumpBoost = 0;
-                grounded = false;
+                isGrounded = false;
             }
         }
     }
 
+    private void ApplyJumpAnimation(float bounceAmount, float squashFactor)
+    {
+        BroadcastMessage("PlayChargingJumpAnimation", false);
+        bounceAmount = Mathf.Clamp(bounceAmount, 0, 1);
+        mainPogoBody.transform.localPosition = pogoBodyHeightOffGround + springLength * Vector3.down * bounceAmount;
+        pogoStick.transform.localScale = new Vector3(1, squashFactor, 1);
+    }
+
+    public void ResetJumpState()
+    {
+        groundedTimer = 0;
+        isGrounded = false;
+
+        ApplyJumpAnimation(0, 1);
+    }
+
     void countFlips()
     {
-        if (!grounded)
+        if (!isGrounded)
         {
             float angleDiff = Vector3.SignedAngle(prevPogoUp, pogoStick.up, transform.right);
             currentFlipAngle += angleDiff;
-        } else
+        }
+        else
         {
             currentFlipAngle = 0;
         }
@@ -436,11 +500,11 @@ public class PogoControls : PlayerSubject, TimerObserver
             numFrontFlips += 1;
             currentFlipAngle = 0;
 
-            if(flipFxs.Length > 0)
+            if (flipFxs.Length > 0)
             {
                 pogoAudioSource.PlayOneShot(flipFxs[0]);
             }
-        } 
+        }
 
         if (currentFlipAngle < -270)
         {
@@ -469,7 +533,7 @@ public class PogoControls : PlayerSubject, TimerObserver
         flipAngle *= flipSpeedMultiplier.Evaluate(dotProduct);
 
         // Rotate around the foot of the pogo stick when grounded, and the center when in the air
-        if (grounded)
+        if (isGrounded)
         {
             float angleDiff = Vector3.SignedAngle(Vector3.up, pogoStick.up, transform.right);
             if ((angleDiff > maxLeanForwardAngle && flipAngle > 0) || (angleDiff < maxLeanBackwardAngle && flipAngle < 0))
@@ -511,21 +575,6 @@ public class PogoControls : PlayerSubject, TimerObserver
         pogoStick.position -= posDiff;
     }
 
-    void handleControls()
-    {
-
-        // Currently just changing colour as a place holder for animations
-        if(trick1)
-        {
-            currTrick = 1;
-            trick1 = false;
-        } else if(trick2)
-        {
-            currTrick = -1;
-            trick2 = false;
-        }
-    }
-
     private void setCollidersActive(List<Collider> components, bool active)
     {
         for (int i = 0; i < components.Count; i++)
@@ -551,6 +600,8 @@ public class PogoControls : PlayerSubject, TimerObserver
             pogoStickComponents[i].SetActive(!useRagdoll);
         }
 
+        animator.animator.enabled = !useRagdoll;
+
         // Setting bone positions manually can be buggy, and won't be needed once we have animation
         if (!useRagdoll)
         {
@@ -565,7 +616,8 @@ public class PogoControls : PlayerSubject, TimerObserver
 
             setCollidersActive(playerCollders, true);
             rb.isKinematic = false;
-        } else
+        }
+        else
         {
             setCollidersActive(playerCollders, false);
             rb.isKinematic = true;
@@ -575,7 +627,7 @@ public class PogoControls : PlayerSubject, TimerObserver
     // Disable player model, and spawn rag doll.
     public void setDead(bool isDead)
     {
-        if(isDead)
+        if (isDead)
         {
             DeathData data = new DeathData(lastGroundedPosition, transform.position);
             deathEvent.Invoke(data);
@@ -594,7 +646,7 @@ public class PogoControls : PlayerSubject, TimerObserver
     // Todo use names to 
     public void playVoice(AudioClip voice)
     {
-        if(voiceAudioSource != null)
+        if (voiceAudioSource != null)
         {
             Debug.Log("Playing Scream");
             voiceAudioSource.PlayOneShot(voice);
@@ -602,63 +654,63 @@ public class PogoControls : PlayerSubject, TimerObserver
     }
 
 
-void OnCollisionEnter(Collision collision)
-{
-    Rigidbody rb = GetComponent<Rigidbody>();
-    if (rb == null)
+    void OnCollisionEnter(Collision collision)
     {
-        Debug.LogWarning("No Rigidbody attached to this object.");
-        return;
-    }
-    if (collision.gameObject.CompareTag("Rail"))
-    {
-        Vector3 avgNormal = Vector3.zero;
-        foreach (ContactPoint contact in collision.contacts)
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb == null)
         {
-            avgNormal += contact.normal;
-        }
-        avgNormal /= collision.contactCount;
-
-        // check if we're hitting from below, rail grinding changes
-        float upwardDot = Vector3.Dot(avgNormal, Vector3.up);
-        
-        if (upwardDot > -0.1f)
-        {
-            StartGrinding(collision.gameObject);
+            Debug.LogWarning("No Rigidbody attached to this object.");
             return;
         }
-    }
-
-
-    ContactPoint[] contactPoints = new ContactPoint[collision.contactCount];
-    collision.GetContacts(contactPoints);
-
-    for (int i = 0; i < contactPoints.Length; i++)
-    {   
-        if (deathCollider != null && contactPoints[i].thisCollider.gameObject == deathCollider)
+        if (collision.gameObject.CompareTag("Rail"))
         {
-            float impactForce = collision.relativeVelocity.magnitude;
-
-            if(impactForce > lethalImpactThreshold)
+            Vector3 avgNormal = Vector3.zero;
+            foreach (ContactPoint contact in collision.contacts)
             {
-                if(deathParticleEffect != null)
-                {
-                    GameObject deathEffect = Instantiate(deathParticleEffect, contactPoints[i].point, Quaternion.identity);
-                    Destroy(deathEffect, 1.0f);
-                }
+                avgNormal += contact.normal;
+            }
+            avgNormal /= collision.contactCount;
 
-                if (hurtFxs.Length > 0)
-                {
-                    int voiceLine = UnityEngine.Random.Range(0, hurtFxs.Length);
-                    playVoice(hurtFxs[voiceLine]);
-                }
+            // check if we're hitting from below, rail grinding changes
+            float upwardDot = Vector3.Dot(avgNormal, Vector3.up);
 
-                setDead(true);
-                break;
+            if (upwardDot > -0.1f)
+            {
+                StartGrinding(collision.gameObject);
+                return;
+            }
+        }
+
+
+        ContactPoint[] contactPoints = new ContactPoint[collision.contactCount];
+        collision.GetContacts(contactPoints);
+
+        for (int i = 0; i < contactPoints.Length; i++)
+        {
+            if (deathCollider != null && contactPoints[i].thisCollider.gameObject == deathCollider)
+            {
+                float impactForce = collision.relativeVelocity.magnitude;
+
+                if (impactForce > lethalImpactThreshold)
+                {
+                    if (deathParticleEffect != null)
+                    {
+                        GameObject deathEffect = Instantiate(deathParticleEffect, contactPoints[i].point, Quaternion.identity);
+                        Destroy(deathEffect, 1.0f);
+                    }
+
+                    if (hurtFxs.Length > 0)
+                    {
+                        int voiceLine = UnityEngine.Random.Range(0, hurtFxs.Length);
+                        playVoice(hurtFxs[voiceLine]);
+                    }
+
+                    setDead(true);
+                    break;
+                }
             }
         }
     }
-}
 
     private void OnDrawGizmos()
     {
@@ -676,7 +728,7 @@ void OnCollisionEnter(Collision collision)
 
     public void ApplySpringboardForce(float force)
     {
-        if (grounded)
+        if (isGrounded)
         {
             jumpForce += force;
         }
@@ -698,150 +750,158 @@ void OnCollisionEnter(Collision collision)
     }
 
     public void TimesUP(bool timesUp)
-    {   
+    {
         //TODO Implement action after Times up
         throw new NotImplementedException();
     }
-void StartGrinding(GameObject railObject)
-{
-    if (isGrinding)
-        return;
-
-    isGrinding = true;
-    currentRailScript = railObject.GetComponent<RailScript>();
-    if (currentRailScript == null)
+    void StartGrinding(GameObject railObject)
     {
-        Debug.LogError("RailScript not found on the rail object.");
-        isGrinding = false;
-        return;
-    }
+        if (isGrinding)
+            return;
 
-    Vector3 splinePoint;
-    float normalizedTime = currentRailScript.CalculateTargetRailPoint(transform.position, out splinePoint);
-    grindElapsedTime = normalizedTime;
-
-    float3 pos, forward, up;
-    SplineUtility.Evaluate(currentRailScript.railSpline.Spline, normalizedTime, out pos, out forward, out up);
-    currentRailScript.CalculateDirection(forward, transform.forward);
-    normalDir = currentRailScript.normalDir;
-
-    transform.position = splinePoint + (transform.up * heightOffset);
-
-    // grinding particles
-    if (grindParticlePrefab != null)
-    {
-        GameObject particleObj = Instantiate(grindParticlePrefab, 
-            transform.position - (transform.up * particleYOffset), 
-            Quaternion.identity, 
-            transform);  
-        
-        activeGrindParticles = particleObj.GetComponent<ParticleSystem>();
-        if (activeGrindParticles != null)
+        isGrinding = true;
+        currentRailScript = railObject.GetComponent<RailScript>();
+        if (currentRailScript == null)
         {
-            var main = activeGrindParticles.main;
-            main.simulationSpace = ParticleSystemSimulationSpace.World; 
-            
-            var particleColor = activeGrindParticles.colorOverLifetime;
-            particleColor.enabled = true;
-            
-            var colorGradient = new Gradient();
-            colorGradient.SetKeys(
-                new GradientColorKey[] { 
+            Debug.LogError("RailScript not found on the rail object.");
+            isGrinding = false;
+            return;
+        }
+
+        Vector3 splinePoint;
+        float normalizedTime = currentRailScript.CalculateTargetRailPoint(transform.position, out splinePoint);
+        grindElapsedTime = normalizedTime;
+
+        float3 pos, forward, up;
+        SplineUtility.Evaluate(currentRailScript.railSpline.Spline, normalizedTime, out pos, out forward, out up);
+        currentRailScript.CalculateDirection(forward, transform.forward);
+        normalDir = currentRailScript.normalDir;
+
+        transform.position = splinePoint + (transform.up * heightOffset);
+
+        // grinding particles
+        if (grindParticlePrefab != null)
+        {
+            GameObject particleObj = Instantiate(grindParticlePrefab,
+                transform.position - (transform.up * particleYOffset),
+                Quaternion.identity,
+                transform);
+
+            activeGrindParticles = particleObj.GetComponent<ParticleSystem>();
+            if (activeGrindParticles != null)
+            {
+                var main = activeGrindParticles.main;
+                main.simulationSpace = ParticleSystemSimulationSpace.World;
+
+                var particleColor = activeGrindParticles.colorOverLifetime;
+                particleColor.enabled = true;
+
+                var colorGradient = new Gradient();
+                colorGradient.SetKeys(
+                    new GradientColorKey[] {
                     new GradientColorKey(grindParticleColor, 0.0f),
-                    new GradientColorKey(grindParticleColor, 1.0f) 
-                },
-                new GradientAlphaKey[] {
+                    new GradientColorKey(grindParticleColor, 1.0f)
+                    },
+                    new GradientAlphaKey[] {
                     new GradientAlphaKey(1.0f, 0.0f),
                     new GradientAlphaKey(0.0f, 1.0f)
-                }
-            );
-            particleColor.color = colorGradient;
+                    }
+                );
+                particleColor.color = colorGradient;
+            }
+        }
+
+        rb.isKinematic = true;
+        SetPlayerCollidersTrigger(true);
+        BroadcastMessage("PlayRailGrindingAnimation", isGrinding);
+    }
+
+    void MoveAlongRail()
+    {
+        if (currentRailScript == null)
+            return;
+
+        float deltaProgress = (grindSpeed / currentRailScript.totalSplineLength) * Time.deltaTime;
+        grindElapsedTime += normalDir ? deltaProgress : -deltaProgress;
+
+        float progress = grindElapsedTime;
+
+        if (progress < -0.01f || progress > 1.01f)
+        {
+            Vector3 endDir = SplineUtility.EvaluateTangent(currentRailScript.railSpline.Spline, Mathf.Clamp(progress, 0f, 1f)) * (normalDir ? 1 : -1);
+            EndGrinding(endDir);
+
+            return;
+        }
+
+        float3 pos, tangent, up;
+        float3 nextPosFloat, nextTan, nextUp;
+
+        SplineUtility.Evaluate(currentRailScript.railSpline.Spline, progress, out pos, out tangent, out up);
+
+        float nextProgress = progress + (normalDir ? deltaProgress : -deltaProgress);
+        SplineUtility.Evaluate(currentRailScript.railSpline.Spline, nextProgress, out nextPosFloat, out nextTan, out nextUp);
+
+        Vector3 worldPos = currentRailScript.LocalToWorldConversion(pos);
+        Vector3 nextPos = currentRailScript.LocalToWorldConversion(nextPosFloat);
+
+        transform.position = worldPos + (transform.up * heightOffset);
+
+        if (activeGrindParticles != null)
+        {
+            Vector3 grindDirection = (nextPos - worldPos).normalized;
+            var velocityOverLifetime = activeGrindParticles.velocityOverLifetime;
+            velocityOverLifetime.enabled = true;
+            velocityOverLifetime.space = ParticleSystemSimulationSpace.World;
+
+            float baseSpeed = grindSpeed * 0.5f;
+            velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(
+                -baseSpeed * Mathf.Abs(grindDirection.x),
+                baseSpeed * Mathf.Abs(grindDirection.x));
+            velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(
+                -baseSpeed * 0.2f,
+                baseSpeed * 0.5f);
+            velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(
+                -baseSpeed * Mathf.Abs(grindDirection.z),
+                baseSpeed * Mathf.Abs(grindDirection.z));
         }
     }
 
-    rb.isKinematic = true;
-    SetPlayerCollidersTrigger(true);
-}
-
-void MoveAlongRail()
-{
-    if (currentRailScript == null)
-        return;
-
-    float deltaProgress = (grindSpeed / currentRailScript.totalSplineLength) * Time.deltaTime;
-    grindElapsedTime += normalDir ? deltaProgress : -deltaProgress;
-
-    float progress = grindElapsedTime;
-
-    if (progress < -0.01f || progress > 1.01f)
+    void EndGrinding(Vector3 jumpDir)
     {
-        EndGrinding();
-        return;
+
+        Debug.Log("Ending Grinding" + jumpDir);
+        isGrinding = false;
+        currentRailScript = null;
+        rb.isKinematic = false;
+
+        if (activeGrindParticles != null)
+        {
+            var emission = activeGrindParticles.emission;
+            emission.enabled = false;
+            Destroy(activeGrindParticles.gameObject, activeGrindParticles.main.duration);
+            activeGrindParticles = null;
+        }
+
+        Physics.IgnoreLayerCollision(3, 4, true);
+        transform.position += transform.up * 0.5f;
+
+        rb.AddForce(jumpDir.normalized * 35f, ForceMode.Impulse);
+        pogoStick.transform.localScale = Vector3.one;
+
+        reEnableCollidersPending = true;
+        colliderReEnableTimer = 0f;
+
+        NotifyTrickObservers(PlayerTricks.RailGrinding);
+        BroadcastMessage("PlayRailGrindingAnimation", isGrinding);
     }
 
-    float3 pos, tangent, up;
-    float3 nextPosFloat, nextTan, nextUp;
-
-    SplineUtility.Evaluate(currentRailScript.railSpline.Spline, progress, out pos, out tangent, out up);
-
-    float nextProgress = progress + (normalDir ? deltaProgress : -deltaProgress);
-    SplineUtility.Evaluate(currentRailScript.railSpline.Spline, nextProgress, out nextPosFloat, out nextTan, out nextUp);
-
-    Vector3 worldPos = currentRailScript.LocalToWorldConversion(pos);
-    Vector3 nextPos = currentRailScript.LocalToWorldConversion(nextPosFloat);
-
-    transform.position = worldPos + (transform.up * heightOffset);
-
-    if (activeGrindParticles != null)
+    void SetPlayerCollidersTrigger(bool isTrigger)
     {
-        Vector3 grindDirection = (nextPos - worldPos).normalized;
-        var velocityOverLifetime = activeGrindParticles.velocityOverLifetime;
-        velocityOverLifetime.enabled = true;
-        velocityOverLifetime.space = ParticleSystemSimulationSpace.World;
-        
-        float baseSpeed = grindSpeed * 0.5f;  
-        velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(
-            -baseSpeed * Mathf.Abs(grindDirection.x), 
-            baseSpeed * Mathf.Abs(grindDirection.x));
-        velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(
-            -baseSpeed * 0.2f,  
-            baseSpeed * 0.5f);
-        velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(
-            -baseSpeed * Mathf.Abs(grindDirection.z), 
-            baseSpeed * Mathf.Abs(grindDirection.z));
+        Collider[] colliders = GetComponentsInChildren<Collider>();
+        foreach (Collider col in colliders)
+        {
+            col.isTrigger = isTrigger;
+        }
     }
-}
-
-void EndGrinding()
-{
-    isGrinding = false;
-    currentRailScript = null;
-    rb.isKinematic = false;
-
-    if (activeGrindParticles != null)
-    {
-        var emission = activeGrindParticles.emission;
-        emission.enabled = false;  
-        Destroy(activeGrindParticles.gameObject, activeGrindParticles.main.duration); 
-        activeGrindParticles = null;
-    }
-
-    Physics.IgnoreLayerCollision(3, 4, true);
-    transform.position += transform.up * 0.5f;
-
-    rb.AddForce(leanChild.transform.up * 50f, ForceMode.Impulse);
-    pogoStick.transform.localScale = Vector3.one;
-
-    reEnableCollidersPending = true;
-    colliderReEnableTimer = 0f; 
-}
-
-void SetPlayerCollidersTrigger(bool isTrigger)
-{
-    Collider[] colliders = GetComponentsInChildren<Collider>();
-    foreach (Collider col in colliders)
-    {
-        col.isTrigger = isTrigger;
-    }
-}
 }

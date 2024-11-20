@@ -13,8 +13,6 @@ public class RespawnSystem: MonoBehaviour
 
     private PlayerInputActions playerInputActions;
 
-    public GameObject respawnText;
-
     public bool drawRespawnLocations;
     public float respawnRad = 5f;
 
@@ -59,22 +57,23 @@ public class RespawnSystem: MonoBehaviour
 
             if(respawnTimer > respawnDelay)
             {
-                if(respawnText != null)
-                {
-                    respawnText.SetActive(true);
-                }
+                //if(respawnText != null)
+                //{
+                //    respawnText.SetActive(true);
+                //}
             }
 
             // Choose the closest respawn point to the players last grounded position
-            if(resPressed && respawnPointParent && respawnPointParent.childCount > 0)
+            if(respawnTimer > respawnDelay && respawnPointParent && respawnPointParent.childCount > 0)
             {
 
                 Transform closestPoint = respawnPointParent.GetChild(0);
-                float minDistance = (currentDeathData.lastGroundedPosition - closestPoint.position).magnitude;
+                //float minDistance = (currentDeathData.lastGroundedPosition - closestPoint.position).magnitude;
+                float minDistance = (currentDeathData.deathPosition - closestPoint.position).magnitude;
 
-                for(int i = 1; i < respawnPointParent.childCount; i++)
+                for (int i = 1; i < respawnPointParent.childCount; i++)
                 {
-                    float distance = (currentDeathData.lastGroundedPosition - respawnPointParent.GetChild(i).position).magnitude;
+                    float distance = (currentDeathData.deathPosition - respawnPointParent.GetChild(i).position).magnitude;
                     if(distance < minDistance)
                     {
                         minDistance = distance;
@@ -88,7 +87,7 @@ public class RespawnSystem: MonoBehaviour
 
                 player.pogoStick.rotation = Quaternion.identity;
 
-                respawnText.SetActive(false);
+                //respawnText.SetActive(false);
                 enableRespawn = false;
 
             }
@@ -103,7 +102,7 @@ public class RespawnSystem: MonoBehaviour
         if(drawRespawnLocations)
         {
             Gizmos.color = Color.blue;
-            for (int i = 1; i < respawnPointParent.childCount; i++)
+            for (int i = 0; i < respawnPointParent.childCount; i++)
             {
                 Transform pos = respawnPointParent.GetChild(i);
                 Gizmos.DrawSphere(pos.position, respawnRad);

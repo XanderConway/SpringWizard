@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -13,6 +14,10 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private Button restartButton;
     [SerializeField] private Button mainMenuButton;
     [SerializeField] private Button resumeButton;
+    [SerializeField] private Button closeControlsButton;
+    [SerializeField] private GameObject mainPauseButtons;
+    [SerializeField] private GameObject controlPage;
+    [SerializeField] private EventSystem eventSystem;
 
     // List to store all menu buttons
     private List<Button> menuButtons;
@@ -81,5 +86,20 @@ public class PauseMenu : MonoBehaviour
     {
         gameObject.SetActive(false);
         Time.timeScale = 1;
+    }
+
+    public void openControls()
+    {
+        mainPauseButtons.SetActive(false);
+        controlPage.SetActive(true);
+        EventSystem.current.SetSelectedGameObject(closeControlsButton.gameObject);
+
+    }
+
+    public void closeControls()
+    {
+        mainPauseButtons.SetActive(true);
+        controlPage.SetActive(false);
+        EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
     }
 }
