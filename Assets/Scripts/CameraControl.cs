@@ -17,6 +17,8 @@ public class Rotate : MonoBehaviour
     private PlayerInputActions playerInputActions;
     private Vector2 lookInputVector;
 
+    private Quaternion targetStartRotation;
+
     void Awake () {
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Look.Enable();
@@ -24,6 +26,7 @@ public class Rotate : MonoBehaviour
 
     void Start() {
         controls = target.GetComponentInChildren<PogoControls>();
+        targetStartRotation = target.rotation;
     }
 
     void Update() {
@@ -38,7 +41,7 @@ public class Rotate : MonoBehaviour
             Vector3 offset = rotation * cameraDistance;
             transform.position = target.position + offset;
             
-            target.rotation = Quaternion.Euler(0, yaw, 0);
+            target.rotation = targetStartRotation * Quaternion.Euler(0, yaw, 0);
         }
     }
 
