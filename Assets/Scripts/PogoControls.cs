@@ -247,15 +247,11 @@ public class PogoControls : TrickSubject, TimerObserver
 
     void FixedUpdate()
     {
-        if (isGrinding)
-        {
+        if (isGrinding) {
             MoveAlongRail();
-        }
-        else if (!dead)
-        {
+        } else {
             detectJumping();
             countFlips();
-
         }
     }
 
@@ -532,6 +528,16 @@ public class PogoControls : TrickSubject, TimerObserver
         float dotProduct = Vector3.Dot(pogoStick.up.normalized, transform.up.normalized);
         flipAngle *= flipSpeedMultiplier.Evaluate(dotProduct);
 
+        if (Mathf.Abs(forwardInput) < 0.1f && IsFalling())
+        {
+            float forwardAdjustment = rotationSpeed * Time.deltaTime * 0.3f; // Smooth reset speed
+            float forwardAngle = Vector3.SignedAngle(Vector3.up, pogoStick.up, transform.right);
+            if (Mathf.Abs(forwardAngle) > 20f) {
+                float resetFlipAngle = -Mathf.Sign(forwardAngle) * Mathf.Min(forwardAdjustment, Mathf.Abs(forwardAngle));
+                pogoStick.Rotate(transform.right, resetFlipAngle, Space.World);
+            }   
+        }
+
         // Rotate around the foot of the pogo stick when grounded, and the center when in the air
         if (isGrounded)
         {
@@ -681,6 +687,10 @@ public class PogoControls : TrickSubject, TimerObserver
             }
         }
 
+        Vector3 pogoCastStart = leanChild.transform.position + leanChild.transform.rotation * pogoRayCastOffset;
+        if (Physics.SphereCast(pogoCastStart, pogoCastRadius, -1 * leanChild.transform.up, out RaycastHit hit, pogoRayCastLength, ~LayerMask.GetMask("Player"))) {
+            return;
+        }
 
         ContactPoint[] contactPoints = new ContactPoint[collision.contactCount];
         collision.GetContacts(contactPoints);
@@ -903,5 +913,10 @@ public class PogoControls : TrickSubject, TimerObserver
         {
             col.isTrigger = isTrigger;
         }
+    }
+
+    private bool IsFalling()
+    {
+        return rb != null && rb.velocity.y < 0;
     }
 }

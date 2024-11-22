@@ -24,6 +24,9 @@ public class Rotate : MonoBehaviour
 
     void Start() {
         controls = target.GetComponentInChildren<PogoControls>();
+        Vector3 initialRotation = transform.eulerAngles - target.eulerAngles;
+        yaw = initialRotation.y;
+        pitch = initialRotation.z;
     }
 
     void Update() {
