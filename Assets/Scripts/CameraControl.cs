@@ -27,21 +27,30 @@ public class Rotate : MonoBehaviour
     void Start() {
         controls = target.GetComponentInChildren<PogoControls>();
         targetStartRotation = target.rotation;
+
+        Vector3 initialRotation = transform.eulerAngles - target.eulerAngles;
+        yaw = initialRotation.y;
+        pitch = initialRotation.z;
+
     }
 
     void Update() {
         if (IsCameraControlEnabled()) {
-            lookInputVector = playerInputActions.Player.Look.ReadValue<Vector2>();
-            yaw += lookInputVector.x * sensitivity.x * PlayerPrefs.GetFloat("Sensitivity", 1.0f);
-            pitch -= lookInputVector.y * sensitivity.y * PlayerPrefs.GetFloat("Sensitivity", 1.0f);
-            pitch = Mathf.Clamp(pitch, verticalClampAngleTop, verticalClampAngleBottom);
 
-            Quaternion rotation = Quaternion.Euler(pitch, yaw, 0.0f);
-            transform.rotation = rotation * Quaternion.Euler(cameraAngle);
-            Vector3 offset = rotation * cameraDistance;
-            transform.position = target.position + offset;
-            
-            target.rotation = targetStartRotation * Quaternion.Euler(0, yaw, 0);
+            if (Time.frameCount > 5)
+            {
+                lookInputVector = playerInputActions.Player.Look.ReadValue<Vector2>();
+                yaw += lookInputVector.x * sensitivity.x * PlayerPrefs.GetFloat("Sensitivity", 1.0f);
+                pitch -= lookInputVector.y * sensitivity.y * PlayerPrefs.GetFloat("Sensitivity", 1.0f);
+                pitch = Mathf.Clamp(pitch, verticalClampAngleTop, verticalClampAngleBottom);
+
+                Quaternion rotation = Quaternion.Euler(pitch, yaw, 0.0f);
+                transform.rotation = rotation * Quaternion.Euler(cameraAngle);
+                Vector3 offset = rotation * cameraDistance;
+                transform.position = target.position + offset;
+
+                target.rotation = targetStartRotation * Quaternion.Euler(0, yaw, 0);
+            }
         }
     }
 
