@@ -64,7 +64,6 @@ public class PogoControls : TrickSubject, TimerObserver
     public float compressTime = 0.4f;
 
     // Used for spring compression animation (Aesthetic)
-    public PlayerAnimator animator;
     public GameObject mainPogoBody;
     public float velocitySpringMultiplier = 0.2f;
     public float springLength = 1.0f;
@@ -206,16 +205,14 @@ public class PogoControls : TrickSubject, TimerObserver
     void PerformTrick1(InputAction.CallbackContext context)
     {
         currTrick = PlayerTricks.NoHands;
-        animator.PlayTrick1Animation();
-        //BroadcastMessage("PlayTrick1Animation");
+        BroadcastMessage("PlayTrick1Animation");
     }
 
     private bool trick2 = false;
     void PerformTrick2(InputAction.CallbackContext context)
     {
         currTrick = PlayerTricks.Kickflip;
-        animator.PlayTrick2Animation();
-        //BroadcastMessage("PlayTrick2Animation");
+        BroadcastMessage("PlayTrick2Animation");
     }
 
     void PerformTrick3(InputAction.CallbackContext context)
@@ -599,8 +596,6 @@ public class PogoControls : TrickSubject, TimerObserver
             pogoStickComponents[i].SetActive(!useRagdoll);
         }
 
-        animator.animator.enabled = !useRagdoll;
-
         // Setting bone positions manually can be buggy, and won't be needed once we have animation
         if (!useRagdoll)
         {
@@ -634,7 +629,6 @@ public class PogoControls : TrickSubject, TimerObserver
         }
         dead = isDead;
         ToggleRagdoll(isDead);
-
     }
 
     public bool IsDead()
