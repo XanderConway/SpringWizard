@@ -377,7 +377,6 @@ public class PogoControls : TrickSubject, TimerObserver
                 // If we are on a new wall, notify observers
                 if (_currentWallCollider == null || _currentWallCollider != hit.collider)
                 {
-                    Debug.Log("On Wall");
                     // NotifyTrickObservers(PlayerTricks.WallJump);
 
                     // Store the current wall collider to avoid duplicate notifications
