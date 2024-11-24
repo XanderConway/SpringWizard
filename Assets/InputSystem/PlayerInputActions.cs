@@ -315,6 +315,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""59667d4d-7a68-4cd5-9335-87be03b503f6"",
+                    ""path"": ""<Mouse>/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""a87d2fa0-ee40-41b9-a0ec-5bb694282082"",
                     ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
