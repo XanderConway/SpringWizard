@@ -9,6 +9,7 @@ public class LevelMetaData
     public string sceneName;
     public float timeLimit;
     public int numCollectibles;
+    public int scoreRequirement;
 }
 
 [System.Serializable]

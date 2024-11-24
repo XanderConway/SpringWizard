@@ -13,7 +13,7 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     [SerializeField] private TrickSubject player;
     [SerializeField] private GameObject collectibesParent;
 
-    private int _totalScore = 0;
+    private int totalScore = 0;
     private int _trickScore = 0;
 
 
@@ -25,9 +25,11 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
 
     [SerializeField] private TextMeshProUGUI trickNameText;
     [SerializeField] private TextMeshProUGUI trickScoreText;
+    [SerializeField] private Image scoreFill;
 
     private int totalCollectables = 0;
     private int numCollected = 0;
+    private int scoreRequirement = 500;
 
 
     //combo system
@@ -111,7 +113,7 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
 
             _isInCombo = false;
             _tricksInCombo.Clear();
-            _totalScore += _trickScore * _validComboCount;
+            totalScore += _trickScore * _validComboCount;
             _trickScore = 0;
             _validComboCount = 0;
         }
@@ -142,9 +144,11 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
 
     private void UpdateUI(bool comboEnded)
     {
-        totalScoreText.text = "Score: " + _totalScore;
+        totalScoreText.text = $"{totalScore} / {scoreRequirement}";
 
-        if(!comboEnded)
+        scoreFill.fillAmount = Mathf.Clamp(totalScore / scoreRequirement, 0, 1);
+
+        if (!comboEnded)
         {
             trickNameText.text = _trickName;
             trickScoreText.text = trickScoreDisplay(true);
@@ -157,7 +161,14 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
 
     private void updateScoreCollected(CollectibleData collectibleData)
     {
-        _totalScore += (int)(collectibleData.points * (1 + _validComboCount / 10.0f));
+        totalScore += (int)(collectibleData.points * (1 + _validComboCount / 10.0f));
+
+
+        if (totalScore > scoreRequirement)
+        {
+            Debug.Log("Score threshold reached!");
+        }
+
         numCollected += 1;
         collectedDisplayText.text = $"Scrolls: {numCollected} / {totalCollectables}";
         UpdateUI(false);
@@ -185,13 +196,20 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
             }
         }
 
+
+
+        if (LevelManager.Instance != null && LevelManager.Instance.currentLevel != null)
+        {
+            scoreRequirement = LevelManager.Instance.currentLevel.scoreRequirement;
+        }
+
         collectedDisplayText.text = $"Scrolls: {numCollected} / {totalCollectables}";
     }
 
     void OnDisable()
     {
         // Todo store score in LevelManager
-        PlayerPrefs.SetInt("score", _totalScore);
+        PlayerPrefs.SetInt("score", totalScore);
         PlayerPrefs.SetString("numCollected", $"{numCollected} / {totalCollectables}");
         player.RemoveObserver(this);
     }

@@ -41,7 +41,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 244674429243301497}
-  - component: {fileID: 1144385446340015059}
   m_Layer: 3
   m_Name: WizardModel
   m_TagString: Untagged
@@ -67,27 +66,6 @@ Transform:
   - {fileID: 1883603008112029276}
   m_Father: {fileID: 2823786398027076748}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &1144385446340015059
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2817763672058518266}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 9f192b2c7c25aea428d62a40addb35aa, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &3578656647644916066
 GameObject:
   m_ObjectHideFlags: 0
@@ -692,8 +670,8 @@ MonoBehaviour:
   verticalClampAngleBottom: 40
   cameraDistance: {x: 0, y: 8.58, z: -13}
   cameraAngle: {x: 30, y: 0, z: 0}
-  yaw: 2326.1472
-  pitch: 38.306095
+  yaw: 0
+  pitch: 0
 --- !u!1 &7492502442604362572
 GameObject:
   m_ObjectHideFlags: 0
@@ -818,7 +796,7 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0.28060693
     - serializedVersion: 3
-      time: -0.50602895
+      time: -0.16201955
       value: 2.0062802
       inSlope: -0.0056837504
       outSlope: -0.0056837504
@@ -827,8 +805,8 @@ MonoBehaviour:
       inWeight: 0.33333334
       outWeight: 0.31371182
     - serializedVersion: 3
-      time: 0.24453864
-      value: 1.0218599
+      time: 0.24065135
+      value: 0.9067201
       inSlope: -0.07302374
       outSlope: -0.07302374
       tangentMode: 0
@@ -2175,6 +2153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c98acbb7926c9f7428316b47e818725c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 0}
 --- !u!1 &9017509612216153812 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 391773653927355662, guid: 3a29ffed4c74eaa4d91e8771873fdff0, type: 3}

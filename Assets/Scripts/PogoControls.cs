@@ -249,7 +249,9 @@ public class PogoControls : TrickSubject, TimerObserver
     {
         if (isGrinding) {
             MoveAlongRail();
-        } else {
+        }
+        else if (!dead)
+        {
             detectJumping();
             countFlips();
         }
@@ -687,7 +689,8 @@ public class PogoControls : TrickSubject, TimerObserver
         }
 
         Vector3 pogoCastStart = leanChild.transform.position + leanChild.transform.rotation * pogoRayCastOffset;
-        if (Physics.SphereCast(pogoCastStart, pogoCastRadius * 1.5f, -1 * leanChild.transform.up, out RaycastHit hit, pogoRayCastLength, ~LayerMask.GetMask("Player"))) {
+        if (Physics.SphereCast(pogoCastStart, pogoCastRadius * 1.5f, -1 * leanChild.transform.up, out RaycastHit hit, pogoRayCastLength, ~LayerMask.GetMask("Player")))
+        {
             return;
         }
 
