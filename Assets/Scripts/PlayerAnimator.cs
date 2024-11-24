@@ -3,8 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerAnimator : MonoBehaviour
-{
+public class PlayerAnimator : MonoBehaviour {
     private Animator animator;
     private PlayerInputActions playerInputActions;
     private Vector2 leanInputVector;
@@ -26,7 +25,7 @@ public class PlayerAnimator : MonoBehaviour
         } else {
             animator.enabled = true;
         }
-        
+
         leanInputVector = playerInputActions.Player.Lean.ReadValue<Vector2>();
         float forwardInput = leanInputVector.y;
         float sideInput = leanInputVector.x;
@@ -44,20 +43,28 @@ public class PlayerAnimator : MonoBehaviour
         animator.SetBool("IsLeaningBack", forwardInput == -1);
     }
 
-    private void PlayTrick1Animation() {
+    private void PerformTrick1() {
         animator.SetTrigger("NoHandsTrick2Trigger");
     }
 
-    private void PlayTrick2Animation() {
+    private void PerformTrick2() {
         animator.SetTrigger("PogoKickFlipTrigger");
     }
 
-    private void PlayTrick3Animation() {
+    private void PerformTrick3() {
         animator.SetTrigger("ScissorKickTrigger");
     }
 
-    private void PlayTrick4Animation() {
+    private void PerformTrick4() {
+        animator.SetTrigger("ScissorKickTrigger");
+    }
+
+    private void PerformTrick5() {
         animator.SetTrigger("NoHandsTrick1Trigger");
+    }
+
+    private void PerformTrick6() {
+        animator.SetTrigger("PogoKickFlipTrigger");
     }
 
     private void PlayRailGrindingAnimation(bool isRailGrinding) {
@@ -69,7 +76,7 @@ public class PlayerAnimator : MonoBehaviour
         }
     }
 
-    private void PlayChargingJumpAnimation(bool isChargingJump) {
+    private void PerformChargedJump(bool isChargingJump) {
         if (isChargingJump) {
             animator.SetBool("IsChargingJump", true);
             animator.Play("Charging Jump");
