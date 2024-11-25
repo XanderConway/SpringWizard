@@ -51,7 +51,6 @@ public class RailScript : MonoBehaviour
             for (int j = 0; j < 8; j++)
             {
                 vertices.Add(center);
-
             }
         }
 
@@ -70,7 +69,6 @@ public class RailScript : MonoBehaviour
                 triangles.Add(currentIdx);
                 triangles.Add(nextRingIdx);
                 triangles.Add(nextIdx);
-
                 triangles.Add(nextIdx);
                 triangles.Add(nextRingIdx);
                 triangles.Add(nextRingNextIdx);
