@@ -63,14 +63,6 @@ public class EndMenu : MonoBehaviour
 
         // Initialize the list of buttons
         menuButtons = new List<Button> { BackToMainButton, quitButton };
-
-        if(LevelManager.Instance != null && LevelManager.Instance.currentLevel != null)
-        {
-            ScoreData scoreData = new ScoreData(numCollected, playerScore);
-
-            LevelManager.Instance.scoreMap[LevelManager.Instance.currentLevel.levelId] = scoreData;
-            LevelManager.Instance.saveScores();
-        }
     }
 
     // Button actions

@@ -15,7 +15,7 @@ public class UITimer : TimerSubject
 
     private bool clipPlayed = false;
 
-    private float currentTime;
+    public float currentTime;
     private bool isTimerRunning = false;
 
 
@@ -28,9 +28,9 @@ public class UITimer : TimerSubject
     // Update is called once per frame
     void Update()
     {
-        if (isTimerRunning && currentTime > 0)
+        if (isTimerRunning)
         {
-            currentTime -= Time.deltaTime;
+            currentTime += Time.deltaTime;
 
             NotifyTime(currentTime);  // Notify observers of remaining time
             UpdateTimerUI(currentTime);
@@ -50,13 +50,13 @@ public class UITimer : TimerSubject
                 }
             }
 
-            if (currentTime <= 0)
-            {
-                currentTime = 0;
-                isTimerRunning = false;
-                TimerEnded();
+            //if (currentTime <= 0)
+            //{
+            //    currentTime = 0;
+            //    isTimerRunning = false;
+            //    TimerEnded();
                 
-            }
+            //}
 
             NotifyIsRunning(isTimerRunning);
         }
@@ -87,7 +87,7 @@ public class UITimer : TimerSubject
 
             }
         }
-        currentTime = countdownTime;
+        currentTime = 0;
 
 
         NotifyIsRunning(isTimerRunning);
@@ -117,8 +117,8 @@ public class UITimer : TimerSubject
         timerText.text = "Time's up!";
 
         SceneManager.LoadScene("EndMenu");
-        //Scene scene = SceneManager.GetActiveScene();
-        //SceneManager.LoadScene(scene.name);
+        Scene scene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(scene.name);
     }
 
 

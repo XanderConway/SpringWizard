@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -9,6 +10,7 @@ public class LevelMetaData
     public string sceneName;
     public float timeLimit;
     public int numCollectibles;
+    public int scoreRequirement;
 }
 
 [System.Serializable]
@@ -16,11 +18,27 @@ public class ScoreData
 {
     public string numCollected = "?/?";
     public int score;
+    public float totalTime;
 
-    public ScoreData(string numCollected, int score)
+    public ScoreData(string numCollected, int score, float totalTime)
     {
         this.numCollected = numCollected;
         this.score = score;
+        this.totalTime = totalTime;
+        
+    }
+}
+
+
+// Wrapper for serialization
+[System.Serializable]
+public class ScoreListWrapper
+{
+    public List<ScoreData> scoreData;
+
+    public ScoreListWrapper(List<ScoreData> scoreData)
+    {
+        this.scoreData = scoreData;
     }
 }
 
@@ -36,7 +54,7 @@ public class LevelManager : MonoBehaviour
     public LevelMetaData currentLevel;
     public bool currentIsPractice;
 
-    public Dictionary<string, ScoreData> scoreMap = new Dictionary<string, ScoreData>();
+    public Dictionary<string, List<ScoreData>> scoreMap = new Dictionary<string, List<ScoreData>>();
     public string scoreDataPath;
 
 
@@ -47,15 +65,7 @@ public class LevelManager : MonoBehaviour
         // Ensure only one instance exists (Singleton pattern)
         if (Instance == null)
         {
-
-            dataMap = new Dictionary<string, LevelMetaData>();
-            foreach (LevelMetaData level in levelData)
-            {
-                dataMap[level.levelId] = level;
-            }
-
             Instance = this;
-            scoreDataPath = Path.Combine(Application.persistentDataPath, "levelData.json");
             loadScores();
             DontDestroyOnLoad(gameObject);
         }
@@ -68,6 +78,16 @@ public class LevelManager : MonoBehaviour
     private void Start()
     {
 
+        dataMap = new Dictionary<string, LevelMetaData>();
+        foreach (LevelMetaData level in levelData)
+        {
+            dataMap[level.levelId] = level;
+        }
+    }
+
+    public string getLevelSavePath(string levelId)
+    {
+        return Path.Combine(Application.persistentDataPath, levelId);
     }
 
     public LevelMetaData getMetaData(string levelId)
@@ -79,7 +99,7 @@ public class LevelManager : MonoBehaviour
         return null;
     }
 
-    public ScoreData getScores(string levelId)
+    public List<ScoreData> getScores(string levelId)
     {
         if(scoreMap.ContainsKey(levelId))
         {
@@ -88,63 +108,44 @@ public class LevelManager : MonoBehaviour
         return null;
     }
 
-
-
-    public void saveScores()
+    public void saveScore(ScoreData data, string levelId)
     {
-        string jsonData = JsonUtility.ToJson(new SerializationWrapper<ScoreData>(scoreMap), true);
-        File.WriteAllText(scoreDataPath, jsonData);
-        Debug.Log("Level data saved to " + scoreDataPath);
+
+        List<ScoreData> scores;
+        if(scoreMap.ContainsKey(levelId))
+        {
+            scores = scoreMap[levelId];
+        } else
+        {
+            scores = new List<ScoreData>();
+        }
+        scores.Add(data);
+
+        string jsonData = JsonUtility.ToJson(new ScoreListWrapper(scores), true);
+
+        Debug.Log(jsonData);
+        File.WriteAllText(getLevelSavePath(levelId), jsonData);
     }
 
 
     public void loadScores()
     {
-        if (File.Exists(scoreDataPath))
+
+        foreach(LevelMetaData level in levelData)
         {
-            string jsonData = File.ReadAllText(scoreDataPath);
-            scoreMap = JsonUtility.FromJson<SerializationWrapper<ScoreData>>(jsonData).ToDictionary();
-            Debug.Log("Level data loaded from " + scoreDataPath);
+            string levelSavePath = getLevelSavePath(level.levelId);
+
+            Debug.Log(level.levelId);
+            if (File.Exists(levelSavePath))
+            {
+                string jsonData = File.ReadAllText(levelSavePath);
+                ScoreListWrapper levelScores = JsonUtility.FromJson<ScoreListWrapper>(jsonData);
+                scoreMap[level.levelId] = levelScores.scoreData;
+            }
+            else
+            {
+                Debug.LogWarning($"Save file not found for {level.levelId}");
+            }
         }
-        else
-        {
-            Debug.LogWarning("Save file not found!");
-        }
-    }
-
-    //public LevelMetaData GetLevelData(string levelName)
-    //{
-    //    if (levelDataDictionary.TryGetValue(levelName, out LevelMetaData levelData))
-    //    {
-    //        return levelData;
-    //    }
-    //    Debug.LogWarning("Level data not found for level: " + levelName);
-    //    return new LevelMetaData();
-    //}
-
-
-    // Additional methods for managing level data can be added here
-}
-
-[System.Serializable]
-public class SerializationWrapper<T>
-{
-    public List<string> keys;
-    public List<T> values;
-
-    public SerializationWrapper(Dictionary<string, T> dictionary)
-    {
-        keys = new List<string>(dictionary.Keys);
-        values = new List<T>(dictionary.Values);
-    }
-
-    public Dictionary<string, T> ToDictionary()
-    {
-        Dictionary<string, T> result = new Dictionary<string, T>();
-        for (int i = 0; i < keys.Count; i++)
-        {
-            result[keys[i]] = values[i];
-        }
-        return result;
     }
 }

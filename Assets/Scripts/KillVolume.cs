@@ -15,7 +15,7 @@ public class KillVolume : MonoBehaviour
 
         if(playerControls != null )
         {
-            playerControls.setDead(true);
+            playerControls.setDead(true, true);
 
             if (fallScream != null)
             {

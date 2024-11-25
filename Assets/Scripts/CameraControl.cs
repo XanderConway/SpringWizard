@@ -25,29 +25,31 @@ public class Rotate : MonoBehaviour
     void Start() {
         controls = target.GetComponentInChildren<PogoControls>();
 
-        Vector3 initialRotation = transform.localRotation.eulerAngles - target.localRotation.eulerAngles;
+        Vector3 initialRotation = transform.localRotation.eulerAngles;
 
         yaw = initialRotation.y;
         pitch = initialRotation.z;
     }
 
     void Update() {
-        if (IsCameraControlEnabled()) {
+        updateCameraPosition();
+    }
 
-            if (Time.frameCount > 5)
-            {
-                lookInputVector = playerInputActions.Player.Look.ReadValue<Vector2>();
-                yaw += lookInputVector.x * sensitivity.x * PlayerPrefs.GetFloat("Sensitivity", 1.0f);
-                pitch -= lookInputVector.y * sensitivity.y * PlayerPrefs.GetFloat("Sensitivity", 1.0f);
-                pitch = Mathf.Clamp(pitch, verticalClampAngleTop, verticalClampAngleBottom);
+    public void updateCameraPosition()
+    {
+        if(IsCameraControlEnabled())
+        {
+            lookInputVector = playerInputActions.Player.Look.ReadValue<Vector2>();
+            yaw += lookInputVector.x * sensitivity.x * PlayerPrefs.GetFloat("Sensitivity", 1.0f);
+            pitch -= lookInputVector.y * sensitivity.y * PlayerPrefs.GetFloat("Sensitivity", 1.0f);
+            pitch = Mathf.Clamp(pitch, verticalClampAngleTop, verticalClampAngleBottom);
 
-                Quaternion rotation = Quaternion.Euler(pitch, yaw, 0.0f);
-                transform.rotation = rotation * Quaternion.Euler(cameraAngle);
-                Vector3 offset = rotation * cameraDistance;
-                transform.position = target.position + offset;
+            Quaternion rotation = Quaternion.Euler(pitch, yaw, 0.0f);
+            transform.rotation = rotation * Quaternion.Euler(cameraAngle);
+            Vector3 offset = rotation * cameraDistance;
+            transform.position = target.position + offset;
 
-                target.rotation = Quaternion.Euler(0, yaw, 0);
-            }
+            target.rotation = Quaternion.Euler(0, yaw, 0);
         }
     }
 

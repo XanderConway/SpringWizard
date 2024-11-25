@@ -1,3 +1,4 @@
+using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,6 +9,8 @@ using UnityEngine.UI;
 public class RespawnSystem: MonoBehaviour
 {
     public PogoControls player;
+
+    public Rotate camControls;
 
     public Transform respawnPointParent;
 
@@ -49,7 +52,7 @@ public class RespawnSystem: MonoBehaviour
         respawnTimer = 0.0f;
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (enableRespawn)
         {
@@ -67,25 +70,34 @@ public class RespawnSystem: MonoBehaviour
             if(respawnTimer > respawnDelay && respawnPointParent && respawnPointParent.childCount > 0)
             {
 
-                Transform closestPoint = respawnPointParent.GetChild(0);
-                //float minDistance = (currentDeathData.lastGroundedPosition - closestPoint.position).magnitude;
-                float minDistance = (currentDeathData.deathPosition - closestPoint.position).magnitude;
-
-                for (int i = 1; i < respawnPointParent.childCount; i++)
+                Vector3 respawnPos = currentDeathData.deathPosition;
+                // If they fall of the map, bring them to a checkpoint
+                if (currentDeathData.fellToDeath)
                 {
-                    float distance = (currentDeathData.deathPosition - respawnPointParent.GetChild(i).position).magnitude;
-                    if(distance < minDistance)
-                    {
-                        minDistance = distance;
-                        closestPoint = respawnPointParent.GetChild(i);
-                    }
-                }
+                    Transform closestPoint = respawnPointParent.GetChild(0);
+                    //float minDistance = (currentDeathData.lastGroundedPosition - closestPoint.position).magnitude;
+                    float minDistance = (currentDeathData.deathPosition - closestPoint.position).magnitude;
 
+                    for (int i = 1; i < respawnPointParent.childCount; i++)
+                    {
+                        float distance = (currentDeathData.deathPosition - respawnPointParent.GetChild(i).position).magnitude;
+                        if (distance < minDistance)
+                        {
+                            minDistance = distance;
+                            closestPoint = respawnPointParent.GetChild(i);
+                        }
+                    }
+
+                    respawnPos = closestPoint.transform.position;
+                }
                 player.setDead(false);
-                player.transform.position = closestPoint.position;
-                player.transform.rotation = closestPoint.rotation;
+                player.transform.position = respawnPos;
+                player.transform.rotation = Quaternion.identity;
 
                 player.pogoStick.rotation = Quaternion.identity;
+
+                camControls.updateCameraPosition();
+                CinemachineCore.Instance.GetActiveBrain(0).ManualUpdate();
 
                 //respawnText.SetActive(false);
                 enableRespawn = false;

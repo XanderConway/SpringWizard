@@ -12,10 +12,12 @@ public class DeathData
 {
     public Vector3 lastGroundedPosition;
     public Vector3 deathPosition;
-    public DeathData(Vector3 lastGroundedPosition, Vector3 deathPosition)
+    public bool fellToDeath;
+    public DeathData(Vector3 lastGroundedPosition, Vector3 deathPosition, bool fellToDeath)
     {
         this.lastGroundedPosition = lastGroundedPosition;
         this.deathPosition = deathPosition;
+        this.fellToDeath = fellToDeath;
     }
 }
 
@@ -249,7 +251,9 @@ public class PogoControls : TrickSubject, TimerObserver
     {
         if (isGrinding) {
             MoveAlongRail();
-        } else {
+        }
+        else if (!dead)
+        {
             detectJumping();
             countFlips();
         }
@@ -630,11 +634,11 @@ public class PogoControls : TrickSubject, TimerObserver
     }
 
     // Disable player model, and spawn rag doll.
-    public void setDead(bool isDead)
+    public void setDead(bool isDead, bool fellToDeath=false)
     {
         if (isDead)
         {
-            DeathData data = new DeathData(lastGroundedPosition, transform.position);
+            DeathData data = new DeathData(lastGroundedPosition, transform.position, fellToDeath);
             deathEvent.Invoke(data);
             NotifyTrickObservers(PlayerTricks.Death);
         }
@@ -687,7 +691,8 @@ public class PogoControls : TrickSubject, TimerObserver
         }
 
         Vector3 pogoCastStart = leanChild.transform.position + leanChild.transform.rotation * pogoRayCastOffset;
-        if (Physics.SphereCast(pogoCastStart, pogoCastRadius * 1.5f, -1 * leanChild.transform.up, out RaycastHit hit, pogoRayCastLength, ~LayerMask.GetMask("Player"))) {
+        if (Physics.SphereCast(pogoCastStart, pogoCastRadius * 1.5f, -1 * leanChild.transform.up, out RaycastHit hit, pogoRayCastLength, ~LayerMask.GetMask("Player")))
+        {
             return;
         }
 

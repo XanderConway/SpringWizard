@@ -440,12 +440,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4720142906567174292, guid: 4b0e646900d791d4793db34c21e30f24, type: 3}
-      propertyPath: levelData.Array.data[1].sceneName
+      propertyPath: levelData.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4720142906567174292, guid: 4b0e646900d791d4793db34c21e30f24, type: 3}
+      propertyPath: levelData.Array.data[2].levelId
+      value: lvl1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4720142906567174292, guid: 4b0e646900d791d4793db34c21e30f24, type: 3}
+      propertyPath: levelData.Array.data[2].sceneName
       value: Level1_Final
       objectReference: {fileID: 0}
     - target: {fileID: 4720142906567174292, guid: 4b0e646900d791d4793db34c21e30f24, type: 3}
-      propertyPath: levelData.Array.data[1].timeLimit
-      value: 60
+      propertyPath: levelData.Array.data[2].scoreRequirement
+      value: 10000
       objectReference: {fileID: 0}
     - target: {fileID: 5216326158851246068, guid: 4b0e646900d791d4793db34c21e30f24, type: 3}
       propertyPath: m_Name

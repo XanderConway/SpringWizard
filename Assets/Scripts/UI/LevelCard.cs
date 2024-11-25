@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -29,16 +30,21 @@ public class LevelCard : MonoBehaviour
 
     private void LoadScore()
     {
+
+        scoreText.text = "??:??";
         if (LevelManager.Instance != null) {
-            ScoreData data = LevelManager.Instance.getScores(levelId);
-            if (data != null)
+            List<ScoreData> data = LevelManager.Instance.getScores(levelId);
+            if (data != null && data.Count > 0)
             {
-                scoreText.text = data.score.ToString();
-                numCollected.text = data.numCollected;
+                // TODO find the fastest time
+                TimeSpan timeSpan = TimeSpan.FromSeconds(data[0].totalTime);
+                string formatTimer = timeSpan.Minutes.ToString("00") + ":" + timeSpan.Seconds.ToString("00");
+
+                scoreText.text = formatTimer;
+                numCollected.text = data[0].numCollected;
                 return;
             }
         }
-        scoreText.text = "000000";
         
     }
 

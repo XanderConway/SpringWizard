@@ -49,18 +49,22 @@ MonoBehaviour:
     sceneName: Tutorial
     timeLimit: 999
     numCollectibles: 0
+    scoreRequirement: 1000
   - levelId: lvl1
-    sceneName: 
+    sceneName: Level1_Final
     timeLimit: 60
     numCollectibles: 3
+    scoreRequirement: 10000
   - levelId: lvl2
     sceneName: 
     timeLimit: 60
     numCollectibles: 3
+    scoreRequirement: 0
   currentLevel:
     levelId: 
     sceneName: 
     timeLimit: 0
     numCollectibles: 0
+    scoreRequirement: 0
   currentIsPractice: 0
   scoreDataPath: 
