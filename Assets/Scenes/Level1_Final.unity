@@ -10966,6 +10966,10 @@ PrefabInstance:
       propertyPath: grindSpeed
       value: 80
       objectReference: {fileID: 0}
+    - target: {fileID: 3675564786134479229, guid: 0a35dbe365abb004e9dbb67dc6277ea5, type: 3}
+      propertyPath: heightOffset
+      value: 1.2
+      objectReference: {fileID: 0}
     - target: {fileID: 5656991646464929276, guid: 0a35dbe365abb004e9dbb67dc6277ea5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -8.9
