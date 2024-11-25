@@ -169,7 +169,7 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
         totalScore += (int)(collectibleData.points * (1 + _validComboCount / 10.0f));
 
         numCollected += 1;
-        collectedDisplayText.text = $"Score {numCollected} / {totalCollectables}";
+        collectedDisplayText.text = $"Scrolls {numCollected} / {totalCollectables}";
         UpdateUI(false);
         Debug.Log("Collected!");
     }
