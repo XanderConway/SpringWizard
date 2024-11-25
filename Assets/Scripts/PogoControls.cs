@@ -12,10 +12,12 @@ public class DeathData
 {
     public Vector3 lastGroundedPosition;
     public Vector3 deathPosition;
-    public DeathData(Vector3 lastGroundedPosition, Vector3 deathPosition)
+    public bool fellToDeath;
+    public DeathData(Vector3 lastGroundedPosition, Vector3 deathPosition, bool fellToDeath)
     {
         this.lastGroundedPosition = lastGroundedPosition;
         this.deathPosition = deathPosition;
+        this.fellToDeath = fellToDeath;
     }
 }
 
@@ -632,11 +634,11 @@ public class PogoControls : TrickSubject, TimerObserver
     }
 
     // Disable player model, and spawn rag doll.
-    public void setDead(bool isDead)
+    public void setDead(bool isDead, bool fellToDeath=false)
     {
         if (isDead)
         {
-            DeathData data = new DeathData(lastGroundedPosition, transform.position);
+            DeathData data = new DeathData(lastGroundedPosition, transform.position, fellToDeath);
             deathEvent.Invoke(data);
             NotifyTrickObservers(PlayerTricks.Death);
         }

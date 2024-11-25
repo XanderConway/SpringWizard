@@ -5,12 +5,14 @@ using TMPro;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 public class UiScoreSystem : MonoBehaviour, TrickObserver
 {
     [SerializeField] private TrickSubject player;
+    [SerializeField] private UITimer timer;
     [SerializeField] private GameObject collectibesParent;
 
     private int totalScore = 0;
@@ -26,10 +28,11 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     [SerializeField] private TextMeshProUGUI trickNameText;
     [SerializeField] private TextMeshProUGUI trickScoreText;
     [SerializeField] private Image scoreFill;
+    [SerializeField] private Image scrollFill;
 
     private int totalCollectables = 0;
     private int numCollected = 0;
-    private int scoreRequirement = 500;
+    private int scoreRequirement = 5000;
 
 
     //combo system
@@ -144,9 +147,11 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
 
     private void UpdateUI(bool comboEnded)
     {
-        totalScoreText.text = $"{totalScore} / {scoreRequirement}";
+        totalScoreText.text = $"Score {totalScore} / {scoreRequirement}";
 
-        scoreFill.fillAmount = Mathf.Clamp(totalScore / scoreRequirement, 0, 1);
+        scoreFill.fillAmount = Mathf.Clamp((float)(totalScore) / scoreRequirement, 0f, 1f);
+
+        scrollFill.fillAmount = Mathf.Clamp((float)(numCollected) / totalCollectables, 0f, 1f);
 
         if (!comboEnded)
         {
@@ -163,14 +168,8 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     {
         totalScore += (int)(collectibleData.points * (1 + _validComboCount / 10.0f));
 
-
-        if (totalScore > scoreRequirement)
-        {
-            Debug.Log("Score threshold reached!");
-        }
-
         numCollected += 1;
-        collectedDisplayText.text = $"Scrolls: {numCollected} / {totalCollectables}";
+        collectedDisplayText.text = $"Score {numCollected} / {totalCollectables}";
         UpdateUI(false);
         Debug.Log("Collected!");
     }
@@ -203,7 +202,29 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
             scoreRequirement = LevelManager.Instance.currentLevel.scoreRequirement;
         }
 
-        collectedDisplayText.text = $"Scrolls: {numCollected} / {totalCollectables}";
+        collectedDisplayText.text = $"Scrolls {numCollected} / {totalCollectables}";
+    }
+
+    void Update()
+    {
+        checkFinished();
+    }
+
+    void checkFinished()
+    {
+        if (numCollected == totalCollectables && totalScore >= scoreRequirement)
+        {
+
+            // Save the score
+            if (LevelManager.Instance != null && LevelManager.Instance.currentLevel != null)
+            {
+                ScoreData data = new ScoreData(numCollected.ToString(), totalScore, timer.currentTime);
+                string levelId = LevelManager.Instance.currentLevel.levelId;
+                LevelManager.Instance.saveScore(data, levelId);
+            }
+
+            SceneManager.LoadScene("EndMenu");
+        }
     }
 
     void OnDisable()

@@ -15,7 +15,7 @@ public class UITimer : TimerSubject
 
     private bool clipPlayed = false;
 
-    private float currentTime;
+    public float currentTime;
     private bool isTimerRunning = false;
 
 
@@ -50,13 +50,13 @@ public class UITimer : TimerSubject
                 }
             }
 
-            if (currentTime <= 0)
-            {
-                currentTime = 0;
-                isTimerRunning = false;
-                TimerEnded();
+            //if (currentTime <= 0)
+            //{
+            //    currentTime = 0;
+            //    isTimerRunning = false;
+            //    TimerEnded();
                 
-            }
+            //}
 
             NotifyIsRunning(isTimerRunning);
         }
@@ -113,12 +113,12 @@ public class UITimer : TimerSubject
 
     private void TimerEnded()
     {
-        //NotifyTimesUp(true);
-        //timerText.text = "Time's up!";
+        NotifyTimesUp(true);
+        timerText.text = "Time's up!";
 
-        //SceneManager.LoadScene("EndMenu");
-        //Scene scene = SceneManager.GetActiveScene();
-        //SceneManager.LoadScene(scene.name);
+        SceneManager.LoadScene("EndMenu");
+        Scene scene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(scene.name);
     }
 
 
