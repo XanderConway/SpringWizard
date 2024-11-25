@@ -15,7 +15,7 @@ EditorBuildSettings:
     path: Assets/Scenes/SettingsMenu.unity
     guid: 9e7a660ba47f1db4fa4d63e92ec2ed07
   - enabled: 1
-    path: Assets/Scenes/OldTutorial.unity
+    path: Assets/Scenes/UnusedScenes/OldTutorial.unity
     guid: b3f09175c011bb9449514a0f14db7969
   - enabled: 1
     path: Assets/Scenes/Level1_Final.unity
