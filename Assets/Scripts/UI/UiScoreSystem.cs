@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using System.Linq;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -58,19 +59,33 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
         {PlayerTricks.WallJump, (75, "Wall Jump")}
     };
 
+    //hashmap of counting tricks perfomed in a combo
+    private Dictionary<PlayerTricks, int> trickCount = new Dictionary<PlayerTricks, int>
+    {
+        {PlayerTricks.None, 0},
+        {PlayerTricks.Death, 0},
+        {PlayerTricks.FrontFlip, 0},
+        {PlayerTricks.BackFlip, 0},
+        {PlayerTricks.NoHands, 0},
+        {PlayerTricks.Kickflip, 0},
+        {PlayerTricks.ScissorKick, 0},
+        {PlayerTricks.HandlessBarSpin, 0},
+        {PlayerTricks.springboard, 0},
+        {PlayerTricks.RailGrinding, 0},
+        {PlayerTricks.WallJump, 0}
+    };
+
+
     public void UpdateTrickObserver(PlayerTricks playerTricks)
     {
-        TrickDisplay(playerTricks);
+        trickDisplay(playerTricks);
 
         bool comboEnded = playerTricks == PlayerTricks.None || playerTricks == PlayerTricks.Death;
-        UpdateUI(comboEnded);
+        updateUI(comboEnded);
     }
 
-    //TODO: for now I will have the trick name and score here, but this should be moved to a separate class
-
-    private void TrickDisplay(PlayerTricks playerTrick)
+    private void trickDisplay(PlayerTricks playerTrick)
     {
-
         comboCount(playerTrick);
 
         if (_validComboCount <= 1)
@@ -80,17 +95,24 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
         else
         {
             _trickName = "";
-            for (int i = 0; i < _tricksInCombo.Count; i++)
+            foreach (var trick in trickCount)
             {
-                _trickName += trickScores[_tricksInCombo[i]].name;
-                if (i < _tricksInCombo.Count - 1)
+                if (trick.Value > 0) // Only display tricks that were performed
                 {
-                    _trickName += " + ";
+                    _trickName += trickScores[trick.Key].name;
+                    if (trick.Value > 1)
+                    {
+                        _trickName += $" x{trick.Value}";
+                    }
+                    _trickName += ", ";
                 }
             }
+
+            _trickName = _trickName.TrimEnd(',', ' '); // Remove trailing comma and space
         }
 
     }
+
 
     private string trickScoreDisplay(bool math)
     {
@@ -113,25 +135,35 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     {
         if (trick == PlayerTricks.None || trick == PlayerTricks.Death)
         {
-
             _isInCombo = false;
             _tricksInCombo.Clear();
+
+            // Reset trick counts when the combo ends
+            foreach (var key in trickCount.Keys.ToList())
+            {
+                trickCount[key] = 0;
+            }
+
             totalScore += _trickScore * _validComboCount;
             _trickScore = 0;
             _validComboCount = 0;
         }
         else
         {
-            
             _isInCombo = true;
+
             if (!_tricksInCombo.Contains(trick))
             {
-                _validComboCount += 1;
+                _validComboCount++;
                 _tricksInCombo.Add(trick);
             }
+
+            // Increment the count for the performed trick
+            trickCount[trick]++;
             _trickScore += trickScores[trick].score;
         }
     }
+
 
     private IEnumerator UpdateWithTime()
     {
@@ -145,7 +177,7 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
         trickNameText.text = "";
     }
 
-    private void UpdateUI(bool comboEnded)
+    private void updateUI(bool comboEnded)
     {
         totalScoreText.text = $"Score {totalScore} / {scoreRequirement}";
 
@@ -156,11 +188,18 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
         if (!comboEnded)
         {
             trickNameText.text = _trickName;
+            trickNameText.color = GetComboColor(_validComboCount); // Set text color
             trickScoreText.text = trickScoreDisplay(true);
-        } else
+            trickScoreText.color = GetComboColor(_validComboCount); // Set text color
+            StartCoroutine(PulseText(trickScoreText)); // Pulse effect
+
+        }
+        else
         {
+            trickNameText.text = "";
             trickScoreText.text = trickScoreDisplay(false);
-            StartCoroutine(UpdateWithTime());
+            trickScoreText.color = Color.white; // Reset to default color
+
         }
     }
 
@@ -170,7 +209,7 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
 
         numCollected += 1;
         collectedDisplayText.text = $"Scrolls {numCollected} / {totalCollectables}";
-        UpdateUI(false);
+        updateUI(false);
         Debug.Log("Collected!");
     }
 
@@ -234,4 +273,39 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
         PlayerPrefs.SetString("numCollected", $"{numCollected} / {totalCollectables}");
         player.RemoveObserver(this);
     }
+
+    // Get the color of the combo text
+    private Color GetComboColor(int comboSize)
+    {
+        //white -> yellow -> red
+        if (comboSize <= 2) return Color.white; // Default color
+        if (comboSize <= 5) return Color.yellow; // Small combos
+        return Color.red; // Large combos
+    }
+
+    private IEnumerator PulseText(TextMeshProUGUI textElement)
+    {
+        Vector3 originalScale = textElement.transform.localScale;
+        Vector3 targetScale = originalScale * 1.7f;
+        float duration = 10f;
+
+        // Scale up
+        for (float t = 0; t < 1f; t += Time.deltaTime * duration)
+        {
+            textElement.transform.localScale = Vector3.Lerp(originalScale, targetScale, t);
+            yield return null;
+        }
+
+        // Scale back
+        for (float t = 0; t < 1f; t += Time.deltaTime * duration)
+        {
+            textElement.transform.localScale = Vector3.Lerp(targetScale, originalScale, t);
+            yield return null;
+        }
+
+        textElement.transform.localScale = originalScale; // Ensure it's reset
+    }
+
+
+
 }
