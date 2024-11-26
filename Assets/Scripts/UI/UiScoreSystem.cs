@@ -28,6 +28,11 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
 
     [SerializeField] private TextMeshProUGUI trickNameText;
     [SerializeField] private TextMeshProUGUI trickScoreText;
+
+    private Animator scoreAnimator;
+    private Animator trickTextAnimator;
+
+
     [SerializeField] private Image scoreFill;
     [SerializeField] private Image scrollFill;
 
@@ -191,7 +196,17 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
             trickNameText.color = GetComboColor(_validComboCount); // Set text color
             trickScoreText.text = trickScoreDisplay(true);
             trickScoreText.color = GetComboColor(_validComboCount); // Set text color
-            StartCoroutine(PulseText(trickScoreText)); // Pulse effect
+            //StartCoroutine(PulseText(trickScoreText)); // Pulse effect
+
+            if (scoreAnimator != null)
+            {
+                scoreAnimator.SetTrigger("Pulse");
+            }
+
+            if (trickTextAnimator != null)
+            {
+                trickTextAnimator.SetTrigger("Pulse");
+            }
 
         }
         else
@@ -242,6 +257,11 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
         }
 
         collectedDisplayText.text = $"Scrolls {numCollected} / {totalCollectables}";
+
+        trickTextAnimator = trickNameText.gameObject.GetComponent<Animator>();
+        scoreAnimator = trickScoreText.gameObject.GetComponent<Animator>();
+
+
     }
 
     void Update()
@@ -282,30 +302,4 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
         if (comboSize <= 5) return Color.yellow; // Small combos
         return Color.red; // Large combos
     }
-
-    private IEnumerator PulseText(TextMeshProUGUI textElement)
-    {
-        Vector3 originalScale = textElement.transform.localScale;
-        Vector3 targetScale = originalScale * 1.7f;
-        float duration = 10f;
-
-        // Scale up
-        for (float t = 0; t < 1f; t += Time.deltaTime * duration)
-        {
-            textElement.transform.localScale = Vector3.Lerp(originalScale, targetScale, t);
-            yield return null;
-        }
-
-        // Scale back
-        for (float t = 0; t < 1f; t += Time.deltaTime * duration)
-        {
-            textElement.transform.localScale = Vector3.Lerp(targetScale, originalScale, t);
-            yield return null;
-        }
-
-        textElement.transform.localScale = originalScale; // Ensure it's reset
-    }
-
-
-
 }
