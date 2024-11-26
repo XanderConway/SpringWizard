@@ -6678,7 +6678,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7654053979341889699, guid: 610805a1674802740aa532a7daa8c889, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 82
+      value: 81.2
       objectReference: {fileID: 0}
     - target: {fileID: 7654053979341889699, guid: 610805a1674802740aa532a7daa8c889, type: 3}
       propertyPath: m_LocalPosition.z
@@ -10964,11 +10964,11 @@ PrefabInstance:
       objectReference: {fileID: 7324192649927878662}
     - target: {fileID: 3675564786134479229, guid: 0a35dbe365abb004e9dbb67dc6277ea5, type: 3}
       propertyPath: grindSpeed
-      value: 80
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 3675564786134479229, guid: 0a35dbe365abb004e9dbb67dc6277ea5, type: 3}
       propertyPath: heightOffset
-      value: 1.2
+      value: 1.1
       objectReference: {fileID: 0}
     - target: {fileID: 5656991646464929276, guid: 0a35dbe365abb004e9dbb67dc6277ea5, type: 3}
       propertyPath: m_LocalPosition.x
