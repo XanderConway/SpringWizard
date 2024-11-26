@@ -96,7 +96,10 @@ public class RespawnSystem: MonoBehaviour
 
                 player.pogoStick.rotation = Quaternion.identity;
 
-                camControls.updateCameraPosition();
+                if(camControls != null)
+                {
+                    camControls.updateCameraPosition();
+                }
                 CinemachineCore.Instance.GetActiveBrain(0).ManualUpdate();
 
                 //respawnText.SetActive(false);

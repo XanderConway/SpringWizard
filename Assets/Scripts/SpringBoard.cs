@@ -20,7 +20,7 @@ public class Springboard : MonoBehaviour
 
         animController.SetTrigger("Pop");
         
-        if (pogoControls != null)
+        if (pogoControls != null && !pogoControls.IsDead())
         {
             Debug.Log("Adding Force");
             Rigidbody rb = pogoControls.gameObject.GetComponent<Rigidbody>();
