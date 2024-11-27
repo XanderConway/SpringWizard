@@ -14334,6 +14334,18 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 8425310611652151658}
+    - target: {fileID: 4656598539155903028, guid: ff4e8307c6c52e045adc2046c7f9f4f7, type: 3}
+      propertyPath: cameraAngle.x
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 4656598539155903028, guid: ff4e8307c6c52e045adc2046c7f9f4f7, type: 3}
+      propertyPath: cameraDistance.y
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4656598539155903028, guid: ff4e8307c6c52e045adc2046c7f9f4f7, type: 3}
+      propertyPath: cameraDistance.z
+      value: -20
+      objectReference: {fileID: 0}
     - target: {fileID: 8258748032025357334, guid: ff4e8307c6c52e045adc2046c7f9f4f7, type: 3}
       propertyPath: m_Name
       value: Virtual Camera
