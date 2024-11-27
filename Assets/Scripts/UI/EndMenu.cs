@@ -65,15 +65,17 @@ public class EndMenu : MonoBehaviour
         // Initialize the list of buttons
         menuButtons = new List<Button> { BackToMainButton, leaderboardButton, quitButton };
     }
-    public void Leaderboard()
-    {
-        SceneManager.LoadScene("Leaderboard");
-    }
+
     // Button actions
     public void BackToMain()
     {
         //load scene 0
         SceneManager.LoadScene(0);
+    }
+
+    public void Leaderboard()
+    {
+        SceneManager.LoadScene("Leaderboard");
     }
 
     public void QuitGame()

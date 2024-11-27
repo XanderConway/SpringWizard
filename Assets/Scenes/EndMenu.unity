@@ -1731,7 +1731,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e877b64960d3837409075f932b50408f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trickScoreText: {fileID: 0}
+  trickScoreText: {fileID: 1849382281}
   numScrollsText: {fileID: 166200447}
   BackToMainButton: {fileID: 1687973823}
   leaderboardButton: {fileID: 1507015021}
