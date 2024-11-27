@@ -290,7 +290,11 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
             {
                 ScoreData data = new ScoreData(numCollected.ToString(), totalScore, timer.currentTime);
                 string levelId = LevelManager.Instance.currentLevel.levelId;
-                LevelManager.Instance.saveScore(data, levelId);
+
+                if (!LevelManager.Instance.currentIsPractice)
+                {
+                    LevelManager.Instance.saveScore(data, levelId);
+                }
             }
 
             // SceneManager.LoadScene("EndMenu");

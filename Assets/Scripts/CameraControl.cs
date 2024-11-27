@@ -40,8 +40,8 @@ public class Rotate : MonoBehaviour
         if(IsCameraControlEnabled())
         {
             lookInputVector = playerInputActions.Player.Look.ReadValue<Vector2>();
-            yaw += lookInputVector.x * sensitivity.x * PlayerPrefs.GetFloat("Sensitivity", 1.0f);
-            pitch -= lookInputVector.y * sensitivity.y * PlayerPrefs.GetFloat("Sensitivity", 1.0f);
+            yaw += lookInputVector.x * sensitivity.x * PlayerPrefs.GetFloat("Sensitivity", 1.0f) * Time.deltaTime;
+            pitch -= lookInputVector.y * sensitivity.y * PlayerPrefs.GetFloat("Sensitivity", 1.0f) * Time.deltaTime;
             pitch = Mathf.Clamp(pitch, verticalClampAngleTop, verticalClampAngleBottom);
 
             Quaternion rotation = Quaternion.Euler(pitch, yaw, 0.0f);

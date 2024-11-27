@@ -23,10 +23,8 @@ public class TutorialPopUp : MonoBehaviour
 
     IEnumerator SelectButtonAfterDelay()
     {
-        Debug.Log("Kill me");
         yield return new WaitForSecondsRealtime(enableDelay);
 
-        Debug.Log("Updating Close Button");
         // Set the button as the current selected object in the EventSystem
         closeButton.SetActive(true);
         EventSystem.current.SetSelectedGameObject(closeButton.gameObject);
