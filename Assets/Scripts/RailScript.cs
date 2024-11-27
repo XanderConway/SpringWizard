@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Splines;
+using Unity.Mathematics;
+using System.Collections.Generic;
 
 public class RailScript : MonoBehaviour
 {
@@ -10,10 +9,79 @@ public class RailScript : MonoBehaviour
     public SplineContainer railSpline;
     public float totalSplineLength;
 
+    [Header("Rail Visuals")]
+    public Material railMaterial;
+    private MeshFilter meshFilter;
+    private MeshRenderer meshRenderer;
+
     private void Start()
     {
         railSpline = GetComponent<SplineContainer>();
         totalSplineLength = railSpline.CalculateLength();
+        SetupMeshComponents();
+        GenerateRailMesh();
+    }
+
+    private void SetupMeshComponents()
+    {
+        meshFilter = gameObject.GetComponent<MeshFilter>();
+        if (meshFilter == null)
+            meshFilter = gameObject.AddComponent<MeshFilter>();
+
+        meshRenderer = gameObject.GetComponent<MeshRenderer>();
+        if (meshRenderer == null)
+            meshRenderer = gameObject.AddComponent<MeshRenderer>();
+
+        meshRenderer.material = railMaterial;
+    }
+
+    private void GenerateRailMesh()
+    {
+        Mesh mesh = new Mesh();
+        List<Vector3> vertices = new List<Vector3>();
+        List<int> triangles = new List<int>();
+        List<Vector2> uvs = new List<Vector2>();
+        Vector3[] splinePoints = new Vector3[50];
+        Vector3[] splineTangents = new Vector3[50];
+
+        for (int i = 0; i < 50; i++)
+        {
+            Vector3 center = splinePoints[i];
+
+            for (int j = 0; j < 8; j++)
+            {
+                vertices.Add(center);
+            }
+        }
+
+        for (int i = 0; i < 49; i++)
+        {
+            int ringStartIdx = i * 8;
+            int nextRingStartIdx = (i + 1) * 8;
+
+            for (int j = 0; j < 8; j++)
+            {
+                int currentIdx = ringStartIdx + j;
+                int nextIdx = ringStartIdx + (j + 1) % 8;
+                int nextRingIdx = nextRingStartIdx + j;
+                int nextRingNextIdx = nextRingStartIdx + (j + 1) % 8;
+
+                triangles.Add(currentIdx);
+                triangles.Add(nextRingIdx);
+                triangles.Add(nextIdx);
+                triangles.Add(nextIdx);
+                triangles.Add(nextRingIdx);
+                triangles.Add(nextRingNextIdx);
+            }
+        }
+
+        mesh.SetVertices(vertices);
+        mesh.SetTriangles(triangles, 0);
+        mesh.SetUVs(0, uvs);
+        mesh.RecalculateNormals();
+        mesh.RecalculateTangents();
+
+        meshFilter.mesh = mesh;
     }
 
     public Vector3 LocalToWorldConversion(float3 localPoint)
