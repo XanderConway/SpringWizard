@@ -468,6 +468,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  timer: {fileID: 629387101364740564}
   collectibesParent: {fileID: 0}
   totalScoreText: {fileID: 2717433007320547663}
   collectedDisplayText: {fileID: 2708846479261450409}
@@ -766,6 +767,7 @@ GameObject:
   - component: {fileID: 4479281814960066647}
   - component: {fileID: 2158275528152984576}
   - component: {fileID: 1475468671586372928}
+  - component: {fileID: 7273435900890585836}
   m_Layer: 5
   m_Name: TrickDisplay
   m_TagString: Untagged
@@ -789,7 +791,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -5, y: 323}
+  m_AnchoredPosition: {x: 0, y: 172}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2158275528152984576
@@ -883,12 +885,33 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -271.03766, y: 31.466013, z: -312.98022, w: -166.2798}
+  m_margin: {x: -271.03766, y: -45.990715, z: -312.98022, w: -13.763535}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!95 &7273435900890585836
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4118043042026179047}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 675a5525ff51327408e33b9d8c18f4f3, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &4121773103970505371
 GameObject:
   m_ObjectHideFlags: 0
@@ -1540,6 +1563,7 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   lowTimeClip: {fileID: 8300000, guid: 5b738c767e6ab2d49b80cfa60dcc8a25, type: 3}
   musicChangeThreshold: 30
+  currentTime: 0
   timerText: {fileID: 6813895277448861974}
 --- !u!114 &6813895277448861974
 MonoBehaviour:
@@ -2942,6 +2966,7 @@ GameObject:
   - component: {fileID: 1429198147378442899}
   - component: {fileID: 313521567195349504}
   - component: {fileID: 8444662509353120784}
+  - component: {fileID: 7738584650379608573}
   m_Layer: 5
   m_Name: TrickPoint
   m_TagString: Untagged
@@ -2958,14 +2983,14 @@ RectTransform:
   m_GameObject: {fileID: 9155092879228589498}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1.2298, y: 1.2298, z: 1.2298}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 3154985972724408093}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -18, y: 111}
+  m_AnchoredPosition: {x: -18, y: 79}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &313521567195349504
@@ -3067,3 +3092,24 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!95 &7738584650379608573
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9155092879228589498}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 675a5525ff51327408e33b9d8c18f4f3, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
