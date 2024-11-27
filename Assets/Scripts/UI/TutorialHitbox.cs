@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class TutorialBox : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI trickScoreText;
-    [SerializeField] private string tutorialText;
+    [SerializeField] private TutorialPopUp tutorial;
+    private bool activated = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,12 +21,16 @@ public class TutorialBox : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        trickScoreText.gameObject.SetActive(true);
-        trickScoreText.text = tutorialText;
+        if(!activated)
+        {
+            tutorial.gameObject.SetActive(true);
+            Time.timeScale = 0;
+            activated = true;
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        trickScoreText.gameObject.SetActive(false);
+
     }
 }
