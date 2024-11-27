@@ -12,6 +12,7 @@ public class EndMenu : MonoBehaviour
     [SerializeField] private Text trickScoreText;
     [SerializeField] private TextMeshProUGUI numScrollsText;
     [SerializeField] private Button BackToMainButton;
+    [SerializeField] private Button leaderboardButton;
     [SerializeField] private Button quitButton;
 
     private int playerScore;
@@ -62,7 +63,7 @@ public class EndMenu : MonoBehaviour
         numScrollsText.text = GetFeedback(numCollected) + $" You Collected {numCollected} Scrolls!";
 
         // Initialize the list of buttons
-        menuButtons = new List<Button> { BackToMainButton, quitButton };
+        menuButtons = new List<Button> { BackToMainButton, leaderboardButton, quitButton };
     }
 
     // Button actions
@@ -70,6 +71,11 @@ public class EndMenu : MonoBehaviour
     {
         //load scene 0
         SceneManager.LoadScene(0);
+    }
+
+    public void Leaderboard()
+    {
+        SceneManager.LoadScene("Leaderboard");
     }
 
     public void QuitGame()
