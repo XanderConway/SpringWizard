@@ -4027,6 +4027,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3720491296095361428, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
+      propertyPath: grindingSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 6fd3cd5e8ad644117b1e9ede414eb558, type: 3}
     - target: {fileID: 8722310485764097514, guid: d76d105df6ebeb04ba117df0cee13f26, type: 3}
       propertyPath: m_Name
       value: NewWizard 1
@@ -5446,6 +5450,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 4300000, guid: 307fafd36c5b74d4bb56ccb5b843903a, type: 2}
+    - target: {fileID: 831548339809603778, guid: 610805a1674802740aa532a7daa8c889, type: 3}
+      propertyPath: railMaterial
+      value: 
+      objectReference: {fileID: -8346980593941660806, guid: 08d04e084e8fd40928dcbb27b2382236, type: 3}
     - target: {fileID: 2948820185591925651, guid: 610805a1674802740aa532a7daa8c889, type: 3}
       propertyPath: m_Splines.Array.size
       value: 2

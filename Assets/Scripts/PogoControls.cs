@@ -178,6 +178,7 @@ public class PogoControls : TrickSubject, TimerObserver
         grindingAudioSource.clip = grindingSFX;
         grindingAudioSource.loop = true;
         grindingAudioSource.playOnAwake = false;
+        grindingAudioSource.volume = 0.2f;
 
         startBoneRotations = new Quaternion[ragdollBones.Length];
         startBonePositions = new Vector3[ragdollBones.Length];
