@@ -3,21 +3,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerAnimator : MonoBehaviour
-{
-    public Animator animator;
+public class PlayerAnimator : MonoBehaviour {
+    private Animator animator;
     private PlayerInputActions playerInputActions;
     private Vector2 leanInputVector;
+    private PogoControls pogoControlsScript;
     private void Awake() {
         animator = GetComponent<Animator>();
     }
 
     private void Start() {
+        pogoControlsScript = GetComponentInParent<PogoControls>();
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Lean.Enable();
     }
 
     private void Update() {
+        if (pogoControlsScript.IsDead()) {
+            animator.enabled = false;
+            return;
+        } else {
+            animator.enabled = true;
+        }
+
         leanInputVector = playerInputActions.Player.Lean.ReadValue<Vector2>();
         float forwardInput = leanInputVector.y;
         float sideInput = leanInputVector.x;
@@ -35,23 +43,31 @@ public class PlayerAnimator : MonoBehaviour
         animator.SetBool("IsLeaningBack", forwardInput == -1);
     }
 
-    public void PlayTrick1Animation() {
+    private void PerformTrick1() {
         animator.SetTrigger("NoHandsTrick2Trigger");
     }
 
-    public void PlayTrick2Animation() {
+    private void PerformTrick2() {
         animator.SetTrigger("PogoKickFlipTrigger");
     }
 
-    void PlayTrick3Animation() {
+    private void PerformTrick3() {
         animator.SetTrigger("ScissorKickTrigger");
     }
 
-    void PlayTrick4Animation() {
+    private void PerformTrick4() {
+        animator.SetTrigger("ScissorKickTrigger");
+    }
+
+    private void PerformTrick5() {
         animator.SetTrigger("NoHandsTrick1Trigger");
     }
 
-    void PlayRailGrindingAnimation(bool isRailGrinding) {
+    private void PerformTrick6() {
+        animator.SetTrigger("PogoKickFlipTrigger");
+    }
+
+    private void PlayRailGrindingAnimation(bool isRailGrinding) {
         if (isRailGrinding) {
             animator.SetBool("IsRailGrinding", true);
             animator.Play("rail grind part 1");
@@ -60,7 +76,7 @@ public class PlayerAnimator : MonoBehaviour
         }
     }
 
-    void PlayChargingJumpAnimation(bool isChargingJump) {
+    private void PerformChargedJump(bool isChargingJump) {
         if (isChargingJump) {
             animator.SetBool("IsChargingJump", true);
             animator.Play("Charging Jump");

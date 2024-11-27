@@ -739,6 +739,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8829146388634044418}
   - component: {fileID: 3720491296095361428}
+  - component: {fileID: 4361829818936239967}
   - component: {fileID: 7825629372783430010}
   - component: {fileID: 7006093425984090003}
   m_Layer: 3
@@ -833,7 +834,6 @@ MonoBehaviour:
   maxChargedJumpForce: 50
   maxCompressTime: 0.5
   compressTime: 0.3
-  animator: {fileID: 4739786035268828135}
   mainPogoBody: {fileID: 5244567125300186198}
   velocitySpringMultiplier: 0.2
   springLength: 0.4
@@ -901,6 +901,25 @@ MonoBehaviour:
   grindParticleColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   pogoAudioSource: {fileID: 2908888315733890370}
   voiceAudioSource: {fileID: 7889485622749836846}
+--- !u!114 &4361829818936239967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8722310485764097514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bea741adece335c48b13da5e9af7a7fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  backForce: 40
+  forwardForce: 40
+  rightForce: 40
+  leftForce: 40
+  upForce: 50
+  trickVelocityMaxThreshold: 75
+  trickVelocityMinThreshold: -30
 --- !u!54 &7825629372783430010
 Rigidbody:
   m_ObjectHideFlags: 0
