@@ -21,22 +21,12 @@ public class DeathData
     }
 }
 
-/*
- * POGO STICK CONTROLS
- * WS -> Rotate forward and backwards
- * AD -> Rotate side to side
- * SPACE -> Hold space when on the ground to compress the spring longer and jump higher
- * MOUSE -> Pan to change the look direction
- * Q -> Perform trick 1 (Needs to be performed with a flip for effect)
- * E -> Perform trick 2 (Needs to be performed with a flip for effect)
- */
-
 public class PogoControls : TrickSubject, TimerObserver
 {
     // Rotation parameters
     public float rotationSpeed = 360f;
     public float leanSpeed = 360f;
-    public float maxLeanAngle = 15;
+    public float maxLeanAngle = 30;
     public float maxLeanForwardAngle = 60;
     public float maxLeanBackwardAngle = 40;
 
@@ -66,7 +56,6 @@ public class PogoControls : TrickSubject, TimerObserver
     public float compressTime = 0.4f;
 
     // Used for spring compression animation (Aesthetic)
-    public PlayerAnimator animator;
     public GameObject mainPogoBody;
     public float velocitySpringMultiplier = 0.2f;
     public float springLength = 1.0f;
@@ -162,17 +151,6 @@ public class PogoControls : TrickSubject, TimerObserver
         playerInputActions.Player.ChargeJump.Enable();
         playerInputActions.Player.ChargeJump.performed += OnChargeJumpStarted;
         playerInputActions.Player.ChargeJump.canceled += OnChargeJumpReleased;
-        playerInputActions.Player.Restart.Enable();
-        playerInputActions.Player.Restart.performed += OnRestart;
-
-        playerInputActions.Player.Trick1.Enable();
-        playerInputActions.Player.Trick1.performed += PerformTrick1;
-        playerInputActions.Player.Trick2.Enable();
-        playerInputActions.Player.Trick2.performed += PerformTrick2;
-        playerInputActions.Player.Trick3.Enable();
-        playerInputActions.Player.Trick3.performed += PerformTrick3;
-        playerInputActions.Player.Trick4.Enable();
-        playerInputActions.Player.Trick4.performed += PerformTrick4;
 
         grindingAudioSource = gameObject.AddComponent<AudioSource>();
         grindingAudioSource.clip = grindingSFX;
@@ -202,41 +180,38 @@ public class PogoControls : TrickSubject, TimerObserver
         AudioListener.volume = PlayerPrefs.GetFloat("Volume", 1.0f);
     }
 
-    void OnRestart(InputAction.CallbackContext context)
-    {
-
-    }
-
     void OnChargeJumpStarted(InputAction.CallbackContext context)
     {
         isChargingJump = true;
     }
 
-    void PerformTrick1(InputAction.CallbackContext context)
+    void PerformTrick1()
     {
         currTrick = PlayerTricks.NoHands;
-        animator.PlayTrick1Animation();
-        //BroadcastMessage("PlayTrick1Animation");
     }
 
-    private bool trick2 = false;
-    void PerformTrick2(InputAction.CallbackContext context)
+    void PerformTrick2()
     {
         currTrick = PlayerTricks.Kickflip;
-        animator.PlayTrick2Animation();
-        //BroadcastMessage("PlayTrick2Animation");
     }
 
-    void PerformTrick3(InputAction.CallbackContext context)
+    void PerformTrick3()
     {
         currTrick = PlayerTricks.ScissorKick;
-        BroadcastMessage("PlayTrick3Animation");
     }
 
-    void PerformTrick4(InputAction.CallbackContext context)
+    void PerformTrick4()
     {
         currTrick = PlayerTricks.HandlessBarSpin;
-        BroadcastMessage("PlayTrick4Animation");
+    }
+    void PerformTrick5()
+    {
+        currTrick = PlayerTricks.HandlessBarSpin;
+    }
+
+    void PerformTrick6()
+    {
+        currTrick = PlayerTricks.HandlessBarSpin;
     }
 
     private void OnChargeJumpReleased(InputAction.CallbackContext context)
@@ -400,6 +375,7 @@ public class PogoControls : TrickSubject, TimerObserver
             if (!isGrounded && rb.velocity.y <= 0)
             {
                 isGrounded = true;
+                BroadcastMessage("PerformGroundedAction");
                 jumpForce = baseJumpForce;
 
                 jumpForce += Math.Min(Math.Abs(rb.velocity.y) * velocitySpringMultiplier, 100);
@@ -433,7 +409,7 @@ public class PogoControls : TrickSubject, TimerObserver
                 decompressHalfTime = compressTime / (compressHalfTime / compressTime);
 
                 jumpForce += (Time.deltaTime / maxCompressTime) * maxChargedJumpForce;
-                BroadcastMessage("PlayChargingJumpAnimation", true);
+                BroadcastMessage("PerformChargedJump", true);
             }
 
             // Current compression is inital_velocity * cos(time)
@@ -450,6 +426,7 @@ public class PogoControls : TrickSubject, TimerObserver
             {
                 bounceAmount = maxCompression * (-0.5f * Mathf.Cos((groundedTimer - compressHalfTime) / decompressHalfTime * Mathf.PI + Mathf.PI) + 0.5f);
                 squashFactor = bounceScale.Evaluate((groundedTimer - compressHalfTime) / (2 * decompressHalfTime) + 0.5f);
+                BroadcastMessage("PerformChargedJump", false);
             }
 
             // The spring is fully compressed, begin decompressing
@@ -458,22 +435,19 @@ public class PogoControls : TrickSubject, TimerObserver
 
         if (groundedTimer > compressHalfTime + decompressHalfTime)
         {
-            {
-                Jump(jumpForce);
+            Jump(jumpForce);
 
-                GameObject jumpEffect = Instantiate(jumpParticle, pogoStick.transform.position, Quaternion.FromToRotation(Vector3.up, groundHit.normal));
-                Destroy(jumpEffect, 1.0f);
+            GameObject jumpEffect = Instantiate(jumpParticle, pogoStick.transform.position, Quaternion.FromToRotation(Vector3.up, groundHit.normal));
+            Destroy(jumpEffect, 1.0f);
 
-                groundedTimer = 0;
-                fireJumpBoost = 0;
-                isGrounded = false;
-            }
+            groundedTimer = 0;
+            fireJumpBoost = 0;
+            isGrounded = false;
         }
     }
 
     private void ApplyJumpAnimation(float bounceAmount, float squashFactor)
     {
-        BroadcastMessage("PlayChargingJumpAnimation", false);
         bounceAmount = Mathf.Clamp(bounceAmount, 0, 1);
         mainPogoBody.transform.localPosition = pogoBodyHeightOffGround + springLength * Vector3.down * bounceAmount;
         pogoStick.transform.localScale = new Vector3(1, squashFactor, 1);
@@ -616,8 +590,6 @@ public class PogoControls : TrickSubject, TimerObserver
             pogoStickComponents[i].SetActive(!useRagdoll);
         }
 
-        animator.animator.enabled = !useRagdoll;
-
         // Setting bone positions manually can be buggy, and won't be needed once we have animation
         if (!useRagdoll)
         {
@@ -664,7 +636,6 @@ public class PogoControls : TrickSubject, TimerObserver
     {
         if (voiceAudioSource != null)
         {
-            Debug.Log("Playing Scream");
             voiceAudioSource.PlayOneShot(voice);
         }
     }
@@ -698,7 +669,7 @@ public class PogoControls : TrickSubject, TimerObserver
         }
 
         Vector3 pogoCastStart = leanChild.transform.position + leanChild.transform.rotation * pogoRayCastOffset;
-        if (Physics.SphereCast(pogoCastStart, pogoCastRadius * 1.5f, -1 * leanChild.transform.up, out RaycastHit hit, pogoRayCastLength, ~LayerMask.GetMask("Player")))
+        if (Physics.SphereCast(pogoCastStart, pogoCastRadius, -1 * leanChild.transform.up, out RaycastHit hit, pogoRayCastLength, ~LayerMask.GetMask("Player")))
         {
             return;
         }
@@ -757,6 +728,7 @@ public class PogoControls : TrickSubject, TimerObserver
         {
             rb.AddForce(leanChild.transform.up * force, ForceMode.Impulse);
         }
+        BroadcastMessage("ActivateSpringboard");
     }
 
     //TODO Function dealing with timer
@@ -898,7 +870,6 @@ public class PogoControls : TrickSubject, TimerObserver
         {
             grindingAudioSource.Stop();
         }
-        Debug.Log("Ending Grinding" + jumpDir);
         isGrinding = false;
         currentRailScript = null;
         rb.isKinematic = false;

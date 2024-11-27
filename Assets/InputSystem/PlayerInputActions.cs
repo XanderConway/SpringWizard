@@ -134,6 +134,24 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Trick 5"",
+                    ""type"": ""Button"",
+                    ""id"": ""a4dc5abf-9c36-406d-bfda-9c9ec1dd7b6f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Trick 6"",
+                    ""type"": ""Button"",
+                    ""id"": ""d2fc38be-eda6-405b-964d-c64ecbb15607"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -576,6 +594,28 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Trick4"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""abaa4542-7724-49f1-9aa4-b470ae371fc4"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Trick 5"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ac7f0346-e754-4b0e-a296-1a61058eb6c3"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Trick 6"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -596,6 +636,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Trick2 = m_Player.FindAction("Trick2", throwIfNotFound: true);
         m_Player_Trick3 = m_Player.FindAction("Trick3", throwIfNotFound: true);
         m_Player_Trick4 = m_Player.FindAction("Trick4", throwIfNotFound: true);
+        m_Player_Trick5 = m_Player.FindAction("Trick 5", throwIfNotFound: true);
+        m_Player_Trick6 = m_Player.FindAction("Trick 6", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -669,6 +711,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Trick2;
     private readonly InputAction m_Player_Trick3;
     private readonly InputAction m_Player_Trick4;
+    private readonly InputAction m_Player_Trick5;
+    private readonly InputAction m_Player_Trick6;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -685,6 +729,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @Trick2 => m_Wrapper.m_Player_Trick2;
         public InputAction @Trick3 => m_Wrapper.m_Player_Trick3;
         public InputAction @Trick4 => m_Wrapper.m_Player_Trick4;
+        public InputAction @Trick5 => m_Wrapper.m_Player_Trick5;
+        public InputAction @Trick6 => m_Wrapper.m_Player_Trick6;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -730,6 +776,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Trick4.started += instance.OnTrick4;
             @Trick4.performed += instance.OnTrick4;
             @Trick4.canceled += instance.OnTrick4;
+            @Trick5.started += instance.OnTrick5;
+            @Trick5.performed += instance.OnTrick5;
+            @Trick5.canceled += instance.OnTrick5;
+            @Trick6.started += instance.OnTrick6;
+            @Trick6.performed += instance.OnTrick6;
+            @Trick6.canceled += instance.OnTrick6;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -770,6 +822,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Trick4.started -= instance.OnTrick4;
             @Trick4.performed -= instance.OnTrick4;
             @Trick4.canceled -= instance.OnTrick4;
+            @Trick5.started -= instance.OnTrick5;
+            @Trick5.performed -= instance.OnTrick5;
+            @Trick5.canceled -= instance.OnTrick5;
+            @Trick6.started -= instance.OnTrick6;
+            @Trick6.performed -= instance.OnTrick6;
+            @Trick6.canceled -= instance.OnTrick6;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -801,5 +859,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnTrick2(InputAction.CallbackContext context);
         void OnTrick3(InputAction.CallbackContext context);
         void OnTrick4(InputAction.CallbackContext context);
+        void OnTrick5(InputAction.CallbackContext context);
+        void OnTrick6(InputAction.CallbackContext context);
     }
 }

@@ -3,26 +3,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerAnimator : MonoBehaviour
-{
-    public Animator animator;
+public class PlayerAnimator : MonoBehaviour {
+    private Animator animator;
     private PlayerInputActions playerInputActions;
     private Vector2 leanInputVector;
+    private PogoControls pogoControlsScript;
     private void Awake() {
         animator = GetComponent<Animator>();
     }
 
     private void Start() {
+        pogoControlsScript = GetComponentInParent<PogoControls>();
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Lean.Enable();
     }
 
     private void Update() {
+        if (pogoControlsScript.IsDead()) {
+            animator.enabled = false;
+            return;
+        } else {
+            animator.enabled = true;
+        }
+
         leanInputVector = playerInputActions.Player.Lean.ReadValue<Vector2>();
         float forwardInput = leanInputVector.y;
         float sideInput = leanInputVector.x;
 
-        // Truncate inputs once for repeated comparisons
         float truncatedForward = (float)Math.Truncate(forwardInput * 10) / 10;
         float truncatedSide = (float)Math.Truncate(sideInput * 10) / 10;
 
@@ -33,34 +40,48 @@ public class PlayerAnimator : MonoBehaviour
         animator.SetBool("IsLeaningLeft", sideInput == -1);
         animator.SetBool("IsLeaningFront", forwardInput == 1);
         animator.SetBool("IsLeaningBack", forwardInput == -1);
+        Debug.Log(animator.GetBool("IsLeaningBack"));
     }
 
-    public void PlayTrick1Animation() {
-        animator.SetTrigger("NoHandsTrick2Trigger");
+    private void PerformTrick1() {
+        animator.SetTrigger("Hands Off Trigger");
     }
 
-    public void PlayTrick2Animation() {
-        animator.SetTrigger("PogoKickFlipTrigger");
+    private void PerformTrick2() {
+        animator.SetTrigger("Kickflip Trigger");
     }
 
-    void PlayTrick3Animation() {
-        animator.SetTrigger("ScissorKickTrigger");
+    private void PerformTrick3() {
+        animator.SetTrigger("Scissor Kick Right Trigger");
     }
 
-    void PlayTrick4Animation() {
+    private void PerformTrick4() {
+        animator.SetTrigger("Handless Bar Spin Trigger");
+    }
+
+    private void PerformTrick5() {
         animator.SetTrigger("NoHandsTrick1Trigger");
     }
 
-    void PlayRailGrindingAnimation(bool isRailGrinding) {
+    private void PerformTrick6() {
+        animator.SetTrigger("PogoKickFlipTrigger");
+    }
+
+    private void PlayRailGrindingAnimation(bool isRailGrinding) {
         if (isRailGrinding) {
+            int randomIndex = UnityEngine.Random.Range(0, 2);
+            if (randomIndex == 0){
+                animator.Play("Rail Grinding Start 0");
+            } else {
+                animator.Play("Rail Grinding Start 1");
+            }
             animator.SetBool("IsRailGrinding", true);
-            animator.Play("rail grind part 1");
         } else {
             animator.SetBool("IsRailGrinding", false);
         }
     }
 
-    void PlayChargingJumpAnimation(bool isChargingJump) {
+    private void PerformChargedJump(bool isChargingJump) {
         if (isChargingJump) {
             animator.SetBool("IsChargingJump", true);
             animator.Play("Charging Jump");

@@ -112,6 +112,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Trick 5",
+                    "type": "Button",
+                    "id": "a4dc5abf-9c36-406d-bfda-9c9ec1dd7b6f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Trick 6",
+                    "type": "Button",
+                    "id": "d2fc38be-eda6-405b-964d-c64ecbb15607",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -552,6 +570,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Trick4",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "abaa4542-7724-49f1-9aa4-b470ae371fc4",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Trick 5",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ac7f0346-e754-4b0e-a296-1a61058eb6c3",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Trick 6",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
