@@ -15,6 +15,8 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     [SerializeField] private TrickSubject player;
     [SerializeField] private UITimer timer;
     [SerializeField] private GameObject collectibesParent;
+    
+    [SerializeField] private PauseMenu pauseMenu;
 
     private int totalScore = 0;
     private int _trickScore = 0;
@@ -39,6 +41,8 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
     private int totalCollectables = 0;
     private int numCollected = 0;
     private int scoreRequirement = 5000;
+
+    private bool isFinished = false;
 
 
     //combo system
@@ -184,9 +188,16 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
 
     private void updateUI(bool comboEnded)
     {
-        totalScoreText.text = $"Score {totalScore} / {scoreRequirement}";
-
-        scoreFill.fillAmount = Mathf.Clamp((float)(totalScore) / scoreRequirement, 0f, 1f);
+        if (!isFinished)
+        {
+            totalScoreText.text = $"Score {totalScore} / {scoreRequirement}";
+            scoreFill.fillAmount = Mathf.Clamp((float)(totalScore) / scoreRequirement, 0f, 1f);
+        }
+        else{
+            //show infinite score
+            totalScoreText.text = $"Score {totalScore} / ∞";
+            scoreFill.fillAmount = 1;
+        }
 
         scrollFill.fillAmount = Mathf.Clamp((float)(numCollected) / totalCollectables, 0f, 1f);
 
@@ -271,7 +282,7 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
 
     void checkFinished()
     {
-        if (numCollected == totalCollectables && totalScore >= scoreRequirement)
+        if (numCollected == totalCollectables && totalScore >= scoreRequirement && !isFinished)
         {
 
             // Save the score
@@ -282,7 +293,9 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
                 LevelManager.Instance.saveScore(data, levelId);
             }
 
-            SceneManager.LoadScene("EndMenu");
+            // SceneManager.LoadScene("EndMenu");
+            pauseMenu.NotifyGameFinished();
+            isFinished = true;
         }
     }
 
@@ -292,6 +305,18 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
         PlayerPrefs.SetInt("score", totalScore);
         PlayerPrefs.SetString("numCollected", $"{numCollected} / {totalCollectables}");
         player.RemoveObserver(this);
+    }
+
+    // getter for total score
+    public int getTotalScore()
+    {
+        return totalScore;
+    }
+    
+    //getter for time passed
+    public string getFormatTime(){
+        TimeSpan timeSpan = TimeSpan.FromSeconds(timer.currentTime);
+        return timeSpan.Minutes.ToString("00") + ":" + timeSpan.Seconds.ToString("00");
     }
 
     // Get the color of the combo text
