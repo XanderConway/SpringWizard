@@ -50,7 +50,19 @@ public class LevelCard : MonoBehaviour
         }
         
     }
+    public void OpenLeaderboard()
+    {
+        if (LevelManager.Instance != null)
+        {
+            LevelMetaData data = LevelManager.Instance.getMetaData(levelId);
 
+            if (data != null)
+            {
+                LevelManager.Instance.currentLevel = data;
+                SceneManager.LoadScene("Leaderboard");
+            }
+        }
+    }
     public void LoadLevel(bool isPractice)
     {
         if (LevelManager.Instance != null)

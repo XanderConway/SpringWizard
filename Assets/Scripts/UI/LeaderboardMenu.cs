@@ -56,13 +56,8 @@ public class LeaderboardMenu : MonoBehaviour
         }
     }
 
-    public void BackToEnd()
+    public void BackToLevelSelect()
     {
-        SceneManager.LoadScene(5); 
-    }
-
-    public void BackToMain()
-    {
-        SceneManager.LoadScene(0); 
+        SceneManager.LoadScene(1); 
     }
 }
