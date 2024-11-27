@@ -5,6 +5,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+
 
 public class LevelCard : MonoBehaviour
 {
@@ -20,6 +22,7 @@ public class LevelCard : MonoBehaviour
     void Start()
     {
         LoadScore();
+
     }
 
     // Update is called once per frame
