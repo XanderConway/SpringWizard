@@ -14494,6 +14494,10 @@ PrefabInstance:
       propertyPath: cam
       value: 
       objectReference: {fileID: 7324192649927878662}
+    - target: {fileID: 3675564786134479229, guid: 0a35dbe365abb004e9dbb67dc6277ea5, type: 3}
+      propertyPath: grindingSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 6fd3cd5e8ad644117b1e9ede414eb558, type: 3}
     - target: {fileID: 5656991646464929276, guid: 0a35dbe365abb004e9dbb67dc6277ea5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -8.9

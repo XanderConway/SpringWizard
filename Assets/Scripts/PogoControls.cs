@@ -119,6 +119,7 @@ public class PogoControls : TrickSubject, TimerObserver
     public AudioClip[] jumpFxs;
     public AudioClip[] hurtFxs;
     public AudioClip[] flipFxs;
+    public AudioClip grindingSFX;
 
     // Rail grinding variables
     private bool isGrinding = false;
@@ -141,6 +142,7 @@ public class PogoControls : TrickSubject, TimerObserver
 
     public AudioSource pogoAudioSource;
     public AudioSource voiceAudioSource;
+    private AudioSource grindingAudioSource;
 
 
     public UnityEvent<DeathData> getDeathEvent()
@@ -172,6 +174,10 @@ public class PogoControls : TrickSubject, TimerObserver
         playerInputActions.Player.Trick4.Enable();
         playerInputActions.Player.Trick4.performed += PerformTrick4;
 
+        grindingAudioSource = gameObject.AddComponent<AudioSource>();
+        grindingAudioSource.clip = grindingSFX;
+        grindingAudioSource.loop = true;
+        grindingAudioSource.playOnAwake = false;
 
         startBoneRotations = new Quaternion[ragdollBones.Length];
         startBonePositions = new Vector3[ragdollBones.Length];
@@ -774,6 +780,10 @@ public class PogoControls : TrickSubject, TimerObserver
             return;
 
         isGrinding = true;
+        if (grindingAudioSource && grindingSFX)
+        {
+            grindingAudioSource.Play();
+        }
         currentRailScript = railObject.GetComponent<RailScript>();
         if (currentRailScript == null)
         {
@@ -883,7 +893,10 @@ public class PogoControls : TrickSubject, TimerObserver
 
     void EndGrinding(Vector3 jumpDir)
     {
-
+        if (grindingAudioSource)
+        {
+            grindingAudioSource.Stop();
+        }
         Debug.Log("Ending Grinding" + jumpDir);
         isGrinding = false;
         currentRailScript = null;
