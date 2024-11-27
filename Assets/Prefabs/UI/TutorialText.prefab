@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 958075406713209530}
   - component: {fileID: 4644932489483034064}
-  - component: {fileID: 1329184990536736338}
+  - component: {fileID: 4440757720698384001}
   m_Layer: 0
   m_Name: TutorialText
   m_TagString: Untagged
@@ -54,7 +54,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 100, y: 100, z: 101}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1329184990536736338
+--- !u!114 &4440757720698384001
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -66,5 +66,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2749d73977e34d479220c88d74ab093, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trickScoreText: {fileID: 0}
-  tutorialText: Welcome to Spring Wizard! Use the Left Joystick to Angle the Pogostick.
+  tutorial: {fileID: 0}

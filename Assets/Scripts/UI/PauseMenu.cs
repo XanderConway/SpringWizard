@@ -66,6 +66,8 @@ public class PauseMenu : MonoBehaviour
             this.gameObject.SetActive(!this.gameObject.activeSelf);
         }
 
+        EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
+
 
         if (Time.timeScale == 0)
         {
