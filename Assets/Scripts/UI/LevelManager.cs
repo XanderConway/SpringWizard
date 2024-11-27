@@ -14,7 +14,7 @@ public class LevelMetaData
 }
 
 [System.Serializable]
-public class ScoreData
+public class ScoreData : System.IComparable<ScoreData>
 {
     public string numCollected = "?/?";
     public int score;
@@ -25,7 +25,11 @@ public class ScoreData
         this.numCollected = numCollected;
         this.score = score;
         this.totalTime = totalTime;
-        
+    }
+
+    public int CompareTo(ScoreData other)
+    {
+        return this.totalTime.CompareTo(other.totalTime);
     }
 }
 
@@ -120,6 +124,15 @@ public class LevelManager : MonoBehaviour
             scores = new List<ScoreData>();
         }
         scores.Add(data);
+        scores.Sort();
+
+        // Keeping top 5 scores only
+        if (scores.Count > 5)
+        {
+            scores = scores.Take(5).ToList();
+        }
+
+        scoreMap[levelId] = scores;
 
         string jsonData = JsonUtility.ToJson(new ScoreListWrapper(scores), true);
 
