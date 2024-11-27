@@ -195,8 +195,6 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
             }
         }
 
-
-
         if (LevelManager.Instance != null && LevelManager.Instance.currentLevel != null)
         {
             scoreRequirement = LevelManager.Instance.currentLevel.scoreRequirement;
@@ -222,7 +220,6 @@ public class UiScoreSystem : MonoBehaviour, TrickObserver
                 string levelId = LevelManager.Instance.currentLevel.levelId;
                 LevelManager.Instance.saveScore(data, levelId);
             }
-
             SceneManager.LoadScene("EndMenu");
         }
     }
