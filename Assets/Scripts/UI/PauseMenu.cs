@@ -19,6 +19,7 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private Button closeControlsButton;
     [SerializeField] private GameObject mainPauseButtons;
     [SerializeField] private GameObject controlPage;
+    [SerializeField] private Button finishButton;
 
     [SerializeField] private GameObject endMenu;
 
@@ -184,5 +185,9 @@ public class PauseMenu : MonoBehaviour
 
         //open the end menu
         openEndMenu();
+    }
+    public void BackToLevelSelect()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(1); 
     }
 }

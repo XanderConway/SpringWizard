@@ -14,6 +14,7 @@ public class PauseEndMenu : MonoBehaviour
     [SerializeField] private Text trickScoreText;
     [SerializeField] private TextMeshProUGUI timeUseText;
     [SerializeField] private Button keepPlayingButton;
+    [SerializeField] private Button finishButton;
     [SerializeField] private Button restartButton;
 
     private int playerScore;
@@ -74,8 +75,17 @@ public class PauseEndMenu : MonoBehaviour
         Debug.Log("Time: " + time);
         
         trickScoreText.text =  "Your Score: " + playerScore;
+        if (timeUseText != null){
 
-        timeUseText.text = GetFeedback(time)+ $" You completed the adventure in {time}!";
+            if (time == "00:00" || time == "0:00")
+            {
+                timeUseText.text = "You completed the adventure!";
+            }
+            else{
+            timeUseText.text = GetFeedback(time)+ $" You completed the adventure in {time}!";
+            }
+
+        }
 
         //default selected button
         EventSystem.current.SetSelectedGameObject(keepPlayingButton.gameObject);
@@ -86,6 +96,11 @@ public class PauseEndMenu : MonoBehaviour
     public void restartGame()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+    }
+
+    public void BackToLevelSelect()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(1); 
     }
 
 }
