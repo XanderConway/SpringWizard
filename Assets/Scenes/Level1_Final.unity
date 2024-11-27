@@ -15285,10 +15285,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2934433041430411653, guid: f44dbe6cd37ceaa40b9239237c9b951e, type: 3}
-      propertyPath: timer
-      value: 
-      objectReference: {fileID: 8770919276283660660}
-    - target: {fileID: 2934433041430411653, guid: f44dbe6cd37ceaa40b9239237c9b951e, type: 3}
       propertyPath: player
       value: 
       objectReference: {fileID: 3720491297412830884}
@@ -15380,26 +15376,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6421378187064497927, guid: f44dbe6cd37ceaa40b9239237c9b951e, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 62
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f44dbe6cd37ceaa40b9239237c9b951e, type: 3}
---- !u!114 &8770919276283660660 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 629387101364740564, guid: f44dbe6cd37ceaa40b9239237c9b951e, type: 3}
-  m_PrefabInstance: {fileID: 8770919276283660659}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 42c01393ecdfce842b007a8d0d71064d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &8829146389465237298 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5656991646464929276, guid: 0a35dbe365abb004e9dbb67dc6277ea5, type: 3}

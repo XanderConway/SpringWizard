@@ -82,5 +82,11 @@ public class PauseEndMenu : MonoBehaviour
 
     }
 
+
+    public void restartGame()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+    }
+
 }
 
