@@ -377,6 +377,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8214432981859866668, guid: c4330cc2cd81baf40b1d54203329b98a, type: 3}
+      propertyPath: m_text
+      value: FANTASTIC! You completed the adventure!
+      objectReference: {fileID: 0}
     - target: {fileID: 8815051461791944904, guid: c4330cc2cd81baf40b1d54203329b98a, type: 3}
       propertyPath: m_Navigation.m_Mode
       value: -1

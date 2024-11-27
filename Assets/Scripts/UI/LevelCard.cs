@@ -39,13 +39,21 @@ public class LevelCard : MonoBehaviour
             List<ScoreData> data = LevelManager.Instance.getScores(levelId);
             if (data != null && data.Count > 0)
             {
-                // TODO find the fastest time
-                TimeSpan timeSpan = TimeSpan.FromSeconds(data[0].totalTime);
-                string formatTimer = timeSpan.Minutes.ToString("00") + ":" + timeSpan.Seconds.ToString("00");
+            ScoreData fastestScore = data[0];
+            for (int i = 1; i < data.Count; i++)
+            {
+                if (data[i].totalTime < fastestScore.totalTime)
+                {
+                    fastestScore = data[i];
+                }
+            }
 
-                scoreText.text = formatTimer;
-                numCollected.text = data[0].numCollected;
-                return;
+            TimeSpan timeSpan = TimeSpan.FromSeconds(fastestScore.totalTime);
+            string formatTimer = timeSpan.Minutes.ToString("00") + ":" + timeSpan.Seconds.ToString("00");
+
+            scoreText.text = formatTimer;
+            numCollected.text = fastestScore.numCollected;
+            return;
             }
         }
         
