@@ -4540,6 +4540,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 4300000, guid: 20ba4adb0ee360a49933d1055a10f28e, type: 2}
+    - target: {fileID: 831548339809603778, guid: 610805a1674802740aa532a7daa8c889, type: 3}
+      propertyPath: railMaterial
+      value: 
+      objectReference: {fileID: -8346980593941660806, guid: 08d04e084e8fd40928dcbb27b2382236, type: 3}
     - target: {fileID: 2948820185591925651, guid: 610805a1674802740aa532a7daa8c889, type: 3}
       propertyPath: m_Splines.Array.size
       value: 2
@@ -7479,6 +7483,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 4300000, guid: 1e5f8a309dbc8b3438e1e2b6a1fa11fb, type: 2}
+    - target: {fileID: 831548339809603778, guid: 610805a1674802740aa532a7daa8c889, type: 3}
+      propertyPath: railMaterial
+      value: 
+      objectReference: {fileID: -8346980593941660806, guid: 08d04e084e8fd40928dcbb27b2382236, type: 3}
     - target: {fileID: 2948820185591925651, guid: 610805a1674802740aa532a7daa8c889, type: 3}
       propertyPath: m_Splines.Array.size
       value: 2
@@ -12877,6 +12885,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 4300000, guid: c62880da260212a4492a3046dfcf7a69, type: 2}
+    - target: {fileID: 831548339809603778, guid: 610805a1674802740aa532a7daa8c889, type: 3}
+      propertyPath: railMaterial
+      value: 
+      objectReference: {fileID: -8346980593941660806, guid: 08d04e084e8fd40928dcbb27b2382236, type: 3}
     - target: {fileID: 2948820185591925651, guid: 610805a1674802740aa532a7daa8c889, type: 3}
       propertyPath: m_Splines.Array.size
       value: 2

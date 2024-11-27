@@ -243,6 +243,7 @@ MonoBehaviour:
   normalDir: 0
   railSpline: {fileID: 0}
   totalSplineLength: 0
+  railMaterial: {fileID: 0}
 --- !u!64 &99132896576270472
 MeshCollider:
   m_ObjectHideFlags: 0
