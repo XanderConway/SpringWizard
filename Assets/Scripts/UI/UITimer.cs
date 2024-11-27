@@ -121,6 +121,13 @@ public class UITimer : TimerSubject
         SceneManager.LoadScene(scene.name);
     }
 
+    //getter for time passed
+    public float GetTimePassed()
+    {
+        return currentTime;
+    }
+    
+
 
     //UI functions
 
@@ -132,3 +139,5 @@ public class UITimer : TimerSubject
         timerText.text = formatTimer;
     }
 }
+
+
