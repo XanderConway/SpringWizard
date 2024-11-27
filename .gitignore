@@ -73,3 +73,4 @@ crashlytics-build.properties
 .vscode/settings.json
 .vscode/extensions.json
 .vscode/launch.json
+Assets/Skybox.mat
